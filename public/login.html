@@ -77,6 +77,11 @@
             background: #c2185b;
         }
         
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
         .toggle-form {
             text-align: center;
             margin-top: 20px;
@@ -95,26 +100,48 @@
         
         #auth-message {
             margin-top: 15px;
-            padding: 10px;
+            padding: 12px;
             border-radius: 5px;
             text-align: center;
             font-weight: bold;
+            display: none;
         }
         
-        .success {
+        .message-success {
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
+            display: block;
         }
         
-        .error {
+        .message-error {
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+            display: block;
         }
         
         .hidden {
             display: none;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -122,7 +149,7 @@
     <div class="login-container">
         <div class="logo">
             <h1>💄 Glamour Beauty</h1>
-            <p>Panel de Administración</p>
+            <p>Acceso de Usuario</p>
         </div>
         
         <!-- Formulario de Login -->
@@ -137,7 +164,7 @@
                 <input type="password" id="login-password" placeholder="••••••••" required>
             </div>
             
-            <button type="submit" class="login-btn">Iniciar Sesión</button>
+            <button type="submit" class="login-btn" id="login-btn">Iniciar Sesión</button>
         </form>
 
         <!-- Formulario de Registro (oculto inicialmente) -->
@@ -157,7 +184,7 @@
                 <input type="password" id="register-confirm" placeholder="Repite tu contraseña" required>
             </div>
             
-            <button type="submit" class="login-btn">Registrarse</button>
+            <button type="submit" class="login-btn" id="register-btn">Registrarse</button>
         </form>
 
         <div class="toggle-form">
@@ -167,16 +194,17 @@
 
         <div id="auth-message"></div>
         
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="index.html" style="color: #666; text-decoration: none;">← Volver a la Tienda</a>
+        <div class="back-link">
+            <a href="index.html">← Volver a la Tienda</a>
         </div>
     </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     <script>
-        // Configuración de Firebase - USA TU CONFIGURACIÓN REAL
+        // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDU54WCOBHTLNXVqavXqD3-7PlH-BN0JZg",
             authDomain: "fir-maquillaje.firebaseapp.com",
@@ -189,6 +217,7 @@
         // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
         // Elementos DOM
         const loginForm = document.getElementById('login-form');
@@ -196,6 +225,8 @@
         const toggleRegister = document.getElementById('toggle-register');
         const toggleLogin = document.getElementById('toggle-login');
         const authMessage = document.getElementById('auth-message');
+        const loginBtn = document.getElementById('login-btn');
+        const registerBtn = document.getElementById('register-btn');
 
         // Toggle entre login y registro
         toggleRegister.addEventListener('click', () => {
@@ -203,7 +234,7 @@
             registerForm.classList.remove('hidden');
             toggleRegister.classList.add('hidden');
             toggleLogin.classList.remove('hidden');
-            authMessage.textContent = '';
+            authMessage.style.display = 'none';
         });
 
         toggleLogin.addEventListener('click', () => {
@@ -211,13 +242,27 @@
             loginForm.classList.remove('hidden');
             toggleLogin.classList.add('hidden');
             toggleRegister.classList.remove('hidden');
-            authMessage.textContent = '';
+            authMessage.style.display = 'none';
         });
 
         // Función para mostrar mensajes
         function showMessage(message, type) {
             authMessage.textContent = message;
             authMessage.className = type;
+            authMessage.style.display = 'block';
+        }
+
+        // Función para mostrar loading
+        function setLoading(button, isLoading) {
+            if (isLoading) {
+                button.disabled = true;
+                button.textContent = 'Cargando...';
+                button.classList.add('loading');
+            } else {
+                button.disabled = false;
+                button.textContent = button.id === 'login-btn' ? 'Iniciar Sesión' : 'Registrarse';
+                button.classList.remove('loading');
+            }
         }
 
         // Login
@@ -227,15 +272,47 @@
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             
+            setLoading(loginBtn, true);
+            
             try {
-                showMessage('Iniciando sesión...', '');
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                showMessage('¡Sesión iniciada! Redirigiendo...', 'success');
+                const user = userCredential.user;
                 
-                // Redirigir al panel de administrador después de 1 segundo
-                setTimeout(() => {
-                    window.location.href = 'admin.html';
-                }, 1000);
+                // Verificar el rol del usuario en Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    
+                    if (userData.role === 'admin') {
+                        showMessage('¡Bienvenido Administrador! Redirigiendo...', 'message-success');
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 1000);
+                    } else {
+                        showMessage('¡Bienvenido! Redirigiendo a la tienda...', 'message-success');
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1000);
+                    }
+                } else {
+                    // Si no existe en users, crear documento como cliente
+                    await db.collection('users').doc(user.uid).set({
+                        email: email,
+                        username: email.split('@')[0],
+                        role: 'cliente',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        profile: {
+                            nombre: '',
+                            telefono: ''
+                        }
+                    });
+                    
+                    showMessage('¡Bienvenido! Redirigiendo a la tienda...', 'message-success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }
                 
             } catch (error) {
                 let errorMessage = 'Error al iniciar sesión';
@@ -246,7 +323,9 @@
                 } else if (error.code === 'auth/invalid-email') {
                     errorMessage = 'Email inválido';
                 }
-                showMessage(errorMessage, 'error');
+                showMessage(errorMessage, 'message-error');
+            } finally {
+                setLoading(loginBtn, false);
             }
         });
 
@@ -259,23 +338,38 @@
             const confirmPassword = document.getElementById('register-confirm').value;
             
             if (password !== confirmPassword) {
-                showMessage('Las contraseñas no coinciden', 'error');
+                showMessage('Las contraseñas no coinciden', 'message-error');
                 return;
             }
             
             if (password.length < 6) {
-                showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+                showMessage('La contraseña debe tener al menos 6 caracteres', 'message-error');
                 return;
             }
             
+            setLoading(registerBtn, true);
+            
             try {
-                showMessage('Creando cuenta...', '');
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                showMessage('¡Cuenta creada exitosamente! Redirigiendo...', 'success');
+                const user = userCredential.user;
                 
-                // Redirigir al panel de administrador después de 2 segundos
+                // Crear documento de usuario en Firestore como CLIENTE
+                await db.collection('users').doc(user.uid).set({
+                    email: email,
+                    username: email.split('@')[0],
+                    role: 'cliente', // Todos se registran como clientes
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    profile: {
+                        nombre: '',
+                        telefono: ''
+                    }
+                });
+                
+                showMessage('¡Cuenta creada exitosamente! Redirigiendo a la tienda...', 'message-success');
+                
+                // Clientes van a la tienda, NO al admin
                 setTimeout(() => {
-                    window.location.href = 'admin.html';
+                    window.location.href = 'index.html';
                 }, 2000);
                 
             } catch (error) {
@@ -287,16 +381,33 @@
                 } else if (error.code === 'auth/weak-password') {
                     errorMessage = 'La contraseña es muy débil';
                 }
-                showMessage(errorMessage, 'error');
+                showMessage(errorMessage, 'message-error');
+            } finally {
+                setLoading(registerBtn, false);
             }
         });
 
-        // Verificar si ya está autenticado
-        auth.onAuthStateChanged((user) => {
-            if (user && window.location.pathname.includes('login.html')) {
-                // Si ya está logueado, redirigir al admin
-                window.location.href = 'admin.html';
+        // VERIFICACIÓN CORREGIDA - Solo redirige si YA está autenticado al cargar la página
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Solo redirige si el usuario carga la página ya autenticado
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        if (userData.role === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                    }
+                } catch (error) {
+                    console.log('Error verificando usuario:', error);
+                    // Si hay error, mostrar formulario normal
+                }
             }
+            // Si no hay usuario o no existe en Firestore, muestra el formulario normal
         });
     </script>
 </body>
