@@ -1,5 +1,303 @@
-<!-- AL FINAL del body, ANTES de tus scripts -->
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-<script src="js/admin.js"></script> <!-- o auth.js -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Glamour Beauty</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            color: #e91e63;
+            font-size: 2rem;
+            margin: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #e91e63;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .login-btn:hover {
+            background: #c2185b;
+        }
+        
+        .toggle-form {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .toggle-form a {
+            color: #e91e63;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+        
+        #auth-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>💄 Glamour Beauty</h1>
+            <p>Panel de Administración</p>
+        </div>
+        
+        <!-- Formulario de Login -->
+        <form id="login-form">
+            <div class="form-group">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" placeholder="tu@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="login-password">Contraseña:</label>
+                <input type="password" id="login-password" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Iniciar Sesión</button>
+        </form>
+
+        <!-- Formulario de Registro (oculto inicialmente) -->
+        <form id="register-form" class="hidden">
+            <div class="form-group">
+                <label for="register-email">Email:</label>
+                <input type="email" id="register-email" placeholder="tu@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="register-password">Contraseña:</label>
+                <input type="password" id="register-password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="register-confirm">Confirmar Contraseña:</label>
+                <input type="password" id="register-confirm" placeholder="Repite tu contraseña" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Registrarse</button>
+        </form>
+
+        <div class="toggle-form">
+            <a id="toggle-register">¿No tienes cuenta? <strong>Regístrate aquí</strong></a>
+            <a id="toggle-login" class="hidden">¿Ya tienes cuenta? <strong>Inicia Sesión</strong></a>
+        </div>
+
+        <div id="auth-message"></div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="index.html" style="color: #666; text-decoration: none;">← Volver a la Tienda</a>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script>
+        // Configuración de Firebase - USA TU CONFIGURACIÓN REAL
+        const firebaseConfig = {
+            apiKey: "AIzaSyDU54WCOBHTLNXVqavXqD3-7PlH-BN0JZg",
+            authDomain: "fir-maquillaje.firebaseapp.com",
+            projectId: "fir-maquillaje",
+            storageBucket: "fir-maquillaje.firebasestorage.app",
+            messagingSenderId: "125900379034",
+            appId: "1:125900379034:web:b90c95edfd51b12032a023"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Elementos DOM
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const toggleRegister = document.getElementById('toggle-register');
+        const toggleLogin = document.getElementById('toggle-login');
+        const authMessage = document.getElementById('auth-message');
+
+        // Toggle entre login y registro
+        toggleRegister.addEventListener('click', () => {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            toggleRegister.classList.add('hidden');
+            toggleLogin.classList.remove('hidden');
+            authMessage.textContent = '';
+        });
+
+        toggleLogin.addEventListener('click', () => {
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            toggleLogin.classList.add('hidden');
+            toggleRegister.classList.remove('hidden');
+            authMessage.textContent = '';
+        });
+
+        // Función para mostrar mensajes
+        function showMessage(message, type) {
+            authMessage.textContent = message;
+            authMessage.className = type;
+        }
+
+        // Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                showMessage('Iniciando sesión...', '');
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                showMessage('¡Sesión iniciada! Redirigiendo...', 'success');
+                
+                // Redirigir al panel de administrador después de 1 segundo
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1000);
+                
+            } catch (error) {
+                let errorMessage = 'Error al iniciar sesión';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'Usuario no encontrado';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Contraseña incorrecta';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Email inválido';
+                }
+                showMessage(errorMessage, 'error');
+            }
+        });
+
+        // Registro
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm').value;
+            
+            if (password !== confirmPassword) {
+                showMessage('Las contraseñas no coinciden', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+            
+            try {
+                showMessage('Creando cuenta...', '');
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                showMessage('¡Cuenta creada exitosamente! Redirigiendo...', 'success');
+                
+                // Redirigir al panel de administrador después de 2 segundos
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 2000);
+                
+            } catch (error) {
+                let errorMessage = 'Error al crear la cuenta';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Este email ya está registrado';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Email inválido';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'La contraseña es muy débil';
+                }
+                showMessage(errorMessage, 'error');
+            }
+        });
+
+        // Verificar si ya está autenticado
+        auth.onAuthStateChanged((user) => {
+            if (user && window.location.pathname.includes('login.html')) {
+                // Si ya está logueado, redirigir al admin
+                window.location.href = 'admin.html';
+            }
+        });
+    </script>
+</body>
+</html>
