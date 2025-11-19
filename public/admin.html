@@ -125,6 +125,10 @@
             background: #4CAF50;
         }
         
+        .btn-warning {
+            background: #ff9800;
+        }
+        
         .table-container {
             overflow-x: auto;
             margin-top: 20px;
@@ -150,22 +154,6 @@
         
         tr:hover {
             background: #f5f5f5;
-        }
-        
-        .user-role.admin {
-            background: #e91e63;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        
-        .user-role.cliente {
-            background: #2196F3;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-size: 12px;
         }
         
         .stats-grid {
@@ -221,6 +209,18 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
@@ -255,6 +255,79 @@
             </div>
         </div>
 
+        <!-- Gestión de Productos -->
+        <div class="admin-section">
+            <h2 class="section-title">Gestión de Productos</h2>
+            
+            <!-- Formulario para Agregar/Editar Productos -->
+            <form id="product-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre del Producto:</label>
+                        <input type="text" id="product-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio ($):</label>
+                        <input type="number" id="product-price" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría:</label>
+                        <select id="product-category" required>
+                            <option value="">Seleccionar categoría</option>
+                            <option value="labios">Labios</option>
+                            <option value="ojos">Ojos</option>
+                            <option value="rostro">Rostro</option>
+                            <option value="piel">Cuidado de la Piel</option>
+                            <option value="accesorios">Accesorios</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock:</label>
+                        <input type="number" id="product-stock" min="0" value="1" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Descripción:</label>
+                    <textarea id="product-description" rows="3" placeholder="Describe el producto..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>URL de la Imagen:</label>
+                    <input type="url" id="product-image" placeholder="https://ejemplo.com/imagen.jpg">
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="submit" class="btn" id="add-product-btn">Agregar Producto</button>
+                    <button type="button" class="btn btn-warning hidden" id="update-product-btn">Actualizar Producto</button>
+                    <button type="button" class="btn btn-danger hidden" id="cancel-edit-btn">Cancelar</button>
+                </div>
+                <input type="hidden" id="editing-product-id">
+            </form>
+
+            <!-- Lista de Productos -->
+            <div class="table-container">
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-tbody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                Cargando productos...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Gestión de Usuarios -->
         <div class="admin-section">
             <h2 class="section-title">Gestión de Usuarios</h2>
@@ -270,64 +343,11 @@
                         </tr>
                     </thead>
                     <tbody id="users-tbody">
-                        <!-- Los usuarios se cargan aquí -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Gestión de Productos -->
-        <div class="admin-section">
-            <h2 class="section-title">Gestión de Productos</h2>
-            <form id="product-form">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Nombre del Producto:</label>
-                        <input type="text" id="product-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Precio:</label>
-                        <input type="number" id="product-price" step="0.01" required>
-                    </div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Categoría:</label>
-                        <select id="product-category" required>
-                            <option value="labios">Labios</option>
-                            <option value="ojos">Ojos</option>
-                            <option value="rostro">Rostro</option>
-                            <option value="piel">Cuidado de la Piel</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Stock:</label>
-                        <input type="number" id="product-stock" value="1" min="0" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Descripción:</label>
-                    <textarea id="product-description" rows="3"></textarea>
-                </div>
-                
-                <button type="submit" class="btn" id="add-product-btn">Agregar Producto</button>
-            </form>
-
-            <div class="table-container">
-                <table id="products-table">
-                    <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Precio</th>
-                            <th>Categoría</th>
-                            <th>Stock</th>
-                            <th>Acciones</th>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                Cargando usuarios...
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody id="products-tbody">
-                        <!-- Los productos se cargan aquí -->
                     </tbody>
                 </table>
             </div>
@@ -357,6 +377,14 @@
         const auth = firebase.auth();
 
         let currentUser = null;
+        let editingProductId = null;
+
+        // Elementos DOM
+        const productForm = document.getElementById('product-form');
+        const addProductBtn = document.getElementById('add-product-btn');
+        const updateProductBtn = document.getElementById('update-product-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const editingProductIdInput = document.getElementById('editing-product-id');
 
         // Verificar autenticación y rol
         auth.onAuthStateChanged(async (user) => {
@@ -366,24 +394,35 @@
             }
 
             currentUser = user;
+            console.log('Usuario autenticado:', user.uid);
             
-            // Verificar si es admin
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            if (!userDoc.exists || userDoc.data().role !== 'admin') {
-                alert('No tienes permisos de administrador');
-                window.location.href = 'index.html';
-                return;
-            }
+            try {
+                // Verificar si es admin
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                console.log('Documento de usuario:', userDoc.exists);
+                
+                if (!userDoc.exists || userDoc.data().role !== 'admin') {
+                    alert('No tienes permisos de administrador');
+                    window.location.href = 'index.html';
+                    return;
+                }
 
-            // Cargar datos
-            cargarEstadisticas();
-            cargarUsuarios();
-            cargarProductos();
+                console.log('Usuario es administrador, cargando datos...');
+                // Cargar datos
+                await cargarEstadisticas();
+                await cargarProductos();
+                await cargarUsuarios();
+                
+            } catch (error) {
+                console.error('Error verificando permisos:', error);
+                showMessage('Error al verificar permisos de administrador', 'error');
+            }
         });
 
         // Cargar estadísticas
         async function cargarEstadisticas() {
             try {
+                console.log('Cargando estadísticas...');
                 const usersSnapshot = await db.collection('users').get();
                 const productsSnapshot = await db.collection('productos').get();
                 
@@ -395,36 +434,201 @@
                 document.getElementById('total-products').textContent = totalProducts;
                 document.getElementById('total-admins').textContent = totalAdmins;
                 
+                console.log('Estadísticas cargadas:', { totalUsers, totalProducts, totalAdmins });
+                
             } catch (error) {
                 console.error('Error cargando estadísticas:', error);
+                showMessage('Error al cargar estadísticas', 'error');
+            }
+        }
+
+        // Cargar productos
+        async function cargarProductos() {
+            const tbody = document.getElementById('products-tbody');
+            
+            try {
+                console.log('Cargando productos...');
+                const snapshot = await db.collection('productos').orderBy('fechaCreacion', 'desc').get();
+                console.log('Productos encontrados:', snapshot.size);
+                
+                tbody.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                No hay productos registrados
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const product = doc.data();
+                    console.log('Producto:', product);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.nombre || 'Sin nombre'}</td>
+                        <td>$${product.precio || '0'}</td>
+                        <td>${product.categoria || 'Sin categoría'}</td>
+                        <td>${product.stock || '0'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-warning" onclick="editarProducto('${doc.id}')">Editar</button>
+                                <button class="btn btn-danger" onclick="eliminarProducto('${doc.id}')">Eliminar</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error cargando productos:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 20px; color: red;">
+                            Error al cargar productos: ${error.message}
+                        </td>
+                    </tr>
+                `;
+                showMessage('Error al cargar productos', 'error');
+            }
+        }
+
+        // Agregar producto
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const productData = {
+                nombre: document.getElementById('product-name').value,
+                precio: parseFloat(document.getElementById('product-price').value),
+                categoria: document.getElementById('product-category').value,
+                descripcion: document.getElementById('product-description').value,
+                stock: parseInt(document.getElementById('product-stock').value),
+                imagen: document.getElementById('product-image').value || '',
+                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                if (editingProductId) {
+                    // Actualizar producto existente
+                    await db.collection('productos').doc(editingProductId).update(productData);
+                    showMessage('Producto actualizado exitosamente', 'success');
+                    cancelarEdicion();
+                } else {
+                    // Agregar nuevo producto
+                    await db.collection('productos').add(productData);
+                    showMessage('Producto agregado exitosamente', 'success');
+                    productForm.reset();
+                }
+                
+                cargarProductos();
+                cargarEstadisticas();
+                
+            } catch (error) {
+                console.error('Error guardando producto:', error);
+                showMessage('Error al guardar producto: ' + error.message, 'error');
+            }
+        });
+
+        // Editar producto
+        async function editarProducto(productId) {
+            try {
+                const doc = await db.collection('productos').doc(productId).get();
+                if (doc.exists) {
+                    const product = doc.data();
+                    
+                    // Llenar formulario con datos del producto
+                    document.getElementById('product-name').value = product.nombre || '';
+                    document.getElementById('product-price').value = product.precio || '';
+                    document.getElementById('product-category').value = product.categoria || '';
+                    document.getElementById('product-description').value = product.descripcion || '';
+                    document.getElementById('product-stock').value = product.stock || '';
+                    document.getElementById('product-image').value = product.imagen || '';
+                    
+                    // Cambiar a modo edición
+                    editingProductId = productId;
+                    editingProductIdInput.value = productId;
+                    addProductBtn.classList.add('hidden');
+                    updateProductBtn.classList.remove('hidden');
+                    cancelEditBtn.classList.remove('hidden');
+                    
+                    showMessage('Editando producto...', 'success');
+                }
+            } catch (error) {
+                console.error('Error cargando producto para editar:', error);
+                showMessage('Error al cargar producto para editar', 'error');
+            }
+        }
+
+        // Cancelar edición
+        function cancelarEdicion() {
+            editingProductId = null;
+            editingProductIdInput.value = '';
+            productForm.reset();
+            addProductBtn.classList.remove('hidden');
+            updateProductBtn.classList.add('hidden');
+            cancelEditBtn.classList.add('hidden');
+        }
+
+        // Eliminar producto
+        async function eliminarProducto(productId) {
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                try {
+                    await db.collection('productos').doc(productId).delete();
+                    showMessage('Producto eliminado', 'success');
+                    cargarProductos();
+                    cargarEstadisticas();
+                } catch (error) {
+                    console.error('Error eliminando producto:', error);
+                    showMessage('Error al eliminar producto', 'error');
+                }
             }
         }
 
         // Cargar usuarios
         async function cargarUsuarios() {
             const tbody = document.getElementById('users-tbody');
-            tbody.innerHTML = '';
             
             try {
+                console.log('Cargando usuarios...');
                 const snapshot = await db.collection('users').orderBy('createdAt', 'desc').get();
+                console.log('Usuarios encontrados:', snapshot.size);
+                
+                tbody.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px;">
+                                No hay usuarios registrados
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
                 
                 snapshot.forEach(doc => {
                     const user = doc.data();
-                    const row = document.createElement('tr');
-                    
                     const fecha = user.createdAt ? user.createdAt.toDate().toLocaleDateString() : 'N/A';
+                    const roleClass = user.role === 'admin' ? 'admin' : 'cliente';
                     
+                    const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${user.email}</td>
                         <td>${user.username}</td>
-                        <td><span class="user-role ${user.role}">${user.role}</span></td>
+                        <td><span class="user-role ${roleClass}">${user.role}</span></td>
                         <td>${fecha}</td>
                         <td>
-                            ${user.role !== 'admin' ? 
-                                `<button class="btn btn-success" onclick="hacerAdmin('${doc.id}')">Hacer Admin</button>` : 
-                                '<span>Administrador</span>'
-                            }
-                            <button class="btn btn-danger" onclick="eliminarUsuario('${doc.id}')">Eliminar</button>
+                            <div class="action-buttons">
+                                ${user.role !== 'admin' ? 
+                                    `<button class="btn btn-success" onclick="hacerAdmin('${doc.id}')">Hacer Admin</button>` : 
+                                    '<span>Administrador</span>'
+                                }
+                                <button class="btn btn-danger" onclick="eliminarUsuario('${doc.id}')">Eliminar</button>
+                            </div>
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -468,72 +672,6 @@
             }
         }
 
-        // Gestión de productos (similar al código anterior)
-        document.getElementById('product-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const productData = {
-                nombre: document.getElementById('product-name').value,
-                precio: parseFloat(document.getElementById('product-price').value),
-                categoria: document.getElementById('product-category').value,
-                descripcion: document.getElementById('product-description').value,
-                stock: parseInt(document.getElementById('product-stock').value),
-                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            try {
-                await db.collection('productos').add(productData);
-                showMessage('Producto agregado exitosamente', 'success');
-                document.getElementById('product-form').reset();
-                cargarProductos();
-                cargarEstadisticas();
-            } catch (error) {
-                console.error('Error agregando producto:', error);
-                showMessage('Error al agregar producto', 'error');
-            }
-        });
-
-        async function cargarProductos() {
-            const tbody = document.getElementById('products-tbody');
-            tbody.innerHTML = '';
-
-            try {
-                const snapshot = await db.collection('productos').orderBy('fechaCreacion', 'desc').get();
-                
-                snapshot.forEach(doc => {
-                    const product = doc.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${product.nombre}</td>
-                        <td>$${product.precio}</td>
-                        <td>${product.categoria}</td>
-                        <td>${product.stock}</td>
-                        <td>
-                            <button class="btn btn-danger" onclick="eliminarProducto('${doc.id}')">Eliminar</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error cargando productos:', error);
-                showMessage('Error al cargar productos', 'error');
-            }
-        }
-
-        async function eliminarProducto(productId) {
-            if (confirm('¿Estás seguro de eliminar este producto?')) {
-                try {
-                    await db.collection('productos').doc(productId).delete();
-                    showMessage('Producto eliminado', 'success');
-                    cargarProductos();
-                    cargarEstadisticas();
-                } catch (error) {
-                    console.error('Error eliminando producto:', error);
-                    showMessage('Error al eliminar producto', 'error');
-                }
-            }
-        }
-
         // Mostrar mensajes
         function showMessage(message, type) {
             const messageDiv = document.getElementById('admin-message');
@@ -553,10 +691,34 @@
             });
         });
 
+        // Botón cancelar edición
+        cancelEditBtn.addEventListener('click', cancelarEdicion);
+
         // Hacer funciones globales
+        window.editarProducto = editarProducto;
+        window.eliminarProducto = eliminarProducto;
         window.hacerAdmin = hacerAdmin;
         window.eliminarUsuario = eliminarUsuario;
-        window.eliminarProducto = eliminarProducto;
+
+        // Agregar estilos para los roles
+        const style = document.createElement('style');
+        style.textContent = `
+            .user-role.admin {
+                background: #e91e63;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 3px;
+                font-size: 12px;
+            }
+            .user-role.cliente {
+                background: #2196F3;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 3px;
+                font-size: 12px;
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
