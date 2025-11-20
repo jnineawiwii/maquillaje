@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Confirmado - MAC Style Makeup Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Header se cargará dinámicamente -->
+    <div id="header-container"></div>
+
+    <main id="main-content">
+        <section class="confirmation-container">
+            <div class="confirmation-content">
+                <div class="confirmation-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1>¡Pedido Confirmado!</h1>
+                <p class="confirmation-message">Gracias por tu compra en MAC Style Makeup Store.</p>
+                
+                <div class="order-details" id="order-details">
+                    <!-- Los detalles del pedido se cargarán dinámicamente -->
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Cargando información del pedido...</p>
+                    </div>
+                </div>
+
+                <div class="confirmation-actions">
+                    <a href="products.html" class="btn-primary">Seguir Comprando</a>
+                    <a href="index.html" class="btn-secondary">Volver al Inicio</a>
+                </div>
+
+                <div class="support-info">
+                    <h3>¿Necesitas ayuda?</h3>
+                    <p>Estamos aquí para ayudarte con tu pedido.</p>
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:soporte@macstyle.com">soporte@macstyle.com</a></p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2023 MAC Style Makeup Store. Proyecto estudiantil sin derechos de autor.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar el header desde base.html
+            fetch('base.html')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const header = doc.querySelector('header');
+                    if (header) {
+                        document.getElementById('header-container').innerHTML = header.outerHTML;
+                    }
+                    // Ejecutar scripts del header
+                    const scripts = doc.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        if (script.src) {
+                            const newScript = document.createElement('script');
+                            newScript.src = script.src;
+                            document.head.appendChild(newScript);
+                        } else {
+                            eval(script.textContent);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading header:', error));
+
+            // Inicializar Firebase
+            const db = firebase.firestore();
+            const auth = firebase.auth();
+
+            // Verificar autenticación
+            auth.onAuthStateChanged(user => {
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                loadOrderDetails();
+            });
+
+            function loadOrderDetails() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const orderId = urlParams.get('order_id');
+                
+                if (!orderId) {
+                    showError('No se encontró información del pedido');
+                    return;
+                }
+
+                const orderDetails = document.getElementById('order-details');
+
+                db.collection('orders').doc(orderId).get()
+                    .then(doc => {
+                        if (!doc.exists) {
+                            showError('Pedido no encontrado');
+                            return;
+                        }
+
+                        const order = doc.data();
+                        
+                        // Verificar que el pedido pertenece al usuario actual
+                        if (order.user_id !== auth.currentUser.uid) {
+                            showError('No tienes permisos para ver este pedido');
+                            return;
+                        }
+
+                        // Formatear fecha
+                        const orderDate = order.created_at ? 
+                            order.created_at.toDate().toLocaleDateString('es-ES', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }) : 'Fecha no disponible';
+
+                        // Calcular fecha estimada de entrega (3-5 días hábiles)
+                        const deliveryDate = new Date();
+                        deliveryDate.setDate(deliveryDate.getDate() + 4); // +4 días para promedio
+                        const formattedDeliveryDate = deliveryDate.toLocaleDateString('es-ES', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+
+                        orderDetails.innerHTML = `
+                            <div class="detail-item">
+                                <span class="detail-label">Número de pedido:</span>
+                                <span class="detail-value">${order.order_number || `#${orderId.slice(-8).toUpperCase()}`}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <span class="detail-label">Fecha del pedido:</span>
+                                <span class="detail-value">${orderDate}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <span class="detail-label">Total:</span>
+                                <span class="detail-value">$${order.total?.toFixed(2) || '0.00'} MXN</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <span class="detail-label">Método de pago:</span>
+                                <span class="detail-value">${getPaymentMethodText(order.payment_method)}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <span class="detail-label">Fecha estimada de entrega:</span>
+                                <span class="detail-value">${formattedDeliveryDate}</span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <span class="detail-label">Estado:</span>
+                                <span class="detail-value status-${getStatusClass(order.status)}">${getStatusText(order.status)}</span>
+                            </div>
+
+                            <div class="shipping-info">
+                                <h4>Información de envío</h4>
+                                <p><strong>${order.shipping_info?.full_name || 'Nombre no disponible'}</strong></p>
+                                <p>${order.shipping_info?.address || 'Dirección no disponible'}</p>
+                                <p>${order.shipping_info?.city || ''}, ${order.shipping_info?.state || ''} ${order.shipping_info?.zip_code || ''}</p>
+                                <p>${order.shipping_info?.country || ''}</p>
+                                <p>📧 ${order.shipping_info?.email || order.user_email || ''}</p>
+                                <p>📞 ${order.shipping_info?.phone || 'Teléfono no disponible'}</p>
+                            </div>
+
+                            <div class="order-items">
+                                <h4>Productos del pedido</h4>
+                                ${order.items ? order.items.map(item => `
+                                    <div class="order-item">
+                                        <div class="item-info">
+                                            <span class="item-name">${item.product_name}</span>
+                                            <span class="item-quantity">Cantidad: ${item.quantity}</span>
+                                        </div>
+                                        <span class="item-price">$${item.total?.toFixed(2) || '0.00'} MXN</span>
+                                    </div>
+                                `).join('') : '<p>No hay información de productos</p>'}
+                            </div>
+                        `;
+
+                        // Actualizar el título de la página con el número de pedido
+                        document.title = `Pedido ${order.order_number} - MAC Style Makeup Store`;
+
+                    })
+                    .catch(error => {
+                        console.error('Error loading order:', error);
+                        showError('Error al cargar la información del pedido');
+                    });
+            }
+
+            function getPaymentMethodText(method) {
+                const methods = {
+                    'simulated': 'Pago Simulado',
+                    'paypal': 'PayPal',
+                    'card': 'Tarjeta de Crédito/Débito',
+                    'transfer': 'Transferencia Bancaria'
+                };
+                return methods[method] || 'Método no especificado';
+            }
+
+            function getStatusText(status) {
+                const statuses = {
+                    'processing': 'Procesando',
+                    'confirmed': 'Confirmado',
+                    'shipped': 'Enviado',
+                    'delivered': 'Entregado',
+                    'cancelled': 'Cancelado',
+                    'completed': 'Completado'
+                };
+                return statuses[status] || 'Estado desconocido';
+            }
+
+            function getStatusClass(status) {
+                const classes = {
+                    'processing': 'processing',
+                    'confirmed': 'confirmed',
+                    'shipped': 'shipped',
+                    'delivered': 'delivered',
+                    'cancelled': 'cancelled',
+                    'completed': 'completed'
+                };
+                return classes[status] || 'unknown';
+            }
+
+            function showError(message) {
+                const orderDetails = document.getElementById('order-details');
+                orderDetails.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>${message}</p>
+                        <a href="products.html" class="btn-primary">Volver a la tienda</a>
+                    </div>
+                `;
+            }
+        });
+    </script>
+
+    <style>
+        .confirmation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .confirmation-content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .confirmation-icon {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-content h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .confirmation-message {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .order-details {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detail-value {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .status-processing {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .status-confirmed {
+            color: #17a2b8;
+            font-weight: 600;
+        }
+
+        .status-shipped {
+            color: #007bff;
+            font-weight: 600;
+        }
+
+        .status-delivered {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .status-cancelled {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .shipping-info, .order-items {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .shipping-info h4, .order-items h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .item-quantity {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: #7b1fa2;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(123, 31, 162, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .support-info {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+
+        .support-info h3 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .support-info p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .support-info a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .support-info a:hover {
+            text-decoration: underline;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading-spinner i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #7b1fa2;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            color: #dc3545;
+        }
+
+        .error-message i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .confirmation-content {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+
+            .confirmation-content h1 {
+                font-size: 2rem;
+            }
+
+            .confirmation-actions {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                text-align: center;
+            }
+
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<header>
+<nav class="navbar">
+    <div class="nav-brand">
+        <a href="index.html">MAC Style</a>
+    </div>
+
+    <div class="search-container">
+        <form class="search-form" onsubmit="buscarProductos(event)">
+            <input type="text" id="search-input" placeholder="Buscar productos...">
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
+    </div>
+
+    <ul class="nav-menu">
+        <li id="admin-link" style="display: none;">
+            <a href="admin.html">Administración</a>
+        </li>
+        
+        <li><a href="index.html">Productos</a></li>
+        <li><a href="index.html#labios">Labios</a></li>
+        <li><a href="index.html#ojos">Ojos</a></li>
+        <li><a href="index.html#rostro">Rostro</a></li>
+
+        <li id="user-info" style="display: none;">
+            <span class="user-welcome" id="user-welcome"></span>
+        </li>
+
+        <li id="cart-link" style="display: none;">
+            <a href="cart.html" class="cart-icon">🛒<span class="cart-count">0</span></a>
+        </li>
+
+        <li class="dropdown">
+            <button class="dropdown-btn"><i class="fas fa-bars"></i></button>
+            <div class="dropdown-content">
+                <a href="guide.html" target="_blank">Guía de usuario</a>
+                
+                <div class="accessibility-controls">
+                  <details>
+                    <summary>Tamaño de lectura</summary>
+                    <div class="control-group">
+                      <label for="fontSizeRange">
+                        <span>Fuente</span>
+                        <span id="fontSizeValue">16px</span>
+                      </label>
+                      <input id="fontSizeRange" type="range" min="12" max="28" step="1" value="16">
+                      <button id="fontSizeReset">Restablecer</button>
+                    </div>
+                  </details>
+
+                  <details>
+                    <summary>Espaciado</summary>
+                    <div class="control-group">
+                      <label for="spacingRange">
+                        <span>Interlineado</span>
+                        <span id="spacingValue">1rem</span>
+                      </label>
+                      <input id="spacingRange" type="range" min="0.5" max="2.0" step="0.05" value="1.0">
+                      <button id="spacingReset">Restablecer</button>
+                    </div>
+                  </details>
+
+                  <button id="toggleContrastBtn">Alto contraste</button>
+
+                  <details>
+                    <summary>Escala de grises</summary>
+                    <div class="control-group">
+                      <label for="grayscaleRange">
+                        <span>Intensidad</span>
+                        <span id="grayscaleValue">0%</span>
+                      </label>
+                      <input id="grayscaleRange" type="range" min="0" max="100" step="1" value="0">
+                      <button id="grayscaleReset">Restablecer</button>
+                    </div>
+                  </details>
+                </div>
+
+                <button id="srToggleBtnMenu">Lector</button>
+                <button id="themeToggleBtnMenu">Cambiar a modo oscuro</button>
+                
+                <div id="auth-links">
+                    <a href="login.html">Iniciar Sesión</a>
+                    <a href="register.html">Registrarse</a>
+                </div>
+            </div>
+        </li>
+    </ul>
+</nav>
+</header>
+
+<script>
+// Scripts básicos para el header
+document.addEventListener('DOMContentLoaded', function() {
+    // Dropdown functionality
+    const dropdownBtn = document.querySelector('.dropdown-btn');
+    const dropdown = document.querySelector('.dropdown');
+    
+    if (dropdownBtn && dropdown) {
+        dropdownBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function() {
+            dropdown.classList.remove('show');
+        });
+    }
+
+    // Actualizar carrito
+    actualizarContadorCarrito();
+});
+
+function actualizarContadorCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+    const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+        cartCount.textContent = total;
+    }
+}
+
+function buscarProductos(event) {
+    event.preventDefault();
+    const termino = document.getElementById('search-input').value.trim();
+    
+    if (termino) {
+        alert(`Buscando: ${termino}`);
+        // Redirigir a la página de productos con búsqueda
+        window.location.href = `index.html?search=${encodeURIComponent(termino)}`;
+    }
+}
+</script>

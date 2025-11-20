@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página No Encontrada - MAC Style Makeup Store</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <!-- Header se cargará dinámicamente -->
+    <div id="header-container"></div>
+
+    <main id="main-content">
+        <div class="flash-messages" style="position:static; max-width:600px; margin:60px auto;">
+            <div class="flash-message flash-error" style="font-size:1.3rem;">
+                <i class="fas fa-exclamation-triangle"></i>
+                Error 404: Página no encontrada
+            </div>
+            <div style="text-align:center; margin-top:20px;">
+                <a href="index.html" class="btn-primary">Volver al inicio</a>
+            </div>
+            <div style="margin-top:40px;">
+                <p>
+                    La página que buscas no existe o fue movida.<br>
+                    Si crees que esto es un error, contáctanos.<br>
+                    <img src="images/mac.png" alt="MAC Style Makeup" style="width:100px;">
+                    <br>
+                    <span style="display:block;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc ut laoreet cursus, enim erat dictum urna, nec dictum massa enim nec enim. Etiam euismod, nunc ut laoreet cursus, enim erat dictum urna, nec dictum massa enim nec enim.</span>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2023 MAC Style Makeup Store. Proyecto estudiantil sin derechos de autor.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar el header desde base.html
+            fetch('base.html')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const header = doc.querySelector('header');
+                    if (header) {
+                        document.getElementById('header-container').innerHTML = header.outerHTML;
+                    }
+                    // Ejecutar scripts del header
+                    const scripts = doc.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        if (script.src) {
+                            const newScript = document.createElement('script');
+                            newScript.src = script.src;
+                            document.head.appendChild(newScript);
+                        } else {
+                            eval(script.textContent);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading header:', error));
+        });
+    </script>
+
+    <style>
+        .flash-messages {
+            padding: 20px;
+        }
+
+        .flash-message {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .flash-error {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+        }
+
+        .flash-message i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(123, 31, 162, 0.3);
+        }
+
+        .site-footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #666;
+            margin-top: 40px;
+        }
+
+        p {
+            text-align: center;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        img {
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .flash-messages {
+                margin: 30px 20px;
+            }
+            
+            .flash-message {
+                font-size: 1.1rem;
+                padding: 15px;
+            }
+        }
+    </style>
+</body>
+</html>

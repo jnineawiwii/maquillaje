@@ -3,105 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glamour Beauty - Tienda de Maquillaje</title>
+    <title>MAQUILLAIETIRE</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome-6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="logo">
-                    <h2>💄 Glamour Beauty</h2>
-                </div>
-                <ul class="nav-menu">
-                    <li><a href="#inicio">Inicio</a></li>
-                    <li><a href="#productos">Productos</a></li>
-                    <li><a href="#ofertas">Ofertas</a></li>
-                    <li><a href="#contacto">Contacto</a></li>
-                    <li class="cart-icon">
-                        <a href="#carrito">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="cart-count">0</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Hero Section -->
-    <section id="inicio" class="hero">
+    <!-- Tu header/navigation aquí -->
+    
+    <section class="hero">
         <div class="hero-content">
-            <h1>Descubre Tu Belleza</h1>
-            <p>Los mejores productos de maquillaje con calidad premium</p>
-            <button class="cta-button">Ver Colección</button>
+            <h1>Belleza profesional a tu alcance</h1>
+            <p>Descubre los productos que realzan tu belleza natural</p>
+            <a href="products.html" class="btn-primary">Ver productos</a>
         </div>
     </section>
 
-    <!-- Productos -->
-    <section id="productos" class="products">
-        <div class="container">
-            <h2>Nuestros Productos</h2>
-            <div class="product-grid" id="product-grid">
-                <!-- Los productos se cargan con JavaScript -->
-            </div>
+    <section class="featured-products">
+        <h2>Productos destacados</h2>
+        <div id="featured-products-grid" class="products-grid">
+            <!-- Los productos se cargarán con JavaScript -->
         </div>
     </section>
 
-    <!-- Ofertas -->
-    <section id="ofertas" class="offers">
-        <div class="container">
-            <h2>Ofertas Especiales</h2>
-            <div class="offer-banner">
-                <h3>¡Hasta 50% de descuento!</h3>
-                <p>En productos seleccionados</p>
+    <!-- Video destacado -->
+    <div id="featured-video-section" style="margin-top: 40px; display: none;">
+        <div style="max-width: 1000px; margin-left: auto; margin-right: auto;">
+            <h2 id="featured-video-title" style="text-align:center; font-size:2rem; font-weight:700; margin-bottom:20px; color:#111;"></h2>
+            <p id="featured-video-description" style="text-align:center; margin-bottom:25px; color:#555; font-size:1.1rem;"></p>
+            <div class="video-container">
+                <video id="promoVideo" controls autoplay muted style="display: none;">
+                    Tu navegador no soporta el elemento de video.
+                </video>
+                <iframe id="embeddedVideo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: none;"></iframe>
             </div>
-        </div>
-    </section>
-
-    <!-- Contacto -->
-    <section id="contacto" class="contact">
-        <div class="container">
-            <h2>Contáctanos</h2>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <p>Av. Belleza 123, Ciudad</p>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-phone"></i>
-                    <p>+1 234 567 890</p>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <p>info@glamourbeauty.com</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Glamour Beauty. Todos los derechos reservados.</p>
-        </div>
-    </footer>
-
-    <!-- Carrito Modal -->
-    <div id="carrito-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Tu Carrito</h2>
-            <div id="cart-items"></div>
-            <div class="cart-total">
-                <h3>Total: $<span id="total-price">0</span></h3>
-                <button class="checkout-btn">Finalizar Compra</button>
-            </div>
+            <div id="video-category" style="text-align:center; margin-top:15px;"></div>
         </div>
     </div>
 
+    <!-- Más videos -->
+    <section id="other-videos-section" class="videos-section" style="margin-top: 60px; padding: 20px; display: none;">
+        <h2 style="text-align:center; font-size:2rem; font-weight:700; margin-bottom:30px; color:#111;">CONOCENOS!!</h2>
+        <div id="other-videos-grid" class="videos-grid"></div>
+    </section>
+
+    <script src="js/firebase-config.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

@@ -3,411 +3,632 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Glamour Beauty</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Iniciar Sesión - MAC Style Makeup Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
     <style>
+        :root{
+            --color-primary: #7b1fa2; /* Morado Oscuro de MAC Style */
+            --color-secondary: #6a1b9a;
+            --color-text: #ffffff;
+            --color-bg-dark: #1a0033; /* Fondo Oscuro */
+            --base-font-size: 16px;
+            --base-line-height: 1.5;
+            --base-spacing: 1rem;
+            --site-header-height: 70px;
+        }
+        
+        html {
+            font-size: var(--base-font-size);
+            line-height: var(--base-spacing);
+        }
+
         body {
-            background: linear-gradient(135deg, #e91e63, #9c27b0);
-            min-height: 100vh;
+            padding-top: var(--site-header-height);
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        /* --- Estilos del Encabezado (Simulando lo que estaría en css/style.css y base.html) --- */
+        
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--site-header-height);
+            background: var(--color-bg-dark);
+            color: var(--color-text);
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .header-content {
+            width: 100%;
+            max-width: 1200px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-family: 'Arial', sans-serif;
+            justify-content: space-between;
         }
-        
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .logo h1 {
-            color: #e91e63;
-            font-size: 2rem;
-            margin: 0;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
+
+        .logo a {
+            color: var(--color-text);
+            text-decoration: none;
+            font-size: 1.8rem;
             font-weight: bold;
-            color: #333;
+            letter-spacing: 1px;
+            padding-bottom: 3px; /* Espacio para la línea */
+            border-bottom: 3px solid var(--color-primary); /* Línea morada bajo el logo */
         }
         
-        .form-group input {
+        .search-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            margin: 0 40px;
+        }
+
+        .search-input-group {
+            display: flex;
+            max-width: 400px;
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
         }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #e91e63;
+
+        .search-input-group input[type="text"] {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 1rem;
+            flex-grow: 1;
         }
-        
-        .login-btn {
-            width: 100%;
-            background: #e91e63;
+
+        .search-input-group button {
+            background: var(--color-primary);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
             cursor: pointer;
             transition: background 0.3s;
         }
-        
-        .login-btn:hover {
-            background: #c2185b;
+
+        .search-input-group button:hover {
+            background: var(--color-secondary);
         }
         
-        .login-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
+        .nav-links {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
-        
-        .toggle-form {
-            text-align: center;
-            margin-top: 20px;
+
+        .nav-links li {
+            margin-left: 20px;
         }
-        
-        .toggle-form a {
-            color: #e91e63;
+
+        .nav-links a {
+            color: var(--color-text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 0;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-primary);
+        }
+
+        .dropdown-btn { /* Botón de menú/hamburguesa */
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
             cursor: pointer;
-            text-decoration: none;
-            font-weight: bold;
+            margin-left: 20px;
+            display: none; /* Oculto por defecto en desktop */
         }
-        
-        .toggle-form a:hover {
-            text-decoration: underline;
-        }
-        
-        #auth-message {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 5px;
+
+        /* Fin de Estilos de Encabezado */
+        /* ------------------------------------ */
+
+
+        /* Estilos del Footer */
+        .site-footer {
+            background: #f5f5f5;
+            padding: 20px;
             text-align: center;
-            font-weight: bold;
-            display: none;
+            margin-top: 40px;
+            border-top: 1px solid #ddd;
         }
-        
-        .message-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+
+        /* Estilos específicos para el formulario de registro/login (se mantienen igual) */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - var(--site-header-height) - 80px);
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .auth-form {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
             display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
         }
-        
-        .message-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
         }
-        
-        .hidden {
-            display: none;
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #7b1fa2;
+            box-shadow: 0 0 0 3px rgba(123, 31, 162, 0.1);
         }
-        
-        .back-link {
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: #7b1fa2;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            position: relative;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(123, 31, 162, 0.3);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-links {
             text-align: center;
             margin-top: 20px;
         }
-        
-        .back-link a {
-            color: #666;
+
+        .auth-links a {
+            color: #7b1fa2;
             text-decoration: none;
+            transition: color 0.3s;
         }
-        
-        .back-link a:hover {
+
+        .auth-links a:hover {
+            color: #6a1b9a;
             text-decoration: underline;
         }
-        
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
+
+        .auth-separator {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .auth-separator span {
+            background: white;
+            padding: 0 15px;
+            color: #666;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-separator:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: #e1e5e9;
+            z-index: 0;
+        }
+
+        .btn-google {
+            background: white;
+            color: #333;
+            border: 2px solid #e1e5e9;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-google:hover {
+            border-color: #db4437;
+            box-shadow: 0 4px 12px rgba(219, 68, 55, 0.15);
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-error {
+            background: #fee;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-success {
+            background: #eff;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* Ocultar enlaces de navegación en móvil */
+            }
+            .dropdown-btn {
+                display: block; /* Mostrar botón de menú en móvil */
+            }
+            .search-container {
+                margin: 0 10px;
+                max-width: 250px;
+            }
+            .header-content {
+                justify-content: space-between;
+            }
+            .auth-form {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .auth-form h2 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="logo">
-            <h1>💄 Glamour Beauty</h1>
-            <p>Acceso de Usuario</p>
-        </div>
-        
-        <!-- Formulario de Login -->
-        <form id="login-form">
-            <div class="form-group">
-                <label for="login-email">Email:</label>
-                <input type="email" id="login-email" placeholder="tu@email.com" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="login-password">Contraseña:</label>
-                <input type="password" id="login-password" placeholder="••••••••" required>
-            </div>
-            
-            <button type="submit" class="login-btn" id="login-btn">Iniciar Sesión</button>
-        </form>
+    
 
-        <!-- Formulario de Registro (oculto inicialmente) -->
-        <form id="register-form" class="hidden">
-            <div class="form-group">
-                <label for="register-email">Email:</label>
-                <input type="email" id="register-email" placeholder="tu@email.com" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="register-password">Contraseña:</label>
-                <input type="password" id="register-password" placeholder="Mínimo 6 caracteres" minlength="6" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="register-confirm">Confirmar Contraseña:</label>
-                <input type="password" id="register-confirm" placeholder="Repite tu contraseña" required>
-            </div>
-            
-            <button type="submit" class="login-btn" id="register-btn">Registrarse</button>
-        </form>
-
-        <div class="toggle-form">
-            <a id="toggle-register">¿No tienes cuenta? <strong>Regístrate aquí</strong></a>
-            <a id="toggle-login" class="hidden">¿Ya tienes cuenta? <strong>Inicia Sesión</strong></a>
-        </div>
-
-        <div id="auth-message"></div>
-        
-        <div class="back-link">
-            <a href="index.html">← Volver a la Tienda</a>
-        </div>
-    </div>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-    <script>
-        // Configuración de Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDU54WCOBHTLNXVqavXqD3-7PlH-BN0JZg",
-            authDomain: "fir-maquillaje.firebaseapp.com",
-            projectId: "fir-maquillaje",
-            storageBucket: "fir-maquillaje.firebasestorage.app",
-            messagingSenderId: "125900379034",
-            appId: "1:125900379034:web:b90c95edfd51b12032a023"
-        };
-
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Elementos DOM
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
-        const toggleRegister = document.getElementById('toggle-register');
-        const toggleLogin = document.getElementById('toggle-login');
-        const authMessage = document.getElementById('auth-message');
-        const loginBtn = document.getElementById('login-btn');
-        const registerBtn = document.getElementById('register-btn');
-
-        // Toggle entre login y registro
-        toggleRegister.addEventListener('click', () => {
-            loginForm.classList.add('hidden');
-            registerForm.classList.remove('hidden');
-            toggleRegister.classList.add('hidden');
-            toggleLogin.classList.remove('hidden');
-            authMessage.style.display = 'none';
-        });
-
-        toggleLogin.addEventListener('click', () => {
-            registerForm.classList.add('hidden');
-            loginForm.classList.remove('hidden');
-            toggleLogin.classList.add('hidden');
-            toggleRegister.classList.remove('hidden');
-            authMessage.style.display = 'none';
-        });
-
-        // Función para mostrar mensajes
-        function showMessage(message, type) {
-            authMessage.textContent = message;
-            authMessage.className = type;
-            authMessage.style.display = 'block';
-        }
-
-        // Función para mostrar loading
-        function setLoading(button, isLoading) {
-            if (isLoading) {
-                button.disabled = true;
-                button.textContent = 'Cargando...';
-                button.classList.add('loading');
-            } else {
-                button.disabled = false;
-                button.textContent = button.id === 'login-btn' ? 'Iniciar Sesión' : 'Registrarse';
-                button.classList.remove('loading');
-            }
-        }
-
-        // Login
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            
-            setLoading(loginBtn, true);
-            
-            try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const user = userCredential.user;
+    <main id="main-content">
+        <div class="auth-container">
+            <div class="auth-form">
+                <h2>Iniciar Sesión</h2>
                 
-                // Verificar el rol del usuario en Firestore
-                const userDoc = await db.collection('users').doc(user.uid).get();
+                <div id="alert-container"></div>
                 
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
+                <form id="login-form">
                     
-                    if (userData.role === 'admin') {
-                        showMessage('¡Bienvenido Administrador! Redirigiendo...', 'message-success');
-                        setTimeout(() => {
-                            window.location.href = 'admin.html';
-                        }, 1000);
-                    } else {
-                        showMessage('¡Bienvenido! Redirigiendo a la tienda...', 'message-success');
+                    <div class="form-group">
+                        <label for="email">Correo electrónico:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Contraseña:</label>
+                        <input type="password" id="password" name="password" required>
+                        <div class="password-toggle">
+                            <i class="fas fa-eye" id="toggle-password"></i>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="login-btn">
+                        <span id="login-text">Iniciar Sesión</span>
+                        <div id="login-spinner" class="spinner" style="display: none;"></div>
+                    </button>
+                </form>
+                
+                <div class="auth-links">
+                    <p>¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></p>
+                    <p><a href="forgot-password.html">¿Olvidaste tu contraseña?</a></p>
+                </div>
+
+                <div class="auth-separator">
+                    <span>o</span>
+                </div>
+
+                <button type="button" class="btn-google" id="google-login-btn">
+                    <i class="fab fa-google"></i>
+                    Iniciar Sesión con Google
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2023 MAC Style Makeup Store. Proyecto estudiantil sin derechos de autor.</p>
+    </footer>
+
+    <script src="js/firebase-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Se eliminó el código fetch de 'base.html' y se integró el header directamente.
+            
+            // Inicializar Firebase
+            let auth, db;
+            try {
+                // Reemplaza con la inicialización correcta si fuera necesario,
+                // pero se mantiene el código original para compatibilidad con el script firebase-config.js.
+                auth = firebase.auth();
+                db = firebase.firestore();
+            } catch (error) {
+                console.error('Error inicializando Firebase:', error);
+                showAlert('Error de configuración. Por favor contacta al administrador.', 'error');
+                // Si Firebase no carga, detenemos la ejecución de lógica de autenticación
+                return;
+            }
+
+            // --- Lógica del Header (antes en el fetch) ---
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            // Nota: Se asume que en el HTML original la navegación colapsable usa la clase .dropdown. 
+            // Como no se incluyó, la funcionalidad solo se muestra como un ejemplo simple.
+            // Si el menú completo está en un elemento aparte, se necesitaría el HTML de ese menú.
+
+            // Mostrar/ocultar contraseña
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password');
+            
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
+
+            // Manejar envío del formulario de LOGIN
+            const loginForm = document.getElementById('login-form');
+            const loginBtn = document.getElementById('login-btn');
+            const loginText = document.getElementById('login-text');
+            const loginSpinner = document.getElementById('login-spinner');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('email')?.value;
+                    const password = document.getElementById('password')?.value;
+                    
+                    // Validaciones básicas
+                    if (!email || !password) {
+                        showAlert('Por favor ingresa tu correo y contraseña', 'error');
+                        return;
+                    }
+
+                    // Mostrar loading
+                    if (loginText && loginSpinner && loginBtn) {
+                        loginText.style.display = 'none';
+                        loginSpinner.style.display = 'inline-block';
+                        loginBtn.disabled = true;
+                    }
+
+                    try {
+                        // Iniciar sesión en Firebase Auth
+                        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                        const user = userCredential.user;
+                        
+                        // Opcional: Verificar si el correo está verificado
+                        if (!user.emailVerified) {
+                            showAlert('Por favor verifica tu correo electrónico para iniciar sesión.', 'warning');
+                            // auth.signOut();
+                            // return;
+                        }
+
+                        // Mostrar mensaje de éxito
+                        showAlert(`¡Bienvenido/a de nuevo!`, 'success');
+                        
+                        // Redirigir al index después de un breve delay
                         setTimeout(() => {
                             window.location.href = 'index.html';
-                        }, 1000);
-                    }
-                } else {
-                    // Si no existe en users, crear documento como cliente
-                    await db.collection('users').doc(user.uid).set({
-                        email: email,
-                        username: email.split('@')[0],
-                        role: 'cliente',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        profile: {
-                            nombre: '',
-                            telefono: ''
-                        }
-                    });
-                    
-                    showMessage('¡Bienvenido! Redirigiendo a la tienda...', 'message-success');
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1000);
-                }
-                
-            } catch (error) {
-                let errorMessage = 'Error al iniciar sesión';
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'Usuario no encontrado';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = 'Contraseña incorrecta';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Email inválido';
-                }
-                showMessage(errorMessage, 'message-error');
-            } finally {
-                setLoading(loginBtn, false);
-            }
-        });
+                        }, 1500);
 
-        // Registro
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('register-confirm').value;
-            
-            if (password !== confirmPassword) {
-                showMessage('Las contraseñas no coinciden', 'message-error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showMessage('La contraseña debe tener al menos 6 caracteres', 'message-error');
-                return;
-            }
-            
-            setLoading(registerBtn, true);
-            
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                
-                // Crear documento de usuario en Firestore como CLIENTE
-                await db.collection('users').doc(user.uid).set({
-                    email: email,
-                    username: email.split('@')[0],
-                    role: 'cliente', // Todos se registran como clientes
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    profile: {
-                        nombre: '',
-                        telefono: ''
+                    } catch (error) {
+                        console.error('Error en inicio de sesión:', error);
+                        
+                        // Manejar errores específicos de Firebase
+                        let errorMessage = 'Error al iniciar sesión';
+                        
+                        switch (error.code) {
+                            case 'auth/user-not-found':
+                            case 'auth/wrong-password':
+                                errorMessage = 'Correo o contraseña incorrectos';
+                                break;
+                            case 'auth/invalid-email':
+                                errorMessage = 'Correo electrónico inválido';
+                                break;
+                            case 'auth/user-disabled':
+                                errorMessage = 'Tu cuenta ha sido deshabilitada';
+                                break;
+                            default:
+                                errorMessage = error.message;
+                        }
+                        
+                        showAlert(errorMessage, 'error');
+                    } finally {
+                        // Ocultar loading
+                        if (loginText && loginSpinner && loginBtn) {
+                            loginText.style.display = 'inline-block';
+                            loginSpinner.style.display = 'none';
+                            loginBtn.disabled = false;
+                        }
                     }
                 });
-                
-                showMessage('¡Cuenta creada exitosamente! Redirigiendo a la tienda...', 'message-success');
-                
-                // Clientes van a la tienda, NO al admin
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
-                
-            } catch (error) {
-                let errorMessage = 'Error al crear la cuenta';
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'Este email ya está registrado';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Email inválido';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = 'La contraseña es muy débil';
-                }
-                showMessage(errorMessage, 'message-error');
-            } finally {
-                setLoading(registerBtn, false);
             }
-        });
 
-        // VERIFICACIÓN CORREGIDA - Solo redirige si YA está autenticado al cargar la página
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                // Solo redirige si el usuario carga la página ya autenticado
-                try {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        if (userData.role === 'admin') {
-                            window.location.href = 'admin.html';
-                        } else {
-                            window.location.href = 'index.html';
+            // Inicio de Sesión con Google
+            const googleLoginBtn = document.getElementById('google-login-btn');
+            if (googleLoginBtn) {
+                googleLoginBtn.addEventListener('click', async function() {
+                    try {
+                        const provider = new firebase.auth.GoogleAuthProvider();
+                        provider.addScope('email');
+                        provider.addScope('profile');
+
+                        // Mostrar loading
+                        googleLoginBtn.disabled = true;
+                        googleLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
+
+                        const result = await auth.signInWithPopup(provider);
+                        const user = result.user;
+
+                        // Verificar si es un usuario *nuevo* y guardar en Firestore
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        
+                        if (!userDoc.exists) {
+                            await db.collection('users').doc(user.uid).set({
+                                email: user.email,
+                                displayName: user.displayName,
+                                photoURL: user.photoURL,
+                                role: 'customer',
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                provider: 'google',
+                                emailVerified: true
+                            });
                         }
+
+                        showAlert(`¡Bienvenido/a, ${user.displayName || user.email}!`, 'success');
+                        
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+
+                    } catch (error) {
+                        console.error('Error en inicio de sesión con Google:', error);
+                        
+                        let errorMessage = 'Error al iniciar sesión con Google';
+                        if (error.code === 'auth/popup-closed-by-user') {
+                            errorMessage = 'La ventana de inicio de sesión fue cancelada';
+                        } else if (error.code === 'auth/popup-blocked') {
+                            errorMessage = 'El popup fue bloqueado. Por favor permite popups para este sitio';
+                        }
+                        
+                        showAlert(errorMessage, 'error');
+                        
+                        // Restaurar botón
+                        googleLoginBtn.disabled = false;
+                        googleLoginBtn.innerHTML = '<i class="fab fa-google"></i> Iniciar Sesión con Google';
                     }
-                } catch (error) {
-                    console.log('Error verificando usuario:', error);
-                    // Si hay error, mostrar formulario normal
-                }
+                });
             }
-            // Si no hay usuario o no existe en Firestore, muestra el formulario normal
+
+            // Función para mostrar alertas (se mantiene igual)
+            function showAlert(message, type) {
+                const alertContainer = document.getElementById('alert-container');
+                if (!alertContainer) return;
+                
+                const alertClass = type === 'error' ? 'alert-error' : 
+                                   type === 'success' ? 'alert-success' : 'alert-warning';
+                
+                alertContainer.innerHTML = `
+                    <div class="alert ${alertClass}">
+                        <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
+                                         type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+                        ${message}
+                    </div>
+                `;
+                
+                // Auto-eliminar alerta después de 8 segundos para mensajes largos
+                setTimeout(() => {
+                    if (alertContainer) {
+                        alertContainer.innerHTML = '';
+                    }
+                }, 8000);
+            }
+
+            // Verificar si ya está autenticado
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // Si ya está logueado, redirigir
+                    showAlert('Ya tienes una sesión activa', 'warning');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+            });
         });
     </script>
 </body>
