@@ -1,0 +1,18 @@
+{
+  "name": "mac-style-pagos",
+  "version": "1.0.0",
+  "description": "Sistema de pagos para MAC Style Makeup Store",
+  "main": "js/backend-node.js",
+  "scripts": {
+    "start": "node js/backend-node.js",
+    "dev": "node js/backend-node.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mercadopago": "^1.5.17",
+    "cors": "^2.8.5"
+  },
+  "keywords": ["ecommerce", "payments", "mercadopago"],
+  "author": "MAC Style",
+  "license": "MIT"
+}
