@@ -489,92 +489,37 @@
                     try {
                         // Iniciar sesión en Firebase Auth
                         const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                        const user = userCredential.user;
-                        
-                        // Opcional: Verificar si el correo está verificado
-                        if (!user.emailVerified) {
-                            showAlert('Por favor verifica tu correo electrónico para iniciar sesión.', 'warning');
-                            // auth.signOut();
-                            // return;
-                        }
+const user = userCredential.user;
 
-                        // Mostrar mensaje de éxito
-                        showAlert(`¡Bienvenido/a de nuevo!`, 'success');
-                        
-                        // Redirigir al index después de un breve delay
-                        setTimeout(() => {
-                            window.location.href = 'index.html';
-                        }, 1500);
+// VERIFICAR ROL EN FIRESTORE
+const userDoc = await db.collection('users').doc(user.uid).get();
 
-                    } catch (error) {
-                        console.error('Error en inicio de sesión:', error);
-                        
-                        // Manejar errores específicos de Firebase
-                        let errorMessage = 'Error al iniciar sesión';
-                        
-                        switch (error.code) {
-                            case 'auth/user-not-found':
-                            case 'auth/wrong-password':
-                                errorMessage = 'Correo o contraseña incorrectos';
-                                break;
-                            case 'auth/invalid-email':
-                                errorMessage = 'Correo electrónico inválido';
-                                break;
-                            case 'auth/user-disabled':
-                                errorMessage = 'Tu cuenta ha sido deshabilitada';
-                                break;
-                            default:
-                                errorMessage = error.message;
-                        }
-                        
-                        showAlert(errorMessage, 'error');
-                    } finally {
-                        // Ocultar loading
-                        if (loginText && loginSpinner && loginBtn) {
-                            loginText.style.display = 'inline-block';
-                            loginSpinner.style.display = 'none';
-                            loginBtn.disabled = false;
-                        }
-                    }
-                });
-            }
+if (!userDoc.exists) {
+    showAlert('Usuario no encontrado en la base de datos', 'error');
+    await auth.signOut();
+    return;
+}
 
-            // Inicio de Sesión con Google
-            const googleLoginBtn = document.getElementById('google-login-btn');
-            if (googleLoginBtn) {
-                googleLoginBtn.addEventListener('click', async function() {
-                    try {
-                        const provider = new firebase.auth.GoogleAuthProvider();
-                        provider.addScope('email');
-                        provider.addScope('profile');
+const userData = userDoc.data();
+const userRole = userData.role;
 
-                        // Mostrar loading
-                        googleLoginBtn.disabled = true;
-                        googleLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
+// Mostrar mensaje de éxito
+showAlert(`¡Bienvenido/a de nuevo! Rol: ${userRole}`, 'success');
 
-                        const result = await auth.signInWithPopup(provider);
-                        const user = result.user;
-
-                        // Verificar si es un usuario *nuevo* y guardar en Firestore
-                        const userDoc = await db.collection('users').doc(user.uid).get();
-                        
-                        if (!userDoc.exists) {
-                            await db.collection('users').doc(user.uid).set({
-                                email: user.email,
-                                displayName: user.displayName,
-                                photoURL: user.photoURL,
-                                role: 'customer',
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                                provider: 'google',
-                                emailVerified: true
-                            });
-                        }
-
-                        showAlert(`¡Bienvenido/a, ${user.displayName || user.email}!`, 'success');
-                        
-                        setTimeout(() => {
-                            window.location.href = 'index.html';
-                        }, 1500);
+// Redirigir según el rol
+setTimeout(() => {
+    switch(userRole) {
+        case 'masteradmin':
+            window.location.href = 'masteradmin/dashboard.html';
+            break;
+        case 'admin':
+            window.location.href = 'admin/dashboard.html';
+            break;
+        case 'customer':
+        default:
+            window.location.href = 'index.html';
+    }
+}, 1500);
 
                     } catch (error) {
                         console.error('Error en inicio de sesión con Google:', error);

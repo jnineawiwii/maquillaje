@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Master Admin - MAC Style</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <style>
+        :root {
+            --primary-color: #7b1fa2;
+            --secondary-color: #6a1b9a;
+            --danger-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .admin-header {
+            background: linear-gradient(90deg, #2c003e 0%, #4a0072 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-nav {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .admin-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .admin-nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .admin-nav a:hover,
+        .admin-nav a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .admin-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .admin-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.8rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .file-upload-container {
+            border: 2px dashed #dee2e6;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload-container:hover {
+            border-color: var(--primary-color);
+            background: #f8f9fa;
+        }
+        
+        .file-upload-container.dragover {
+            border-color: var(--primary-color);
+            background: #e9ecef;
+        }
+        
+        .file-name {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+        
+        .image-preview {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .preview-img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        
+        /* MODAL CON SCROLL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 800px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .role-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .role-masteradmin {
+            background: #4a0072;
+            color: white;
+        }
+        
+        .role-admin {
+            background: #7b1fa2;
+            color: white;
+        }
+        
+        .role-customer {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .user-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-verified {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-unverified {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .editable-field {
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .editable-field:hover {
+            background: #f0f0f0;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .login-form {
+            margin-top: 1.5rem;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenedor de Login -->
+    <div id="login-section" class="login-container" style="display: none;">
+        <h2><i class="fas fa-crown"></i> Panel Master Admin</h2>
+        <p>Inicia sesión para acceder al panel</p>
+        
+        <form id="login-form" class="login-form">
+            <div class="form-group">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="login-password">Contraseña:</label>
+                <input type="password" id="login-password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </button>
+        </form>
+        
+        <div id="login-alert" style="margin-top: 1rem;"></div>
+    </div>
+
+    <!-- Panel de Administración (se muestra después del login) -->
+    <div id="admin-section" style="display: none;">
+        <header class="admin-header">
+            <h1><i class="fas fa-crown"></i> Panel Master Admin</h1>
+            <div>
+                <span id="admin-welcome"></span>
+                <button onclick="logout()" class="btn btn-primary" style="margin-left: 1rem;">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </header>
+        
+        <nav class="admin-nav">
+            <ul>
+                <li><a href="#" class="active" onclick="showSection('dashboard')">Dashboard</a></li>
+                <li><a href="#" onclick="showSection('users')">Gestión de Usuarios</a></li>
+                <li><a href="#" onclick="showSection('products')">Gestión de Productos</a></li>
+                <li><a href="#" onclick="showSection('system')">Configuración del Sistema</a></li>
+            </ul>
+        </nav>
+        
+        <div class="admin-container">
+            <div id="alert-container"></div>
+            
+            <!-- Dashboard -->
+            <div id="dashboard-section" class="admin-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-users">0</div>
+                        <div class="stat-label">Usuarios Totales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-products">0</div>
+                        <div class="stat-label">Productos Totales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-admins">0</div>
+                        <div class="stat-label">Administradores</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-customers">0</div>
+                        <div class="stat-label">Clientes</div>
+                    </div>
+                </div>
+                
+                <div class="admin-card">
+                    <h2>Actividad Reciente</h2>
+                    <p>Panel de control principal - Aquí puedes ver métricas importantes del sistema.</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn btn-primary" onclick="showSection('users')">
+                            <i class="fas fa-users"></i> Gestionar Usuarios
+                        </button>
+                        <button class="btn btn-success" onclick="showSection('products')">
+                            <i class="fas fa-box"></i> Gestionar Productos
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección Usuarios -->
+            <div id="users-section" class="admin-section" style="display: none;">
+                <div class="admin-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h2>Gestión de Usuarios</h2>
+                        <div>
+                            <button class="btn btn-primary" onclick="openUserModal()">
+                                <i class="fas fa-plus"></i> Nuevo Usuario
+                            </button>
+                            <button class="btn btn-success" onclick="loadAllUsers()">
+                                <i class="fas fa-sync"></i> Actualizar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="users-list">
+                        <!-- Los usuarios se cargarán aquí -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección Productos -->
+            <div id="products-section" class="admin-section" style="display: none;">
+                <div class="admin-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h2>Gestión de Productos</h2>
+                        <button class="btn btn-primary" onclick="openProductModal()">
+                            <i class="fas fa-plus"></i> Nuevo Producto
+                        </button>
+                    </div>
+                    
+                    <div id="products-list">
+                        <!-- Los productos se cargarán aquí -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sección Sistema -->
+            <div id="system-section" class="admin-section" style="display: none;">
+                <div class="admin-card">
+                    <h2>Configuración del Sistema</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Base de Datos</h3>
+                            <p>Estado: <span id="db-status" style="color: var(--success-color);">Conectado</span></p>
+                            <button class="btn btn-sm btn-primary" onclick="testDatabase()">
+                                <i class="fas fa-database"></i> Probar Conexión
+                            </button>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Firebase</h3>
+                            <p id="firebase-status">Estado: Verificando...</p>
+                            <button class="btn btn-sm btn-warning" onclick="checkFirebaseConfig()">
+                                <i class="fas fa-cog"></i> Verificar Config
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal para agregar/editar producto -->
+        <div id="product-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeProductModal()">&times;</span>
+                <h3 id="product-modal-title">Nuevo Producto</h3>
+                <form id="product-form">
+                    <input type="hidden" id="product-id">
+                    <input type="hidden" id="product-image-url">
+                    
+                    <div class="form-group">
+                        <label for="product-name">Nombre:</label>
+                        <input type="text" id="product-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-description">Descripción:</label>
+                        <textarea id="product-description" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-price">Precio (MXN):</label>
+                        <input type="number" id="product-price" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="product-category">Categoría:</label>
+                        <select id="product-category" required>
+                            <option value="">Seleccionar categoría</option>
+                            <option value="labios">Labios</option>
+                            <option value="ojos">Ojos</option>
+                            <option value="rostro">Rostro</option>
+                            <option value="accesorios">Accesorios</option>
+                            <option value="cuidado_piel">Cuidado de la Piel</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Imagen del producto (URL):</label>
+                        <input type="url" id="product-image-url-input" placeholder="https://ejemplo.com/imagen.jpg">
+                        <small>O usa una de estas imágenes predefinidas:</small>
+                        <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-sm" onclick="setDefaultImage('https://images.unsplash.com/photo-1586495777444-4413f21062fa?w=300&h=300&fit=crop')">Labial</button>
+                            <button type="button" class="btn btn-sm" onclick="setDefaultImage('https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=300&h=300&fit=crop')">Sombras</button>
+                            <button type="button" class="btn btn-sm" onclick="setDefaultImage('https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=300&h=300&fit=crop')">Base</button>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary" id="submit-product-btn">
+                            Guardar Producto
+                        </button>
+                        <button type="button" class="btn" onclick="closeProductModal()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para agregar/editar usuario -->
+        <div id="user-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeUserModal()">&times;</span>
+                <h3 id="user-modal-title">Nuevo Usuario</h3>
+                <form id="user-form">
+                    <input type="hidden" id="user-id">
+                    
+                    <div class="form-group">
+                        <label for="user-displayName">Nombre completo:</label>
+                        <input type="text" id="user-displayName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="user-email">Email:</label>
+                        <input type="email" id="user-email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="user-password">Contraseña (solo para nuevos):</label>
+                        <input type="password" id="user-password" placeholder="Dejar vacío para no cambiar">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="user-role">Rol:</label>
+                        <select id="user-role" required>
+                            <option value="customer">Cliente</option>
+                            <option value="admin">Administrador</option>
+                            <option value="masteradmin">Master Admin</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="user-phone">Teléfono:</label>
+                        <input type="tel" id="user-phone" placeholder="+52 123 456 7890">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="user-address">Dirección:</label>
+                        <textarea id="user-address" rows="3" placeholder="Dirección completa"></textarea>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary" id="submit-user-btn">
+                            Guardar Usuario
+                        </button>
+                        <button type="button" class="btn" onclick="closeUserModal()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDU54WCOBHTLNXVqavXqD3-7PlH-BN0JZg",
+            authDomain: "fir-maquillaje.firebaseapp.com",
+            projectId: "fir-maquillaje",
+            storageBucket: "fir-maquillaje.firebasestorage.app",
+            messagingSenderId: "125900379034",
+            appId: "1:125900379034:web:b90c95edfd51b12032a023",
+            measurementId: "G-BB8FL9XJXS"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const storage = firebase.storage();
+
+        let editingProductId = null;
+        let editingUserId = null;
+
+        // Verificar autenticación al cargar la página
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Usuario autenticado - verificar si es masteradmin
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists && userDoc.data().role === 'masteradmin') {
+                        // Es masteradmin, mostrar panel
+                        showAdminPanel(user);
+                    } else {
+                        // No es masteradmin, mostrar error
+                        showLoginError('No tienes permisos de master admin');
+                        await auth.signOut();
+                        showLoginPanel();
+                    }
+                } catch (error) {
+                    console.error('Error verificando rol:', error);
+                    showLoginError('Error verificando permisos');
+                    showLoginPanel();
+                }
+            } else {
+                // No hay usuario autenticado, mostrar login
+                showLoginPanel();
+            }
+        });
+
+        function showLoginPanel() {
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('admin-section').style.display = 'none';
+        }
+
+        function showAdminPanel(user) {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('admin-section').style.display = 'block';
+            document.getElementById('admin-welcome').textContent = `Hola, ${user.email} (Master Admin)`;
+            
+            // Inicializar el panel
+            checkFirebaseConfig();
+            loadDashboardStats();
+        }
+
+        function showLoginError(message) {
+            const loginAlert = document.getElementById('login-alert');
+            loginAlert.innerHTML = `<div class="alert alert-error">${message}</div>`;
+        }
+
+        // Manejar login
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const submitBtn = e.target.querySelector('button');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<div class="loading"></div>Iniciando sesión...';
+            submitBtn.disabled = true;
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                console.error('Error de login:', error);
+                let errorMessage = 'Error al iniciar sesión';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'Usuario no encontrado';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Contraseña incorrecta';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Email no válido';
+                }
+                
+                showLoginError(errorMessage);
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Verificar estado de Firebase
+        function checkFirebaseConfig() {
+            try {
+                const app = firebase.app();
+                const features = ['auth', 'firestore', 'storage'].filter(feature => 
+                    typeof app[feature] === 'function'
+                );
+                document.getElementById('firebase-status').innerHTML = 
+                    `Estado: <span style="color: var(--success-color);">Conectado</span><br>
+                     Servicios: ${features.join(', ')}`;
+            } catch (error) {
+                document.getElementById('firebase-status').innerHTML = 
+                    `Estado: <span style="color: var(--danger-color);">Error</span>`;
+                showAlert('Error en configuración de Firebase: ' + error.message, 'error');
+            }
+        }
+
+        // Probar conexión a la base de datos
+        async function testDatabase() {
+            const statusElement = document.getElementById('db-status');
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<div class="loading"></div>Probando...';
+            button.disabled = true;
+            
+            try {
+                const snapshot = await db.collection('products').limit(1).get();
+                statusElement.innerHTML = 'Conectado';
+                statusElement.style.color = 'var(--success-color)';
+                showAlert('Conexión a la base de datos exitosa', 'success');
+            } catch (error) {
+                statusElement.innerHTML = 'Error de conexión';
+                statusElement.style.color = 'var(--danger-color)';
+                showAlert('Error conectando a la base de datos: ' + error.message, 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // Mostrar/ocultar secciones
+        function showSection(sectionName) {
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(`${sectionName}-section`).style.display = 'block';
+            
+            document.querySelectorAll('.admin-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (sectionName === 'dashboard') {
+                loadDashboardStats();
+            } else if (sectionName === 'users') {
+                loadAllUsers();
+            } else if (sectionName === 'products') {
+                loadAllProducts();
+            }
+        }
+
+        // Cargar estadísticas del dashboard
+        async function loadDashboardStats() {
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                const productsSnapshot = await db.collection('products').get();
+                
+                document.getElementById('total-users').textContent = usersSnapshot.size;
+                document.getElementById('total-products').textContent = productsSnapshot.size;
+                
+                // Contar administradores y clientes
+                let adminCount = 0;
+                let customerCount = 0;
+                
+                usersSnapshot.forEach(doc => {
+                    const userData = doc.data();
+                    if (userData.role === 'admin' || userData.role === 'masteradmin') {
+                        adminCount++;
+                    } else if (userData.role === 'customer') {
+                        customerCount++;
+                    }
+                });
+                
+                document.getElementById('total-admins').textContent = adminCount;
+                document.getElementById('total-customers').textContent = customerCount;
+                
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+                showAlert('Error cargando estadísticas: ' + error.message, 'error');
+            }
+        }
+
+        // Cargar todos los usuarios
+        async function loadAllUsers() {
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = '<p><div class="loading"></div>Cargando usuarios...</p>';
+            
+            try {
+                const snapshot = await db.collection('users').get();
+                
+                if (snapshot.empty) {
+                    usersList.innerHTML = '<p>No hay usuarios registrados</p>';
+                    return;
+                }
+                
+                let html = `
+                    <h3>Todos los Usuarios (${snapshot.size})</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Teléfono</th>
+                                <th>Dirección</th>
+                                <th>Verificado</th>
+                                <th>Fecha Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                snapshot.forEach(doc => {
+                    const user = doc.data();
+                    const userId = doc.id;
+                    const registerDate = user.createdAt ? user.createdAt.toDate().toLocaleDateString() : 'No disponible';
+                    
+                    // Determinar clase del badge según el rol
+                    let roleClass = 'role-customer';
+                    if (user.role === 'admin') roleClass = 'role-admin';
+                    if (user.role === 'masteradmin') roleClass = 'role-masteradmin';
+                    
+                    html += `
+                        <tr>
+                            <td><small>${userId.substring(0, 8)}...</small></td>
+                            <td>
+                                <span class="editable-field" onclick="editUserField('${userId}', 'displayName', '${user.displayName || ''}')">
+                                    ${user.displayName || 'Sin nombre'}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="editable-field" onclick="editUserField('${userId}', 'email', '${user.email || ''}')">
+                                    ${user.email || 'No disponible'}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="editable-field" onclick="editUserRole('${userId}', '${user.role || 'customer'}')">
+                                    <span class="role-badge ${roleClass}">${user.role || 'customer'}</span>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="editable-field" onclick="editUserField('${userId}', 'phone', '${user.phone || ''}')">
+                                    ${user.phone || 'No disponible'}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="editable-field" onclick="editUserField('${userId}', 'address', '${user.address || ''}')">
+                                    ${user.address ? (user.address.length > 30 ? user.address.substring(0, 30) + '...' : user.address) : 'No disponible'}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="user-status ${user.emailVerified ? 'status-verified' : 'status-unverified'}">
+                                    ${user.emailVerified ? '✓ Verificado' : '✗ No verificado'}
+                                </span>
+                            </td>
+                            <td>${registerDate}</td>
+                            <td class="action-buttons">
+                                <button class="btn btn-primary btn-sm" onclick="editUser('${userId}')">
+                                    <i class="fas fa-edit"></i> Editar Completo
+                                </button>
+                                ${user.role !== 'masteradmin' ? 
+                                    `<button class="btn btn-danger btn-sm" onclick="deleteUser('${userId}', '${user.email}')">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>` : 
+                                    ''
+                                }
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                usersList.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error cargando usuarios:', error);
+                usersList.innerHTML = `<p style="color: var(--danger-color);">Error cargando usuarios: ${error.message}</p>`;
+                showAlert('Error cargando usuarios: ' + error.message, 'error');
+            }
+        }
+
+        // Editar campo de usuario inline - CORREGIDO
+        async function editUserField(userId, field, currentValue) {
+            let newValue;
+            
+            if (field === 'role') {
+                return; // Se maneja en otra función
+            }
+            
+            // Manejar valores undefined o null
+            if (currentValue === 'undefined' || currentValue === 'null') {
+                currentValue = '';
+            }
+            
+            if (field === 'address') {
+                newValue = prompt(`Editar dirección:`, currentValue || '');
+            } else {
+                newValue = prompt(`Editar ${field}:`, currentValue || '');
+            }
+            
+            if (newValue !== null && newValue !== currentValue) {
+                try {
+                    const updateData = {};
+                    updateData[field] = newValue || '';
+                    
+                    console.log(`Actualizando usuario ${userId}, campo ${field}:`, updateData);
+                    
+                    await db.collection('users').doc(userId).update(updateData);
+                    showAlert(`✅ Campo ${field} actualizado correctamente`, 'success');
+                    loadAllUsers();
+                } catch (error) {
+                    console.error('Error actualizando campo:', error);
+                    showAlert('❌ Error al actualizar el campo: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // Editar rol de usuario inline - CORREGIDO
+        async function editUserRole(userId, currentRole) {
+            const newRole = prompt(`Cambiar rol:\n\nActual: ${currentRole}\n\nNuevo rol (masteradmin/admin/customer):`, currentRole);
+            
+            if (newRole && ['masteradmin', 'admin', 'customer'].includes(newRole)) {
+                try {
+                    console.log(`Cambiando rol de usuario ${userId} a ${newRole}`);
+                    
+                    await db.collection('users').doc(userId).update({
+                        role: newRole
+                    });
+                    showAlert(`✅ Rol cambiado a ${newRole}`, 'success');
+                    loadAllUsers();
+                    loadDashboardStats();
+                } catch (error) {
+                    console.error('Error cambiando rol:', error);
+                    showAlert('❌ Error al cambiar el rol: ' + error.message, 'error');
+                }
+            } else if (newRole) {
+                showAlert('❌ Rol no válido. Use: masteradmin, admin o customer', 'error');
+            }
+        }
+
+        // Eliminar usuario - CORREGIDO
+        async function deleteUser(userId, userEmail) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar al usuario "${userEmail}"?\n\nEsta acción no se puede deshacer.`)) {
+                return;
+            }
+            
+            try {
+                console.log(`Eliminando usuario ${userId}`);
+                
+                await db.collection('users').doc(userId).delete();
+                showAlert(`✅ Usuario ${userEmail} eliminado correctamente`, 'success');
+                loadAllUsers();
+                loadDashboardStats();
+            } catch (error) {
+                console.error('Error eliminando usuario:', error);
+                showAlert('❌ Error al eliminar el usuario: ' + error.message, 'error');
+            }
+        }
+
+        // Abrir modal para nuevo usuario
+        function openUserModal() {
+            editingUserId = null;
+            document.getElementById('user-modal-title').textContent = 'Nuevo Usuario';
+            document.getElementById('user-form').reset();
+            document.getElementById('user-password').required = true;
+            document.getElementById('submit-user-btn').innerHTML = 'Crear Usuario';
+            document.getElementById('user-modal').style.display = 'block';
+        }
+
+        // Editar usuario en modal completo - CORREGIDO
+        async function editUser(userId) {
+            try {
+                const doc = await db.collection('users').doc(userId).get();
+                
+                if (!doc.exists) {
+                    showAlert('Usuario no encontrado', 'error');
+                    return;
+                }
+                
+                const user = doc.data();
+                editingUserId = userId;
+                
+                document.getElementById('user-modal-title').textContent = 'Editar Usuario';
+                document.getElementById('user-id').value = userId;
+                document.getElementById('user-displayName').value = user.displayName || '';
+                document.getElementById('user-email').value = user.email || '';
+                document.getElementById('user-role').value = user.role || 'customer';
+                document.getElementById('user-phone').value = user.phone || '';
+                document.getElementById('user-address').value = user.address || '';
+                document.getElementById('user-password').required = false;
+                document.getElementById('user-password').placeholder = 'Dejar vacío para no cambiar';
+                document.getElementById('user-password').value = '';
+                
+                document.getElementById('submit-user-btn').innerHTML = 'Actualizar Usuario';
+                document.getElementById('user-modal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error cargando usuario:', error);
+                showAlert('Error al cargar el usuario: ' + error.message, 'error');
+            }
+        }
+
+        // Cerrar modal de usuario
+        function closeUserModal() {
+            document.getElementById('user-modal').style.display = 'none';
+            editingUserId = null;
+        }
+
+        // Manejar envío del formulario de usuario - CORREGIDO
+        document.getElementById('user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-user-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="loading"></div>Guardando...';
+            submitBtn.disabled = true;
+            
+            const userData = {
+                displayName: document.getElementById('user-displayName').value,
+                email: document.getElementById('user-email').value,
+                role: document.getElementById('user-role').value,
+                phone: document.getElementById('user-phone').value || '',
+                address: document.getElementById('user-address').value || '',
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            const password = document.getElementById('user-password').value;
+            const userId = document.getElementById('user-id').value;
+            
+            try {
+                if (editingUserId) {
+                    // Actualizar usuario existente
+                    console.log('Actualizando usuario:', userId, userData);
+                    
+                    await db.collection('users').doc(userId).update(userData);
+                    showAlert('✅ Usuario actualizado correctamente', 'success');
+                } else {
+                    // Crear nuevo usuario
+                    if (!password) {
+                        showAlert('❌ La contraseña es requerida para nuevos usuarios', 'error');
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                    
+                    console.log('Creando nuevo usuario:', userData);
+                    
+                    // Crear usuario en Authentication
+                    const userCredential = await auth.createUserWithEmailAndPassword(userData.email, password);
+                    const newUser = userCredential.user;
+                    
+                    // Agregar datos adicionales a Firestore
+                    userData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    userData.emailVerified = false;
+                    userData.uid = newUser.uid;
+                    
+                    // Actualizar perfil en Authentication
+                    await newUser.updateProfile({
+                        displayName: userData.displayName
+                    });
+                    
+                    // Guardar en Firestore
+                    await db.collection('users').doc(newUser.uid).set(userData);
+                    
+                    showAlert('✅ Usuario creado correctamente', 'success');
+                }
+                
+                closeUserModal();
+                loadAllUsers();
+                loadDashboardStats();
+                
+            } catch (error) {
+                console.error('Error guardando usuario:', error);
+                let errorMessage = 'Error al guardar el usuario: ' + error.message;
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = '❌ El email ya está en uso por otro usuario';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = '❌ La contraseña es demasiado débil';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = '❌ El email no es válido';
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMessage = '❌ Operación no permitida';
+                }
+                
+                showAlert(errorMessage, 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Cargar todos los productos
+        async function loadAllProducts() {
+            const productsList = document.getElementById('products-list');
+            productsList.innerHTML = '<p><div class="loading"></div>Cargando productos...</p>';
+            
+            try {
+                const snapshot = await db.collection('products').get();
+                
+                if (snapshot.empty) {
+                    productsList.innerHTML = '<p>No hay productos registrados</p>';
+                    return;
+                }
+                
+                let html = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3>Todos los Productos (${snapshot.size})</h3>
+                        <button class="btn btn-success" onclick="loadAllProducts()">
+                            <i class="fas fa-sync"></i> Actualizar
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Precio</th>
+                                <th>Categoría</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                snapshot.forEach(doc => {
+                    const product = doc.data();
+                    const productId = doc.id;
+                    
+                    html += `
+                        <tr>
+                            <td>
+                                <img src="${product.image || 'https://via.placeholder.com/60x60?text=Sin+Imagen'}" 
+                                     alt="${product.name}" class="product-image">
+                            </td>
+                            <td><strong>${product.name}</strong></td>
+                            <td>${product.description}</td>
+                            <td>$${parseFloat(product.price).toFixed(2)} MXN</td>
+                            <td><span class="role-badge">${product.category}</span></td>
+                            <td class="action-buttons">
+                                <button class="btn btn-primary btn-sm" onclick="editProduct('${productId}')">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${productId}', '${product.name}')">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                productsList.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error cargando productos:', error);
+                productsList.innerHTML = `<p style="color: var(--danger-color);">Error cargando productos: ${error.message}</p>`;
+                showAlert('Error cargando productos: ' + error.message, 'error');
+            }
+        }
+
+        // Abrir modal de producto
+        function openProductModal() {
+            editingProductId = null;
+            document.getElementById('product-modal-title').textContent = 'Nuevo Producto';
+            document.getElementById('product-form').reset();
+            document.getElementById('product-image-url-input').value = '';
+            document.getElementById('submit-product-btn').innerHTML = 'Guardar Producto';
+            document.getElementById('product-modal').style.display = 'block';
+        }
+
+        // Cerrar modal de producto
+        function closeProductModal() {
+            document.getElementById('product-modal').style.display = 'none';
+            editingProductId = null;
+        }
+
+        // Establecer imagen por defecto
+        function setDefaultImage(url) {
+            document.getElementById('product-image-url-input').value = url;
+        }
+
+        // Editar producto
+        async function editProduct(productId) {
+            try {
+                const doc = await db.collection('products').doc(productId).get();
+                
+                if (!doc.exists) {
+                    showAlert('Producto no encontrado', 'error');
+                    return;
+                }
+                
+                const product = doc.data();
+                editingProductId = productId;
+                
+                document.getElementById('product-modal-title').textContent = 'Editar Producto';
+                document.getElementById('product-id').value = productId;
+                document.getElementById('product-name').value = product.name;
+                document.getElementById('product-description').value = product.description;
+                document.getElementById('product-price').value = product.price;
+                document.getElementById('product-category').value = product.category;
+                document.getElementById('product-image-url-input').value = product.image || '';
+                
+                document.getElementById('submit-product-btn').innerHTML = 'Actualizar Producto';
+                document.getElementById('product-modal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error cargando producto:', error);
+                showAlert('Error al cargar el producto: ' + error.message, 'error');
+            }
+        }
+
+        // Manejar envío del formulario de productos
+        document.getElementById('product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-product-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="loading"></div>Guardando...';
+            submitBtn.disabled = true;
+            
+            const productData = {
+                name: document.getElementById('product-name').value,
+                description: document.getElementById('product-description').value,
+                price: parseFloat(document.getElementById('product-price').value),
+                category: document.getElementById('product-category').value,
+                image: document.getElementById('product-image-url-input').value || 'https://via.placeholder.com/300x300?text=Producto+Sin+Imagen',
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            try {
+                if (editingProductId) {
+                    // Actualizar producto existente
+                    await db.collection('products').doc(editingProductId).update(productData);
+                    showAlert('✅ Producto actualizado correctamente', 'success');
+                } else {
+                    // Crear nuevo producto
+                    productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    
+                    console.log('Creando producto con datos:', productData);
+                    
+                    await db.collection('products').add(productData);
+                    console.log('Producto creado exitosamente');
+                    
+                    showAlert('✅ Producto creado correctamente', 'success');
+                }
+                
+                closeProductModal();
+                loadAllProducts();
+                loadDashboardStats();
+                
+            } catch (error) {
+                console.error('Error guardando producto:', error);
+                showAlert('❌ Error al guardar el producto: ' + error.message, 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Eliminar producto
+        async function deleteProduct(productId, productName) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar el producto "${productName}"?\n\nEsta acción no se puede deshacer.`)) {
+                return;
+            }
+            
+            try {
+                await db.collection('products').doc(productId).delete();
+                showAlert('✅ Producto eliminado correctamente', 'success');
+                loadAllProducts();
+                loadDashboardStats();
+            } catch (error) {
+                console.error('Error eliminando producto:', error);
+                showAlert('❌ Error al eliminar el producto: ' + error.message, 'error');
+            }
+        }
+
+        // Mostrar alertas
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Cerrar sesión
+        function logout() {
+            auth.signOut().then(() => {
+                showLoginPanel();
+            });
+        }
+
+        // Cerrar modales al hacer click fuera
+        window.onclick = function(event) {
+            const productModal = document.getElementById('product-modal');
+            const userModal = document.getElementById('user-modal');
+            if (event.target === productModal) {
+                closeProductModal();
+            }
+            if (event.target === userModal) {
+                closeUserModal();
+            }
+        }
+    </script>
+</body>
+</html>

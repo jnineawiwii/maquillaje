@@ -634,11 +634,12 @@ function cargarPagina(pagina, parametros = {}) {
 // Funciones de productos (Sin cambios)
 // ====================================================================
 async function cargarProductos(categoria = 'all') {
-    // Código existente para cargar productos con Firebase...
     try {
-        // Asegúrate de que 'db' esté definido en firebase-config.js
+        console.log('🔄 Cargando productos...', categoria);
+        
         if (typeof db === 'undefined') {
-            console.error('Firestore no está inicializado. Verifica firebase-config.js');
+            console.error('❌ Firestore no está inicializado');
+            mostrarProductos([]);
             return;
         }
         
@@ -650,59 +651,88 @@ async function cargarProductos(categoria = 'all') {
         
         const snapshot = await query.get();
         const productos = [];
+        
         snapshot.forEach(doc => {
-            productos.push({ id: doc.id, ...doc.data() });
+            const data = doc.data();
+            console.log('📦 Producto cargado:', data.name, data.image); // 👈 Ahora usa data.image
+            productos.push({ 
+                id: doc.id, 
+                name: data.name,
+                description: data.description,
+                price: data.price,
+                category: data.category,
+                imageUrl: data.image // 👈 CAMBIO IMPORTANTE: data.image en lugar de data.imageUrl
+            });
         });
+        
+        console.log(`✅ ${productos.length} productos cargados`);
         mostrarProductos(productos);
+        
     } catch (error) {
-        console.error('Error cargando productos:', error);
+        console.error('❌ Error cargando productos:', error);
+        mostrarProductos([]);
     }
 }
 
 function mostrarProductos(productos) {
     const grid = document.getElementById('products-grid');
     
+    if (!grid) return;
+    
     if (productos.length === 0) {
-        grid.innerHTML = '<p>No se encontraron productos.</p>';
+        grid.innerHTML = '<p>No se encontraron productos</p>';
         return;
     }
     
     grid.innerHTML = productos.map(producto => `
         <div class="product-card">
-            <img src="${producto.imageUrl || 'https://via.placeholder.com/300'}" alt="${producto.name}">
+            <img src="${producto.imageUrl}" 
+                 alt="${producto.name}"
+                 style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px;"
+                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2VuIG5vIGRpc3BvbmlibGU8L3RleHQ+PC9zdmc+'">
             <h3>${producto.name}</h3>
-            <p>${producto.description || 'Descripción no disponible'}</p>
-            <p class="price">$${producto.price}</p>
-            <button onclick="agregarAlCarrito('${producto.id}', '${producto.name.replace(/'/g, "\\'")}', ${producto.price})">
-                Agregar al Carrito
+            <p>${producto.description}</p>
+            <p class="price">$${producto.price} MXN</p>
+            <button onclick="agregarAlCarrito('${producto.id}', '${producto.name.replace(/'/g, "\\'")}', ${producto.price}, '${producto.category}')">
+                <i class="fas fa-cart-plus"></i> Agregar al Carrito
             </button>
         </div>
     `).join('');
 }
-
+// ====================================================================
+// AÑADE ESTA FUNCIÓN FALTANTE
+// ====================================================================
 function filtrarProductos(categoria) {
+    console.log('🔍 Filtrando por categoría:', categoria);
     window.location.hash = `products${categoria !== 'all' ? `?category=${categoria}` : ''}`;
 }
-
 // ====================================================================
 // Funciones del Carrito (Modificada la lógica de "Comprar")
 // ====================================================================
-function agregarAlCarrito(id, nombre, precio) {
+function agregarAlCarrito(id, nombre, precio, categoria = 'General') {
     let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
     const existe = carrito.find(item => item.id === id);
     
     if (existe) {
         existe.cantidad++;
     } else {
-        carrito.push({ id, nombre, precio: parseFloat(precio), cantidad: 1 });
+        carrito.push({ 
+            id, 
+            nombre, 
+            precio: parseFloat(precio), 
+            cantidad: 1,
+            categoria: categoria // 👈 Añadir categoría al carrito
+        });
     }
     
     localStorage.setItem('carrito', JSON.stringify(carrito));
     actualizarContadorCarrito();
     
     const cartCount = document.querySelector('.cart-count');
-    cartCount.classList.add('bump');
-    setTimeout(() => cartCount.classList.remove('bump'), 200);
+    if (cartCount) {
+        cartCount.classList.add('bump');
+        setTimeout(() => cartCount.classList.remove('bump'), 200);
+    }
     
     srAnnounce(`${nombre} agregado al carrito`);
 }
