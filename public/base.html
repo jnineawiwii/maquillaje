@@ -25,7 +25,7 @@
             --white: #ffffff;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --base-font-size: 16px;
-            --base-spacing: 1rem;
+            --base-line-height: 1.6;
             --site-header-height: 70px;
         }
 
@@ -37,10 +37,12 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            line-height: 1.6;
+            line-height: var(--base-line-height);
             color: var(--text-color);
             padding-top: var(--site-header-height);
             font-size: var(--base-font-size);
+            background-color: var(--light-bg);
+            transition: all 0.3s ease;
         }
 
         /* Header */
@@ -52,6 +54,7 @@
             top: 0;
             z-index: 1000;
             height: var(--site-header-height);
+            transition: all 0.3s ease;
         }
 
         .nav-container {
@@ -171,7 +174,7 @@
             100% { opacity: 1; }
         }
 
-        /* Dropdown */
+        /* Dropdown - MEJORADO PARA ACCESIBILIDAD */
         .dropdown {
             position: relative;
         }
@@ -180,8 +183,16 @@
             background: none;
             border: none;
             cursor: pointer;
-            padding: 5px;
+            padding: 8px 12px;
             font-size: 1.2rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .dropdown-btn:hover,
+        .dropdown-btn:focus {
+            background: #f5f5f5;
+            outline: 2px solid var(--primary-color);
         }
 
         .dropdown-content {
@@ -193,8 +204,12 @@
             box-shadow: var(--shadow);
             border-radius: 8px;
             padding: 10px;
-            min-width: 250px;
+            min-width: 280px;
             z-index: 1000;
+        }
+
+        .dropdown-content.show {
+            display: block;
         }
 
         .dropdown-content a,
@@ -204,16 +219,21 @@
             text-align: left;
             background: none;
             border: none;
-            padding: 8px 12px;
+            padding: 10px 12px;
             text-decoration: none;
             color: var(--text-color);
             cursor: pointer;
             border-radius: 4px;
+            font-size: 0.9rem;
+            transition: background 0.3s;
         }
 
         .dropdown-content a:hover,
-        .dropdown-content button:hover {
+        .dropdown-content a:focus,
+        .dropdown-content button:hover,
+        .dropdown-content button:focus {
             background: #f5f5f5;
+            outline: 2px solid var(--primary-color);
         }
 
         /* Controles de accesibilidad */
@@ -232,6 +252,12 @@
             cursor: pointer;
             font-weight: bold;
             padding: 5px 0;
+            outline: none;
+        }
+
+        .accessibility-controls summary:focus {
+            outline: 2px solid var(--primary-color);
+            border-radius: 4px;
         }
 
         .accessibility-controls .control-group {
@@ -251,55 +277,135 @@
             margin-bottom: 10px;
         }
 
+        .accessibility-controls input[type="range"]:focus {
+            outline: 2px solid var(--primary-color);
+        }
+
         .accessibility-controls button {
             background: var(--primary-color);
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 8px 12px;
             border-radius: 4px;
             cursor: pointer;
             margin-top: 5px;
             font-size: 0.9rem;
+            transition: background 0.3s;
         }
 
-        /* Estilos para modo oscuro */
+        .accessibility-controls button:hover,
+        .accessibility-controls button:focus {
+            background: var(--accent-color);
+            outline: 2px solid var(--primary-color);
+        }
+
+        /* ========== MODO OSCURO COMPLETO ========== */
         .dark-mode {
-            background-color: #1a1a1a;
-            color: #f0f0f0;
+            background-color: #1a1a1a !important;
+            color: #f0f0f0 !important;
         }
 
         .dark-mode .navbar {
-            background: #2d2d2d;
+            background: #2d2d2d !important;
         }
 
         .dark-mode .nav-menu a {
-            color: #f0f0f0;
+            color: #f0f0f0 !important;
         }
 
         .dark-mode .dropdown-content {
-            background: #2d2d2d;
-            color: #f0f0f0;
+            background: #2d2d2d !important;
+            color: #f0f0f0 !important;
         }
 
         .dark-mode .dropdown-content a,
         .dark-mode .dropdown-content button {
-            color: #f0f0f0;
+            color: #f0f0f0 !important;
         }
 
         .dark-mode .dropdown-content a:hover,
-        .dark-mode .dropdown-content button:hover {
-            background: #3d3d3d;
+        .dark-mode .dropdown-content a:focus,
+        .dark-mode .dropdown-content button:hover,
+        .dark-mode .dropdown-content button:focus {
+            background: #3d3d3d !important;
         }
 
-        /* Estilos para alto contraste */
+        .dark-mode .dropdown-btn:hover,
+        .dark-mode .dropdown-btn:focus {
+            background: #3d3d3d !important;
+        }
+
+        .dark-mode .hero {
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a) !important;
+        }
+
+        .dark-mode .products {
+            background: #2d2d2d !important;
+            color: #f0f0f0 !important;
+        }
+
+        .dark-mode .products h2 {
+            color: #ff4081 !important;
+        }
+
+        .dark-mode .product-card {
+            background: #3d3d3d !important;
+            color: #f0f0f0 !important;
+            border: 1px solid #555 !important;
+        }
+
+        .dark-mode .product-card h3 {
+            color: #f0f0f0 !important;
+        }
+
+        .dark-mode .product-price {
+            color: #ff4081 !important;
+        }
+
+        .dark-mode .search-results-info {
+            background: #3d3d3d !important;
+            color: #f0f0f0 !important;
+            border-left-color: #ff4081 !important;
+        }
+
+        .dark-mode .no-results {
+            color: #ccc !important;
+        }
+
+        .dark-mode .filters .filter-btn {
+            background: #3d3d3d !important;
+            color: #f0f0f0 !important;
+            border: 1px solid #555 !important;
+        }
+
+        .dark-mode .filters .filter-btn.active {
+            background: #e91e63 !important;
+            color: white !important;
+        }
+
+        .dark-mode .filters .filter-btn:hover {
+            background: #e91e63 !important;
+            color: white !important;
+        }
+
+        .dark-mode .page-section {
+            background: #2d2d2d !important;
+            color: #f0f0f0 !important;
+        }
+
+        .dark-mode .container {
+            color: #f0f0f0 !important;
+        }
+
+        /* ========== ALTO CONTRASTE ========== */
         .high-contrast {
-            background: #000 !important;
-            color: #fff !important;
+            background: #000000 !important;
+            color: #ffffff !important;
         }
 
         .high-contrast .navbar {
-            background: #000 !important;
-            border-bottom: 2px solid #fff;
+            background: #000000 !important;
+            border-bottom: 3px solid #ffff00 !important;
         }
 
         .high-contrast .nav-menu a {
@@ -307,12 +413,29 @@
         }
 
         .high-contrast .dropdown-content {
-            background: #000 !important;
-            border: 2px solid #fff;
+            background: #000000 !important;
+            border: 2px solid #ffff00 !important;
         }
 
         .high-contrast a {
             color: #ffff00 !important;
+        }
+
+        .high-contrast .product-card {
+            background: #000000 !important;
+            border: 2px solid #ffff00 !important;
+            color: #ffffff !important;
+        }
+
+        .high-contrast .products {
+            background: #000000 !important;
+        }
+
+        .high-contrast .dropdown-btn:focus,
+        .high-contrast button:focus,
+        .high-contrast input:focus,
+        .high-contrast summary:focus {
+            outline: 3px solid #ffff00 !important;
         }
 
         /* Estilos para escala de grises */
@@ -327,6 +450,7 @@
             padding: 150px 0 100px;
             text-align: center;
             margin-top: 70px;
+            transition: all 0.3s ease;
         }
 
         .hero-content h1 {
@@ -358,6 +482,7 @@
         .products {
             padding: 80px 0;
             background: var(--light-bg);
+            transition: all 0.3s ease;
         }
 
         .container {
@@ -491,6 +616,10 @@
             padding: 40px 20px;
             max-width: 1200px;
             margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
         }
 
         /* Estilos para accesibilidad */
@@ -522,6 +651,24 @@
 
         .sr-announcement.show {
             opacity: 1;
+        }
+
+        /* Focus visible para todos los elementos interactivos */
+        button:focus,
+        input:focus,
+        select:focus,
+        textarea:focus,
+        a:focus,
+        summary:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Estilo para elementos enfocados con navegación por voz */
+        .voice-navigation-active {
+            outline: 3px solid #4CAF50 !important;
+            outline-offset: 3px !important;
+            background-color: rgba(76, 175, 80, 0.1) !important;
         }
 
         /* Responsive */
@@ -611,13 +758,13 @@
                 <span class="user-welcome" id="user-welcome"></span>
             </li>
 
-            <!-- Menú desplegable -->
+            <!-- Menú desplegable - MEJORADO PARA ACCESIBILIDAD -->
             <li class="dropdown">
-                <button class="dropdown-btn">
+                <button class="dropdown-btn" aria-expanded="false" aria-haspopup="true" aria-label="Menú de opciones">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="dropdown-content">
-                    <a href="#guide">Guía de usuario</a>
+                <div class="dropdown-content" role="menu" aria-labelledby="dropdown-btn">
+                    <a href="guide.html" role="menuitem">Guía de usuario</a>
                     
                     <div class="accessibility-controls">
                         <details>
@@ -637,9 +784,9 @@
                             <div class="control-group">
                                 <label for="spacingRange">
                                     <span>Interlineado</span>
-                                    <span id="spacingValue">1rem</span>
+                                    <span id="spacingValue">1.6</span>
                                 </label>
-                                <input id="spacingRange" type="range" min="0.5" max="2.0" step="0.05" value="1.0">
+                                <input id="spacingRange" type="range" min="1.0" max="3.0" step="0.1" value="1.6">
                                 <button id="spacingReset">Restablecer</button>
                             </div>
                         </details>
@@ -659,12 +806,12 @@
                         </details>
                     </div>
 
-                    <button id="srToggleBtnMenu">Lector</button>
-                    <button id="themeToggleBtnMenu">Cambiar a modo oscuro</button>
+                    <button id="srToggleBtnMenu" role="menuitem">Navegación por voz</button>
+                    <button id="themeToggleBtnMenu" role="menuitem">Cambiar a modo oscuro</button>
                     
                     <div id="auth-links">
-                        <a href="#login">Iniciar Sesión</a>
-                        <a href="#register">Registrarse</a>
+                        <a href="#login" role="menuitem">Iniciar Sesión</a>
+                        <a href="#register" role="menuitem">Registrarse</a>
                     </div>
                 </div>
             </li>
@@ -698,11 +845,20 @@ function cargarPagina(pagina, parametros = {}) {
                         <a href="#products" class="cta-button">Ver Productos</a>
                     </div>
                 </section>
-                <section class="offers">
+                <section class="products">
                     <div class="container">
-                        <div class="offer-banner">
-                            <h2>Ofertas Especiales</h2>
-                            <p>Hasta 50% de descuento en productos seleccionados</p>
+                        <h2>Ofertas Especiales</h2>
+                        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 30px;">Hasta 50% de descuento en productos seleccionados</p>
+                        <div class="product-grid">
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <i class="fas fa-gift" style="font-size: 4rem; color: #e91e63;"></i>
+                                </div>
+                                <h3>Kit Maquillaje Completo</h3>
+                                <p>Todo lo que necesitas en un solo kit</p>
+                                <div class="product-price">$599 MXN</div>
+                                <button class="add-to-cart">Ver Oferta</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -886,70 +1042,164 @@ function filtrarProductos(categoria) {
 // ====================================================================
 // BÚSQUEDA POR VOZ - VERSIÓN CORREGIDA
 // ====================================================================
+// ====================================================================
+// BÚSQUEDA POR VOZ - VERSIÓN CORREGIDA Y MEJORADA
+// ====================================================================
 let recognition = null;
 let isListening = false;
 
 function inicializarReconocimientoVoz() {
+    console.log('🎤 Inicializando reconocimiento de voz...');
+    
+    // Verificar compatibilidad
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        console.warn('El reconocimiento de voz no es compatible con este navegador');
-        document.getElementById('voice-search-btn').style.display = 'none';
+        console.warn('❌ El reconocimiento de voz no es compatible con este navegador');
+        const voiceBtn = document.getElementById('voice-search-btn');
+        if (voiceBtn) {
+            voiceBtn.style.display = 'none';
+            voiceBtn.disabled = true;
+        }
         return;
     }
     
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognition = new SpeechRecognition();
-    
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'es-ES';
-    
-    recognition.onstart = function() {
-        isListening = true;
-        document.getElementById('voice-search-btn').classList.add('voice-listening');
-        srAnnounce('Escuchando... Habla ahora');
-    };
-    
-    recognition.onresult = function(event) {
-        let transcript = event.results[0][0].transcript;
+    try {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
         
-        // LIMPIEZA DEL TEXTO - CORRECCIÓN DEL PUNTO
-        transcript = transcript
-            .trim() // Eliminar espacios al inicio y final
-            .replace(/\.$/, '') // Eliminar punto final
-            .replace(/\s+\.$/, '') // Eliminar punto después de espacios
-            .replace(/\s+/g, ' ') // Normalizar espacios múltiples
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'es-ES';
+        recognition.maxAlternatives = 1;
         
-        console.log('Texto reconocido (limpio):', transcript);
+        recognition.onstart = function() {
+            console.log('🎤 Reconocimiento de voz iniciado');
+            isListening = true;
+            const voiceBtn = document.getElementById('voice-search-btn');
+            if (voiceBtn) {
+                voiceBtn.classList.add('voice-listening');
+                voiceBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                voiceBtn.title = "Click para detener";
+            }
+            srAnnounce('Escuchando... Habla ahora', 'assertive');
+        };
         
-        document.getElementById('search-input').value = transcript;
-        srAnnounce(`Búsqueda por voz: "${transcript}"`);
+        recognition.onresult = function(event) {
+            console.log('🎤 Resultado recibido:', event);
+            
+            if (event.results.length > 0 && event.results[0].length > 0) {
+                let transcript = event.results[0][0].transcript;
+                
+                console.log('Texto reconocido (original):', transcript);
+                
+                // LIMPIEZA MEJORADA DEL TEXTO
+                transcript = transcript
+                    .trim()
+                    .replace(/\.+$/, '') // Eliminar uno o más puntos al final
+                    .replace(/\s+\.$/, '') // Eliminar punto después de espacios
+                    .replace(/\s+/g, ' ') // Normalizar espacios múltiples
+                    .replace(/^\s+|\s+$/g, ''); // Eliminar espacios al inicio y final
+                
+                console.log('Texto reconocido (limpio):', transcript);
+                
+                const searchInput = document.getElementById('search-input');
+                if (searchInput && transcript) {
+                    searchInput.value = transcript;
+                    searchInput.focus();
+                    srAnnounce(`Búsqueda por voz: "${transcript}"`, 'polite');
+                    
+                    // Ejecutar búsqueda automáticamente
+                    setTimeout(() => {
+                        buscarProductos(new Event('submit'));
+                    }, 800);
+                }
+            }
+        };
         
-        // Pequeño delay para que el usuario vea el texto
-        setTimeout(() => {
-            buscarProductos(new Event('submit'));
-        }, 500);
-    };
-    
-    recognition.onerror = function(event) {
-        console.error('Error en reconocimiento de voz:', event.error);
-        srAnnounce('Error en el reconocimiento de voz');
-    };
-    
-    recognition.onend = function() {
-        isListening = false;
-        document.getElementById('voice-search-btn').classList.remove('voice-listening');
-    };
+        recognition.onerror = function(event) {
+            console.error('❌ Error en reconocimiento de voz:', event.error);
+            
+            let errorMsg = 'Error en el reconocimiento de voz';
+            switch(event.error) {
+                case 'not-allowed':
+                case 'permission-denied':
+                    errorMsg = 'Permiso de micrófono denegado. Por favor, permite el acceso al micrófono.';
+                    break;
+                case 'network':
+                    errorMsg = 'Error de red en el reconocimiento de voz';
+                    break;
+                case 'no-speech':
+                    errorMsg = 'No se detectó voz. Intenta nuevamente.';
+                    break;
+            }
+            
+            srAnnounce(errorMsg, 'assertive');
+            resetVoiceButton();
+        };
+        
+        recognition.onend = function() {
+            console.log('🎤 Reconocimiento de voz finalizado');
+            isListening = false;
+            resetVoiceButton();
+        };
+        
+        console.log('✅ Reconocimiento de voz inicializado correctamente');
+        
+    } catch (error) {
+        console.error('❌ Error al inicializar reconocimiento de voz:', error);
+        srAnnounce('Error al inicializar el reconocimiento de voz', 'assertive');
+    }
+}
+
+function resetVoiceButton() {
+    const voiceBtn = document.getElementById('voice-search-btn');
+    if (voiceBtn) {
+        voiceBtn.classList.remove('voice-listening');
+        voiceBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        voiceBtn.title = "Búsqueda por voz";
+    }
 }
 
 function toggleReconocimientoVoz() {
+    console.log('🎤 Click en botón de voz, estado actual:', isListening);
+    
     if (!recognition) {
+        console.log('🎤 Inicializando reconocimiento por primera vez...');
         inicializarReconocimientoVoz();
     }
     
-    if (isListening) {
-        recognition.stop();
-    } else {
-        recognition.start();
+    if (!recognition) {
+        console.error('❌ No se pudo inicializar el reconocimiento de voz');
+        srAnnounce('El reconocimiento de voz no está disponible', 'assertive');
+        return;
+    }
+    
+    try {
+        if (isListening) {
+            console.log('🎤 Deteniendo reconocimiento...');
+            recognition.stop();
+        } else {
+            console.log('🎤 Iniciando reconocimiento...');
+            // Solicitar permiso de micrófono primero
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function(stream) {
+                        // Permiso concedido, iniciar reconocimiento
+                        recognition.start();
+                        // Detener el stream ya que no lo necesitamos directamente
+                        stream.getTracks().forEach(track => track.stop());
+                    })
+                    .catch(function(err) {
+                        console.error('❌ Error al acceder al micrófono:', err);
+                        srAnnounce('No se pudo acceder al micrófono. Por favor, verifica los permisos.', 'assertive');
+                    });
+            } else {
+                // Navegador más antiguo, intentar directamente
+                recognition.start();
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error al controlar reconocimiento de voz:', error);
+        srAnnounce('Error al iniciar el reconocimiento de voz', 'assertive');
     }
 }
 
@@ -1090,6 +1340,356 @@ function redirigirACheckout() {
 }
 
 // ====================================================================
+// NAVEGACIÓN POR VOZ AUTOMÁTICA - LECTOR DE PANTALLA
+// ====================================================================
+let speechSynthesis = window.speechSynthesis;
+let isVoiceNavigationActive = false;
+let lastFocusedElement = null;
+
+function inicializarNavegacionPorVoz() {
+    console.log('🎯 Inicializando navegación por voz automática...');
+    
+    // Verificar compatibilidad
+    if (!('speechSynthesis' in window)) {
+        console.warn('❌ La síntesis de voz no es compatible con este navegador');
+        const srToggleBtnMenu = document.getElementById('srToggleBtnMenu');
+        if (srToggleBtnMenu) {
+            srToggleBtnMenu.style.display = 'none';
+            srToggleBtnMenu.disabled = true;
+        }
+        return;
+    }
+    
+    console.log('✅ Navegación por voz disponible');
+}
+
+function toggleNavegacionPorVoz() {
+    if (!isVoiceNavigationActive) {
+        activarNavegacionPorVoz();
+    } else {
+        desactivarNavegacionPorVoz();
+    }
+}
+
+function activarNavegacionPorVoz() {
+    console.log('🔊 Activando navegación por voz automática');
+    isVoiceNavigationActive = true;
+    
+    const btn = document.getElementById('srToggleBtnMenu');
+    if (btn) {
+        btn.textContent = 'Desactivar navegación por voz';
+        btn.classList.add('active');
+    }
+    
+    // Agregar event listeners para focus
+    document.addEventListener('focusin', manejarFocusEnElemento);
+    document.addEventListener('mouseover', manejarMouseOverElemento);
+    
+    srAnnounce('Navegación por voz activada. Al mover el cursor o usar tabulador, se anunciará cada elemento.', 'assertive');
+    
+    // Anunciar elemento actualmente enfocado
+    if (document.activeElement) {
+        setTimeout(() => {
+            anunciarElemento(document.activeElement);
+        }, 500);
+    }
+}
+
+function desactivarNavegacionPorVoz() {
+    console.log('🔇 Desactivando navegación por voz');
+    isVoiceNavigationActive = false;
+    
+    const btn = document.getElementById('srToggleBtnMenu');
+    if (btn) {
+        btn.textContent = 'Navegación por voz';
+        btn.classList.remove('active');
+    }
+    
+    // Remover event listeners
+    document.removeEventListener('focusin', manejarFocusEnElemento);
+    document.removeEventListener('mouseover', manejarMouseOverElemento);
+    
+    // Remover estilos de navegación activa
+    document.querySelectorAll('.voice-navigation-active').forEach(el => {
+        el.classList.remove('voice-navigation-active');
+    });
+    
+    srAnnounce('Navegación por voz desactivada', 'assertive');
+}
+
+function manejarFocusEnElemento(event) {
+    if (!isVoiceNavigationActive) return;
+    
+    const elemento = event.target;
+    
+    // Evitar anunciar el mismo elemento repetidamente
+    if (elemento === lastFocusedElement) return;
+    
+    lastFocusedElement = elemento;
+    
+    // Remover estilos previos
+    document.querySelectorAll('.voice-navigation-active').forEach(el => {
+        el.classList.remove('voice-navigation-active');
+    });
+    
+    // Aplicar estilo al elemento actual
+    elemento.classList.add('voice-navigation-active');
+    
+    // Anunciar el elemento después de un pequeño delay
+    setTimeout(() => {
+        anunciarElemento(elemento);
+    }, 100);
+}
+
+function manejarMouseOverElemento(event) {
+    if (!isVoiceNavigationActive) return;
+    
+    const elemento = event.target;
+    
+    // Solo anunciar elementos interactivos o importantes
+    if (esElementoImportante(elemento)) {
+        // Remover estilos previos
+        document.querySelectorAll('.voice-navigation-active').forEach(el => {
+            el.classList.remove('voice-navigation-active');
+        });
+        
+        // Aplicar estilo al elemento actual
+        elemento.classList.add('voice-navigation-active');
+        
+        // Anunciar el elemento
+        anunciarElemento(elemento);
+    }
+}
+
+function esElementoImportante(elemento) {
+    const tagName = elemento.tagName.toLowerCase();
+    const roles = elemento.getAttribute('role');
+    const tipos = [
+        'button', 'link', 'heading', 'navigation', 'main', 
+        'form', 'search', 'banner', 'contentinfo'
+    ];
+    
+    return (
+        ['a', 'button', 'input', 'select', 'textarea', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName) ||
+        (roles && tipos.some(tipo => roles.includes(tipo))) ||
+        elemento.hasAttribute('aria-label') ||
+        elemento.hasAttribute('alt') ||
+        elemento.classList.contains('product-card') ||
+        elemento.classList.contains('filter-btn') ||
+        elemento.classList.contains('add-to-cart')
+    );
+}
+
+function anunciarElemento(elemento) {
+    if (!isVoiceNavigationActive) return;
+    
+    let textoAnuncio = obtenerTextoParaAnunciar(elemento);
+    
+    if (!textoAnuncio) return;
+    
+    // Detener cualquier anuncio previo
+    if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+    }
+    
+    const utterance = new SpeechSynthesisUtterance(textoAnuncio);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.volume = 0.8;
+    utterance.pitch = 1;
+    
+    // Configurar voz en español si está disponible
+    const voices = speechSynthesis.getVoices();
+    const spanishVoice = voices.find(voice => 
+        voice.lang.includes('es') || voice.lang.includes('ES')
+    );
+    
+    if (spanishVoice) {
+        utterance.voice = spanishVoice;
+    }
+    
+    utterance.onerror = function(event) {
+        console.error('Error anunciando elemento:', event);
+    };
+    
+    speechSynthesis.speak(utterance);
+}
+
+function obtenerTextoParaAnunciar(elemento) {
+    const tagName = elemento.tagName.toLowerCase();
+    const texto = elemento.textContent?.trim() || '';
+    const ariaLabel = elemento.getAttribute('aria-label');
+    const alt = elemento.getAttribute('alt');
+    const placeholder = elemento.getAttribute('placeholder');
+    const type = elemento.getAttribute('type');
+    const role = elemento.getAttribute('role');
+    
+    // Priorizar aria-label
+    if (ariaLabel) return ariaLabel;
+    
+    // Para imágenes
+    if (tagName === 'img' && alt) return `Imagen: ${alt}`;
+    
+    // Para inputs
+    if (tagName === 'input') {
+        if (type === 'search' || type === 'text') {
+            return `Campo de búsqueda: ${placeholder || 'buscar'}`;
+        }
+        if (type === 'button') {
+            return texto || 'Botón';
+        }
+    }
+    
+    // Para botones
+    if (tagName === 'button' || role === 'button') {
+        if (texto.includes('🛒') || texto.includes('carrito')) {
+            return `Carrito de compras: ${obtenerTextoCarrito()}`;
+        }
+        if (texto.includes('🔍') || texto.includes('buscar')) {
+            return 'Botón de búsqueda';
+        }
+        return texto || 'Botón';
+    }
+    
+    // Para enlaces
+    if (tagName === 'a' || role === 'link') {
+        if (texto.includes('Productos')) return 'Enlace a productos';
+        if (texto.includes('Labios')) return 'Enlace a productos de labios';
+        if (texto.includes('Ojos')) return 'Enlace a productos de ojos';
+        if (texto.includes('Rostro')) return 'Enlace a productos de rostro';
+        if (texto.includes('Iniciar')) return 'Enlace para iniciar sesión';
+        if (texto.includes('Registrarse')) return 'Enlace para registrarse';
+        return `Enlace: ${texto}`;
+    }
+    
+    // Para encabezados
+    if (tagName.startsWith('h')) {
+        return `Encabezado: ${texto}`;
+    }
+    
+    // Para productos
+    if (elemento.classList.contains('product-card')) {
+        const nombre = elemento.querySelector('h3')?.textContent || '';
+        const precio = elemento.querySelector('.product-price')?.textContent || '';
+        return `Producto: ${nombre}. Precio: ${precio}`;
+    }
+    
+    // Para botones de filtro
+    if (elemento.classList.contains('filter-btn')) {
+        const estado = elemento.classList.contains('active') ? 'activo' : 'inactivo';
+        return `Filtro ${texto}: ${estado}`;
+    }
+    
+    // Texto general (limitar longitud)
+    if (texto && texto.length > 0 && texto.length < 100) {
+        return texto;
+    }
+    
+    return null;
+}
+
+function obtenerTextoCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+    const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    return total === 0 ? 'carrito vacío' : `${total} productos en el carrito`;
+}
+
+// ====================================================================
+// ACCESIBILIDAD CON TECLADO - DROPDOWN MEJORADO
+// ====================================================================
+function inicializarDropdownAccesible() {
+    const dropdownBtn = document.querySelector('.dropdown-btn');
+    const dropdownContent = document.querySelector('.dropdown-content');
+    
+    if (!dropdownBtn || !dropdownContent) return;
+    
+    // Función para abrir/cerrar dropdown
+    function toggleDropdown() {
+        const isOpen = dropdownContent.classList.contains('show');
+        dropdownContent.classList.toggle('show');
+        dropdownBtn.setAttribute('aria-expanded', !isOpen);
+        
+        if (!isOpen) {
+            // Enfocar el primer elemento del dropdown cuando se abre
+            const firstItem = dropdownContent.querySelector('a, button');
+            if (firstItem) {
+                setTimeout(() => firstItem.focus(), 100);
+            }
+        }
+    }
+    
+    // Evento click
+    dropdownBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleDropdown();
+    });
+    
+    // Evento teclado - Enter y Space
+    dropdownBtn.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleDropdown();
+        } else if (e.key === 'Escape' && dropdownContent.classList.contains('show')) {
+            toggleDropdown();
+            dropdownBtn.focus();
+        }
+    });
+    
+    // Navegación con teclado dentro del dropdown
+    dropdownContent.addEventListener('keydown', function(e) {
+        const items = Array.from(dropdownContent.querySelectorAll('a, button, input, summary'));
+        const currentIndex = items.indexOf(document.activeElement);
+        
+        switch(e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                const nextIndex = (currentIndex + 1) % items.length;
+                items[nextIndex].focus();
+                break;
+                
+            case 'ArrowUp':
+                e.preventDefault();
+                const prevIndex = (currentIndex - 1 + items.length) % items.length;
+                items[prevIndex].focus();
+                break;
+                
+            case 'Escape':
+                e.preventDefault();
+                toggleDropdown();
+                dropdownBtn.focus();
+                break;
+                
+            case 'Tab':
+                if (!e.shiftKey && currentIndex === items.length - 1) {
+                    // Último elemento, cerrar dropdown
+                    setTimeout(() => {
+                        toggleDropdown();
+                    }, 10);
+                }
+                break;
+        }
+    });
+    
+    // Cerrar dropdown al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (!dropdownBtn.contains(e.target) && !dropdownContent.contains(e.target)) {
+            dropdownContent.classList.remove('show');
+            dropdownBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+    
+    // Cerrar dropdown cuando un enlace es clickeado
+    dropdownContent.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+            setTimeout(() => {
+                dropdownContent.classList.remove('show');
+                dropdownBtn.setAttribute('aria-expanded', 'false');
+            }, 300);
+        }
+    });
+}
+
+// ====================================================================
 // FUNCIONES DE ACCESIBILIDAD
 // ====================================================================
 function srAnnounce(msg, politeness = 'polite', visualFeedback = true) {
@@ -1113,7 +1713,7 @@ function srAnnounce(msg, politeness = 'polite', visualFeedback = true) {
 }
 
 // ====================================================================
-// CONTROLES DE ACCESIBILIDAD
+// CONTROLES DE ACCESIBILIDAD MEJORADOS
 // ====================================================================
 function inicializarControlesAccesibilidad() {
     // Tamaño de fuente
@@ -1123,8 +1723,10 @@ function inicializarControlesAccesibilidad() {
     
     if (fontSizeRange) {
         fontSizeRange.addEventListener('input', function() {
-            document.documentElement.style.fontSize = this.value + 'px';
-            fontSizeValue.textContent = this.value + 'px';
+            const newSize = this.value + 'px';
+            document.documentElement.style.fontSize = newSize;
+            fontSizeValue.textContent = newSize;
+            srAnnounce(`Tamaño de fuente cambiado a ${newSize}`);
         });
         
         fontSizeReset.addEventListener('click', function() {
@@ -1135,22 +1737,24 @@ function inicializarControlesAccesibilidad() {
         });
     }
     
-    // Espaciado
+    // ESPACIADO CORREGIDO
     const spacingRange = document.getElementById('spacingRange');
     const spacingValue = document.getElementById('spacingValue');
     const spacingReset = document.getElementById('spacingReset');
     
     if (spacingRange) {
         spacingRange.addEventListener('input', function() {
-            document.documentElement.style.setProperty('--base-spacing', this.value + 'rem');
-            spacingValue.textContent = this.value + 'rem';
+            const newSpacing = this.value;
+            document.documentElement.style.setProperty('--base-line-height', newSpacing);
+            spacingValue.textContent = newSpacing;
+            srAnnounce(`Interlineado cambiado a ${newSpacing}`);
         });
         
         spacingReset.addEventListener('click', function() {
-            spacingRange.value = 1.0;
-            document.documentElement.style.setProperty('--base-spacing', '1rem');
-            spacingValue.textContent = '1rem';
-            srAnnounce('Espaciado restablecido');
+            spacingRange.value = 1.6;
+            document.documentElement.style.setProperty('--base-line-height', '1.6');
+            spacingValue.textContent = '1.6';
+            srAnnounce('Interlineado restablecido');
         });
     }
     
@@ -1176,6 +1780,7 @@ function inicializarControlesAccesibilidad() {
             document.documentElement.style.setProperty('--grayscale-percent', this.value + '%');
             grayscaleValue.textContent = this.value + '%';
             document.body.classList.toggle('grayscale', this.value > 0);
+            srAnnounce(`Escala de grises al ${this.value}%`);
         });
         
         grayscaleReset.addEventListener('click', function() {
@@ -1187,22 +1792,34 @@ function inicializarControlesAccesibilidad() {
         });
     }
     
-    // Lector de pantalla
+    // NAVEGACIÓN POR VOZ AUTOMÁTICA
     const srToggleBtnMenu = document.getElementById('srToggleBtnMenu');
-    let srEnabled = false;
-    
+
     if (srToggleBtnMenu) {
-        srToggleBtnMenu.addEventListener('click', function() {
-            srEnabled = !srEnabled;
-            this.textContent = srEnabled ? 'Desactivar lector' : 'Lector';
-            this.classList.toggle('active', srEnabled);
+        // Verificar compatibilidad primero
+        if (!('speechSynthesis' in window)) {
+            srToggleBtnMenu.style.display = 'none';
+            console.warn('❌ Navegación por voz no compatible');
+        } else {
+            // Event listener mejorado
+            srToggleBtnMenu.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🎯 Activando/desactivando navegación por voz');
+                toggleNavegacionPorVoz();
+            });
             
-            if (srEnabled) {
-                srAnnounce('Lector de pantalla activado', 'assertive');
-            } else {
-                srAnnounce('Lector de pantalla desactivado', 'assertive');
-            }
-        });
+            // También permitir Enter/Space para accesibilidad
+            srToggleBtnMenu.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    console.log('🎯 Tecla Enter/Space en botón navegación por voz');
+                    toggleNavegacionPorVoz();
+                }
+            });
+            
+            console.log('✅ Navegación por voz inicializada correctamente');
+        }
     }
     
     // Modo oscuro
@@ -1228,6 +1845,8 @@ function inicializarControlesAccesibilidad() {
 // INICIALIZACIÓN
 // ====================================================================
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Inicializando aplicación...');
+    
     // Sistema de rutas
     window.addEventListener('hashchange', function() {
         const hash = window.location.hash.substring(1);
@@ -1244,6 +1863,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         cargarPagina(pagina, parametros);
+        const voiceBtn = document.getElementById('voice-search-btn');
+    if (voiceBtn) {
+        voiceBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🎤 Botón de voz clickeado');
+            toggleReconocimientoVoz();
+        });
+        
+        // También permitir activar con Enter/Space para accesibilidad
+        voiceBtn.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleReconocimientoVoz();
+            }
+        });
+    }
     });
     
     // Cargar página inicial
@@ -1258,24 +1894,10 @@ document.addEventListener('DOMContentLoaded', function() {
     actualizarContadorCarrito();
     inicializarReconocimientoVoz();
     inicializarControlesAccesibilidad();
-    
-    // Event listeners
-    document.getElementById('voice-search-btn').addEventListener('click', toggleReconocimientoVoz);
-    
-    // Dropdown menu
-    const dropdownBtn = document.querySelector('.dropdown-btn');
-    const dropdownContent = document.querySelector('.dropdown-content');
-    
-    if (dropdownBtn && dropdownContent) {
-        dropdownBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-        });
-        
-        document.addEventListener('click', function() {
-            dropdownContent.style.display = 'none';
-        });
-    }
+    inicializarNavegacionPorVoz();
+    inicializarDropdownAccesible();
+
+    console.log('✅ Aplicación inicializada correctamente');
     
     // Auth state
     if (typeof auth !== 'undefined') {
