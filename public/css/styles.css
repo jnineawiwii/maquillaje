@@ -299,3 +299,59 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/* ESTILOS PARA EL BUSCADOR MEJORADO */
+.search-form input:focus {
+    border-color: #e91e63 !important;
+}
+
+.voice-btn:hover {
+    background: #7b1fa2 !important;
+}
+
+.search-btn:hover {
+    background: #c2185b !important;
+}
+
+.voice-listening {
+    background: #e91e63 !important;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Dropdown mejorado */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content a:hover,
+.dropdown-content button:hover {
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+/* Estilos para resultados de búsqueda */
+.search-results-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #e91e63;
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.no-results i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #ccc;
+}
