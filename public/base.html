@@ -40,6 +40,7 @@
             line-height: 1.6;
             color: var(--text-color);
             padding-top: var(--site-header-height);
+            font-size: var(--base-font-size);
         }
 
         /* Header */
@@ -192,7 +193,7 @@
             box-shadow: var(--shadow);
             border-radius: 8px;
             padding: 10px;
-            min-width: 200px;
+            min-width: 250px;
             z-index: 1000;
         }
 
@@ -213,6 +214,110 @@
         .dropdown-content a:hover,
         .dropdown-content button:hover {
             background: #f5f5f5;
+        }
+
+        /* Controles de accesibilidad */
+        .accessibility-controls {
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            margin: 10px 0;
+        }
+
+        .accessibility-controls details {
+            margin-bottom: 10px;
+        }
+
+        .accessibility-controls summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px 0;
+        }
+
+        .accessibility-controls .control-group {
+            margin-top: 10px;
+            padding-left: 10px;
+        }
+
+        .accessibility-controls label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .accessibility-controls input[type="range"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .accessibility-controls button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Estilos para modo oscuro */
+        .dark-mode {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        .dark-mode .navbar {
+            background: #2d2d2d;
+        }
+
+        .dark-mode .nav-menu a {
+            color: #f0f0f0;
+        }
+
+        .dark-mode .dropdown-content {
+            background: #2d2d2d;
+            color: #f0f0f0;
+        }
+
+        .dark-mode .dropdown-content a,
+        .dark-mode .dropdown-content button {
+            color: #f0f0f0;
+        }
+
+        .dark-mode .dropdown-content a:hover,
+        .dark-mode .dropdown-content button:hover {
+            background: #3d3d3d;
+        }
+
+        /* Estilos para alto contraste */
+        .high-contrast {
+            background: #000 !important;
+            color: #fff !important;
+        }
+
+        .high-contrast .navbar {
+            background: #000 !important;
+            border-bottom: 2px solid #fff;
+        }
+
+        .high-contrast .nav-menu a {
+            color: #ffff00 !important;
+        }
+
+        .high-contrast .dropdown-content {
+            background: #000 !important;
+            border: 2px solid #fff;
+        }
+
+        .high-contrast a {
+            color: #ffff00 !important;
+        }
+
+        /* Estilos para escala de grises */
+        .grayscale {
+            filter: grayscale(var(--grayscale-percent, 100%));
         }
 
         /* Hero Section */
@@ -454,6 +559,11 @@
             .filter-btn {
                 width: 200px;
             }
+
+            .dropdown-content {
+                min-width: 200px;
+                right: -10px;
+            }
         }
     </style>
 </head>
@@ -508,7 +618,50 @@
                 </button>
                 <div class="dropdown-content">
                     <a href="#guide">Guía de usuario</a>
+                    
+                    <div class="accessibility-controls">
+                        <details>
+                            <summary>Tamaño de lectura</summary>
+                            <div class="control-group">
+                                <label for="fontSizeRange">
+                                    <span>Fuente</span>
+                                    <span id="fontSizeValue">16px</span>
+                                </label>
+                                <input id="fontSizeRange" type="range" min="12" max="28" step="1" value="16">
+                                <button id="fontSizeReset">Restablecer</button>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>Espaciado</summary>
+                            <div class="control-group">
+                                <label for="spacingRange">
+                                    <span>Interlineado</span>
+                                    <span id="spacingValue">1rem</span>
+                                </label>
+                                <input id="spacingRange" type="range" min="0.5" max="2.0" step="0.05" value="1.0">
+                                <button id="spacingReset">Restablecer</button>
+                            </div>
+                        </details>
+
+                        <button id="toggleContrastBtn">Alto contraste</button>
+
+                        <details>
+                            <summary>Escala de grises</summary>
+                            <div class="control-group">
+                                <label for="grayscaleRange">
+                                    <span>Intensidad</span>
+                                    <span id="grayscaleValue">0%</span>
+                                </label>
+                                <input id="grayscaleRange" type="range" min="0" max="100" step="1" value="0">
+                                <button id="grayscaleReset">Restablecer</button>
+                            </div>
+                        </details>
+                    </div>
+
+                    <button id="srToggleBtnMenu">Lector</button>
                     <button id="themeToggleBtnMenu">Cambiar a modo oscuro</button>
+                    
                     <div id="auth-links">
                         <a href="#login">Iniciar Sesión</a>
                         <a href="#register">Registrarse</a>
@@ -731,7 +884,7 @@ function filtrarProductos(categoria) {
 }
 
 // ====================================================================
-// BÚSQUEDA POR VOZ
+// BÚSQUEDA POR VOZ - VERSIÓN CORREGIDA
 // ====================================================================
 let recognition = null;
 let isListening = false;
@@ -756,25 +909,26 @@ function inicializarReconocimientoVoz() {
         srAnnounce('Escuchando... Habla ahora');
     };
     
-  recognition.onresult = function(event) {
-    let transcript = event.results[0][0].transcript;
-    
-    // Limpiar el texto de forma más completa
-    transcript = transcript
-        .trim() // Eliminar espacios al inicio y final
-        .replace(/\.$/, '') // Eliminar punto final
-        .replace(/\s+\.$/, '') // Eliminar punto después de espacios
-        .replace(/\s+/g, ' ') // Normalizar espacios múltiples
-        .toLowerCase(); // Convertir a minúsculas para mejor búsqueda
-    
-    document.getElementById('search-input').value = transcript;
-    srAnnounce(`Búsqueda por voz: "${transcript}"`);
-    
-    // Pequeño delay para que el usuario vea el texto antes de buscar
-    setTimeout(() => {
-        buscarProductos(new Event('submit'));
-    }, 500);
-};
+    recognition.onresult = function(event) {
+        let transcript = event.results[0][0].transcript;
+        
+        // LIMPIEZA DEL TEXTO - CORRECCIÓN DEL PUNTO
+        transcript = transcript
+            .trim() // Eliminar espacios al inicio y final
+            .replace(/\.$/, '') // Eliminar punto final
+            .replace(/\s+\.$/, '') // Eliminar punto después de espacios
+            .replace(/\s+/g, ' ') // Normalizar espacios múltiples
+        
+        console.log('Texto reconocido (limpio):', transcript);
+        
+        document.getElementById('search-input').value = transcript;
+        srAnnounce(`Búsqueda por voz: "${transcript}"`);
+        
+        // Pequeño delay para que el usuario vea el texto
+        setTimeout(() => {
+            buscarProductos(new Event('submit'));
+        }, 500);
+    };
     
     recognition.onerror = function(event) {
         console.error('Error en reconocimiento de voz:', event.error);
@@ -800,15 +954,19 @@ function toggleReconocimientoVoz() {
 }
 
 // ====================================================================
-// FUNCIONES DEL BUSCADOR
+// BUSCADOR MEJORADO CON LIMPIEZA
 // ====================================================================
 function buscarProductos(event) {
     if (event) event.preventDefault();
     
-    const termino = document.getElementById('search-input').value.trim();
+    let termino = document.getElementById('search-input').value.trim();
+    
+    // Limpieza adicional por si el usuario escribe con punto
+    termino = termino.replace(/\.$/, '').trim();
     
     if (termino) {
-        srAnnounce(`Buscando: ${termino}`);
+        console.log('🔍 Buscando:', termino);
+        srAnnounce(`Buscando: "${termino}"`);
         window.location.hash = `products?search=${encodeURIComponent(termino)}`;
     } else {
         window.location.hash = 'products';
@@ -955,6 +1113,118 @@ function srAnnounce(msg, politeness = 'polite', visualFeedback = true) {
 }
 
 // ====================================================================
+// CONTROLES DE ACCESIBILIDAD
+// ====================================================================
+function inicializarControlesAccesibilidad() {
+    // Tamaño de fuente
+    const fontSizeRange = document.getElementById('fontSizeRange');
+    const fontSizeValue = document.getElementById('fontSizeValue');
+    const fontSizeReset = document.getElementById('fontSizeReset');
+    
+    if (fontSizeRange) {
+        fontSizeRange.addEventListener('input', function() {
+            document.documentElement.style.fontSize = this.value + 'px';
+            fontSizeValue.textContent = this.value + 'px';
+        });
+        
+        fontSizeReset.addEventListener('click', function() {
+            fontSizeRange.value = 16;
+            document.documentElement.style.fontSize = '16px';
+            fontSizeValue.textContent = '16px';
+            srAnnounce('Tamaño de fuente restablecido');
+        });
+    }
+    
+    // Espaciado
+    const spacingRange = document.getElementById('spacingRange');
+    const spacingValue = document.getElementById('spacingValue');
+    const spacingReset = document.getElementById('spacingReset');
+    
+    if (spacingRange) {
+        spacingRange.addEventListener('input', function() {
+            document.documentElement.style.setProperty('--base-spacing', this.value + 'rem');
+            spacingValue.textContent = this.value + 'rem';
+        });
+        
+        spacingReset.addEventListener('click', function() {
+            spacingRange.value = 1.0;
+            document.documentElement.style.setProperty('--base-spacing', '1rem');
+            spacingValue.textContent = '1rem';
+            srAnnounce('Espaciado restablecido');
+        });
+    }
+    
+    // Alto contraste
+    const toggleContrastBtn = document.getElementById('toggleContrastBtn');
+    
+    if (toggleContrastBtn) {
+        toggleContrastBtn.addEventListener('click', function() {
+            document.body.classList.toggle('high-contrast');
+            const isActive = document.body.classList.contains('high-contrast');
+            this.textContent = isActive ? 'Desactivar alto contraste' : 'Alto contraste';
+            srAnnounce(isActive ? 'Alto contraste activado' : 'Alto contraste desactivado');
+        });
+    }
+    
+    // Escala de grises
+    const grayscaleRange = document.getElementById('grayscaleRange');
+    const grayscaleValue = document.getElementById('grayscaleValue');
+    const grayscaleReset = document.getElementById('grayscaleReset');
+    
+    if (grayscaleRange) {
+        grayscaleRange.addEventListener('input', function() {
+            document.documentElement.style.setProperty('--grayscale-percent', this.value + '%');
+            grayscaleValue.textContent = this.value + '%';
+            document.body.classList.toggle('grayscale', this.value > 0);
+        });
+        
+        grayscaleReset.addEventListener('click', function() {
+            grayscaleRange.value = 0;
+            document.documentElement.style.setProperty('--grayscale-percent', '0%');
+            grayscaleValue.textContent = '0%';
+            document.body.classList.remove('grayscale');
+            srAnnounce('Escala de grises restablecida');
+        });
+    }
+    
+    // Lector de pantalla
+    const srToggleBtnMenu = document.getElementById('srToggleBtnMenu');
+    let srEnabled = false;
+    
+    if (srToggleBtnMenu) {
+        srToggleBtnMenu.addEventListener('click', function() {
+            srEnabled = !srEnabled;
+            this.textContent = srEnabled ? 'Desactivar lector' : 'Lector';
+            this.classList.toggle('active', srEnabled);
+            
+            if (srEnabled) {
+                srAnnounce('Lector de pantalla activado', 'assertive');
+            } else {
+                srAnnounce('Lector de pantalla desactivado', 'assertive');
+            }
+        });
+    }
+    
+    // Modo oscuro
+    const themeToggleBtnMenu = document.getElementById('themeToggleBtnMenu');
+    
+    if (themeToggleBtnMenu) {
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            themeToggleBtnMenu.textContent = 'Cambiar a modo claro';
+        }
+        
+        themeToggleBtnMenu.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            this.textContent = isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
+            localStorage.setItem('darkMode', isDark);
+            srAnnounce(isDark ? 'Modo oscuro activado' : 'Modo claro activado');
+        });
+    }
+}
+
+// ====================================================================
 // INICIALIZACIÓN
 // ====================================================================
 document.addEventListener('DOMContentLoaded', function() {
@@ -987,6 +1257,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar componentes
     actualizarContadorCarrito();
     inicializarReconocimientoVoz();
+    inicializarControlesAccesibilidad();
     
     // Event listeners
     document.getElementById('voice-search-btn').addEventListener('click', toggleReconocimientoVoz);
