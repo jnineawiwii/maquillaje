@@ -223,6 +223,35 @@
             color: #7b1fa2;
         }
 
+        .captcha-container { 
+            position: relative; 
+            margin-bottom: 20px; 
+        }
+        
+        #captcha-canvas { 
+            border-radius: 8px; 
+            display: block; 
+            margin-bottom: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+        }
+        
+        #reload-captcha { 
+            position: absolute; 
+            top: 5px; 
+            right: 5px; 
+            background: rgba(123,31,162,0.2); 
+            border: none; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            transition: background 0.3s; 
+        }
+        
+        #reload-captcha:hover { 
+            background: rgba(123,31,162,0.4); 
+        }
+
         .btn-primary {
             background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
             color: white;
@@ -410,6 +439,12 @@
                         </div>
                     </div>
                     
+                    <div class="form-group captcha-container">
+                        <canvas id="captcha-canvas" width="200" height="60"></canvas>
+                        <button type="button" id="reload-captcha"><i class="fas fa-sync-alt"></i></button>
+                        <input type="text" id="captcha-input" placeholder="Resuelve el captcha" required>
+                    </div>
+                    
                     <button type="submit" class="btn-primary" id="register-btn">
                         <span id="register-text">Crear Cuenta</span>
                         <div id="register-spinner" class="spinner" style="display: none;"></div>
@@ -446,6 +481,55 @@
             const auth = firebase.auth();
             const db = firebase.firestore();
 
+            // CAPTCHA
+            const captchaCanvas = document.getElementById('captcha-canvas');
+            const captchaInput = document.getElementById('captcha-input');
+            const reloadBtn = document.getElementById('reload-captcha');
+            const ctx = captchaCanvas.getContext('2d');
+            let captchaAnswer = 0;
+
+            function generarCaptcha() {
+                ctx.clearRect(0, 0, captchaCanvas.width, captchaCanvas.height);
+
+                const num1 = Math.floor(Math.random() * 20) + 1;
+                const num2 = Math.floor(Math.random() * 20) + 1;
+                captchaAnswer = num1 + num2;
+                const captchaText = `${num1} + ${num2} = ?`;
+
+                const grad = ctx.createLinearGradient(0, 0, captchaCanvas.width, captchaCanvas.height);
+                grad.addColorStop(0, '#6a11cb');
+                grad.addColorStop(1, '#2575fc');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, captchaCanvas.width, captchaCanvas.height);
+
+                ctx.font = '28px Arial';
+                ctx.fillStyle = '#fff';
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+                ctx.fillText(captchaText, captchaCanvas.width / 2, captchaCanvas.height / 2);
+
+                for (let i = 0; i < 5; i++) {
+                    ctx.strokeStyle = `rgba(255,255,255,${Math.random() * 0.3})`;
+                    ctx.beginPath();
+                    ctx.moveTo(Math.random() * captchaCanvas.width, Math.random() * captchaCanvas.height);
+                    ctx.lineTo(Math.random() * captchaCanvas.width, Math.random() * captchaCanvas.height);
+                    ctx.stroke();
+                }
+
+                for (let i = 0; i < 30; i++) {
+                    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.5})`;
+                    ctx.beginPath();
+                    ctx.arc(Math.random() * captchaCanvas.width, Math.random() * captchaCanvas.height, 2, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+
+            generarCaptcha();
+            reloadBtn.addEventListener('click', function() {
+                generarCaptcha();
+                captchaInput.value = '';
+            });
+
             // Mostrar/ocultar contraseña
             const togglePassword = document.getElementById('toggle-password');
             const passwordInput = document.getElementById('password');
@@ -479,9 +563,10 @@
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
+                const captchaValue = parseInt(captchaInput.value);
                 
                 // Validaciones
-                if (!displayName || !email || !password || !confirmPassword) {
+                if (!displayName || !email || !password || !confirmPassword || !captchaValue) {
                     showAlert('Por favor completa todos los campos', 'error');
                     return;
                 }
@@ -498,6 +583,14 @@
 
                 if (password !== confirmPassword) {
                     showAlert('Las contraseñas no coinciden', 'error');
+                    return;
+                }
+
+                // Validar CAPTCHA
+                if (captchaValue !== captchaAnswer) {
+                    showAlert('Captcha incorrecto. Intenta de nuevo.', 'error');
+                    generarCaptcha();
+                    captchaInput.value = '';
                     return;
                 }
 

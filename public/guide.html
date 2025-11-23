@@ -126,33 +126,61 @@
                 border: 1px solid #eee;
             }
 
+            /* Estilos para el botón de volver */
+            .back-button-container {
+                margin-bottom: 20px;
+                text-align: left;
+            }
+
+            .back-button {
+                background: #6c757d;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s ease;
+                font-size: 0.9rem;
+                cursor: pointer;
+            }
+
+            .back-button:hover {
+                background: #5a6268;
+                transform: translateY(-2px);
+                text-decoration: none;
+                color: white;
+            }
+
             @media (max-width:991px){
                 .container.catalog-wrap main, .container.catalog-wrap aside { flex: 0 0 100%; max-width:100%; }
                 .viewer-inner { min-height:520px; }
                 .thumb-img { width:56px; height:44px; }
                 .step-meta { text-align:left; padding:12px 4px; }
+                
+                .back-button-container {
+                    margin-bottom: 15px;
+                    padding: 0 15px;
+                }
             }
         </style>
 
         <div class="container catalog-wrap">
+            <!-- Botón para volver al menú principal -->
+            <div class="back-button-container">
+                <a href="base.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver al Menú Principal
+                </a>
+            </div>
+
             <div class="row gx-4">
                 <main class="col-lg-8 mb-4">
                     <div class="viewer">
                         <div class="viewer-inner" id="viewerInner">
                             <!-- Los pasos se cargarán dinámicamente con JavaScript -->
-                            <div class="step-card" data-step="1">
-                                <div class="step-media">
-                                    <img src="images/inicio.png" alt="Paso 1" onerror="this.src='https://via.placeholder.com/600x320/e0e0e0/666666?text=Introducción'">
-                                </div>
-                                <div class="step-meta">
-                                    <h4 class="mb-1">Paso 1 — Introducción</h4>
-                                    <p class="small text-muted">Venta de productos de maquillaje. Propósito y ventajas para el cliente.</p>
-                                    <div class="mt-3 d-flex gap-2">
-                                        <a class="btn btn-outline-primary btn-sm" href="products.html">Ir al catálogo</a>
-                                        <button class="btn btn-primary btn-sm">Probar</button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="viewer-controls">
@@ -262,6 +290,7 @@
                     `;
                 }
 
+                // IMPORTANTE: Eliminamos completamente el div que contenía los botones
                 stepCard.innerHTML = `
                     <div class="step-media">
                         <img src="${step.image}" alt="Paso ${stepNumber}" onerror="this.src='https://via.placeholder.com/600x320/e0e0e0/666666?text=Paso+${stepNumber}'">
@@ -270,10 +299,7 @@
                         <h4 class="mb-1">Paso ${stepNumber} — ${step.title}</h4>
                         <p class="small text-muted">${step.desc}</p>
                         ${additionalContent}
-                        <div class="mt-3 d-flex gap-2">
-                            <a class="btn btn-outline-primary btn-sm" href="products.html">Ir al catálogo</a>
-                            <button class="btn btn-primary btn-sm" onclick="testStep(${stepNumber})">Probar</button>
-                        </div>
+                        <!-- EL DIV CON LOS BOTONES HA SIDO ELIMINADO COMPLETAMENTE -->
                     </div>
                 `;
 
@@ -325,35 +351,6 @@
 
             // Inicializar
             updateViewer(1);
-
-            // Función global para probar pasos
-            window.testStep = function(stepNumber) {
-                switch(stepNumber) {
-                    case 1:
-                        window.location.href = 'index.html';
-                        break;
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                        window.location.href = 'products.html';
-                        break;
-                    case 6:
-                        // Ya está en products.html
-                        window.location.href = 'products.html';
-                        break;
-                    case 7:
-                        window.location.href = 'cart.html';
-                        break;
-                    case 8:
-                        window.location.href = 'checkout.html';
-                        break;
-                    case 9:
-                        // Mostrar mensaje sobre cerrar sesión
-                        alert('El botón de cerrar sesión se encuentra en el menú desplegable de la esquina superior derecha (ícono de tres rayas)');
-                        break;
-                }
-            };
         });
     </script>
 </body>
