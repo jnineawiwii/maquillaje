@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MAC Style Makeup Store</title>
-
-    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-   
-    <link rel="stylesheet" href="css/responsive.css">
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <script src="js/firebase-config.js"></script>
 
     <style>
         /* Variables y Reset */
@@ -34,10 +37,9 @@
 
         body {
             font-family: 'Arial', sans-serif;
-<<<<<<< HEAD
-            line-height: var(--base-spacing, 1.6); /* Usar la variable de espaciado */
-=======
+            line-height: var(--base-line-height);
             color: var(--text-color);
+            padding-top: var(--site-header-height);
             font-size: var(--base-font-size);
             background-color: var(--light-bg);
             transition: all 0.3s ease;
@@ -167,17 +169,9 @@
         }
 
         @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.7;
-            }
-
-            100% {
-                opacity: 1;
-            }
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
         }
 
         /* Dropdown - MEJORADO PARA ACCESIBILIDAD */
@@ -191,10 +185,6 @@
             cursor: pointer;
             padding: 8px 12px;
             font-size: 1.2rem;
-<<<<<<< HEAD
-            /* Cambio: Asegurar que el ícono sea visible en todos los temas */
-            color: var(--text-color);
-=======
             border-radius: 4px;
             transition: background 0.3s;
         }
@@ -203,7 +193,6 @@
         .dropdown-btn:focus {
             background: #f5f5f5;
             outline: 2px solid var(--primary-color);
->>>>>>> d04e4beb74f5e4018ce51b0958423420e7bb668d
         }
 
         .dropdown-content {
@@ -312,72 +301,14 @@
 
         /* ========== MODO OSCURO COMPLETO ========== */
         .dark-mode {
-<<<<<<< HEAD
-            --text-color: #f0f0f0; /* Color de texto principal */
-            --light-bg: #1a1a1a;   /* Fondo claro se vuelve oscuro */
-            background-color: var(--light-bg);
-            color: var(--text-color);
-=======
             background-color: #1a1a1a !important;
             color: #f0f0f0 !important;
->>>>>>> d04e4beb74f5e4018ce51b0958423420e7bb668d
         }
 
         .dark-mode .navbar {
             background: #2d2d2d !important;
         }
 
-<<<<<<< HEAD
-        /* 1. Enlaces generales y botones */
-        .dark-mode a {
-            color: var(--primary-color); /* Mantenemos el color primario para enlaces */
-        }
-        .dark-mode a:hover {
-            color: var(--accent-color);
-        }
-
-        /* 2. Controles de formulario */
-        .dark-mode .search-form input,
-        .dark-mode input,
-        .dark-mode textarea {
-            background-color: #3d3d3d;
-            color: var(--text-color);
-            border-color: #555;
-        }
-
-        .dark-mode .search-form input::placeholder,
-        .dark-mode input::placeholder,
-        .dark-mode textarea::placeholder {
-            color: #aaa;
-        }
-
-        /* 3. Contenido de tarjetas y filtros */
-        .dark-mode .product-card {
-            background-color: #2d2d2d;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-        }
-
-        .dark-mode .product-card h3 {
-            color: var(--text-color);
-        }
-
-        .dark-mode .filter-btn {
-            background: #3d3d3d;
-            color: var(--text-color);
-        }
-
-        .dark-mode .filter-btn.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .dark-mode .search-results-info {
-            background-color: #2d2d2d;
-        }
-
-        .dark-mode .dropdown-content {
-            background: #3d3d3d;
-=======
         .dark-mode .nav-menu a {
             color: #f0f0f0 !important;
         }
@@ -397,7 +328,6 @@
         .dark-mode .dropdown-content button:hover,
         .dark-mode .dropdown-content button:focus {
             background: #3d3d3d !important;
->>>>>>> d04e4beb74f5e4018ce51b0958423420e7bb668d
         }
 
         .dark-mode .dropdown-btn:hover,
@@ -514,15 +444,14 @@
         }
 
         /* Hero Section */
-        .hero-video-section {
-            position: relative;
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 150px 0 100px;
             text-align: center;
             margin-top: 70px;
             transition: all 0.3s ease;
         }
-
 
         .hero-content h1 {
             font-size: 3rem;
@@ -719,8 +648,6 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-<<<<<<< HEAD
-=======
 
         .sr-announcement.show {
             opacity: 1;
@@ -785,143 +712,163 @@
                 right: -10px;
             }
         }
->>>>>>> d04e4beb74f5e4018ce51b0958423420e7bb668d
     </style>
 </head>
+<body>
 
-<body style="display: none;">
-
-    <nav class="navbar">
-         <div class="nav-container">
-             <div class="dropdown">
-                    <button class="dropdown-btn">
-                        <i class="fas fa-bars"></i>
-                    </button>
-					<div class="dropdown-content">
-						<!-- 1. Enlaces Principales -->
-						<a href="#guide">Guía de usuario</a>
-						<a href="#products">Productos</a>
-						<a href="#products?category=labios">Labios</a>
-						<a href="#products?category=ojos">Ojos</a>
-						<a href="#products?category=rostro">Rostro</a>
-
-						<!-- 2. Sección Agrupada de Accesibilidad -->
-						<details class="details-container">
-							<summary>Accesibilidad</summary>
-							<div class="accessibility-controls">
-								<!-- 3. Contenido de Accesibilidad -->
-								<details>
-									<summary>Tamaño de lectura</summary>
-									<div class="control-group">
-										<label for="fontSizeRange">
-											<span>Fuente</span>
-											<span id="fontSizeValue">16px</span>
-										</label>
-										<input id="fontSizeRange" type="range" min="12" max="28" step="1" value="16">
-										<button id="fontSizeReset">Restablecer</button>
-									</div>
-								</details>
-								<details ontoggle="if(this.open) inicializarControlesDeEspaciado();">
-									<summary>Espaciado</summary>
-									<div class="control-group">
-										<label for="spacingRange">
-											<span>Interlineado</span>
-											<span id="spacingValue">1rem</span>
-										</label>
-										<input id="spacingRange" type="range" min="0.5" max="2.0" step="0.05" value="1.0">
-										<button id="spacingReset">Restablecer</button>
-									</div>
-								</details>
-								<button id="toggleContrastBtn">Alto contraste</button>
-								<button id="srToggleBtnMenu">Lector</button>
-								<button id="themeToggleBtnMenu">Cambiar a modo oscuro</button>
-							</div>
-						</details>
-
-<<<<<<< HEAD
-						<!-- 4. Enlaces de Autenticación -->
-						<div id="auth-links">
-							<a href="#login">Iniciar Sesión</a>
-							<a href="#register">Registrarse</a>
-						</div>
-					</div>
-             </div>
- 
-             <div class="logo">
-                 <h2><a href="#home">MAC Style</a></h2>
-             </div>
- 
-             <div class="nav-icons-right">
-                 <a href="#login" id="auth-icon" title="Iniciar Sesión">
-                     <i class="far fa-user"></i>
-                 </a>
-                 
-                 <a href="#" id="search-icon-toggle" class="search-icon-btn" title="Buscar">
-                     <i class="fas fa-search"></i>
-                 </a>
-                 
-                 <a href="#cart" class="cart-icon" id="cart-link" title="Carrito">
-                     <i class="fas fa-shopping-bag"></i>
-                     <span class="cart-count">0</span>
-                 </a>
-             </div>
-         </div>
-    </nav>
-
-    
-    <div class="mobile-search-container">
-        <form class="search-form" onsubmit="buscarProductos(event)">
-            <input type="text" id="mobile-search-input" placeholder="Buscar productos...">
-            <button type="submit" aria-label="Buscar"><i class="fas fa-search"></i></button>
-        </form>
-    </div>
-    
-    <!-- Contenedor del buscador (originalmente en la barra de navegación) -->
-    <div class="mobile-search-container">
-        <form class="search-form" onsubmit="buscarProductos(event)">
-            <input type="text" id="mobile-search-input" placeholder="Buscar productos...">
-            <button type="submit" aria-label="Buscar"><i class="fas fa-search"></i></button>
-        </form>
-    </div>
-
-    <main id="main-content">
-        <div id="page-content">
-            <!-- Contenido se cargará dinámicamente aquí -->
+<nav class="navbar">
+    <div class="nav-container">
+        <!-- Logo -->
+        <div class="logo">
+            <h2><a href="#home">MAC Style</a></h2>
         </div>
-    </main>
 
-    <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-    <div id="sr-visual-announcer" class="sr-announcement" aria-hidden="true"></div>
+        <!-- Buscador Mejorado -->
+        <div class="search-container">
+            <form class="search-form" onsubmit="buscarProductos(event)">
+                <input type="text" id="search-input" placeholder="Buscar productos..." value="">
+                <button type="button" class="voice-btn" id="voice-search-btn" title="Búsqueda por voz">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
 
-    <script>
-        // ====================================================================
-        // SISTEMA DE RUTAS
-        // ====================================================================
-        function cargarPagina(pagina, parametros = {}) {
-            const contenido = document.getElementById('page-content');
+        <!-- Menú de navegación -->
+        <ul class="nav-menu">
+            <li id="admin-link" style="display: none;">
+                <a href="#admin">Administración</a>
+            </li>
+            
+            <li><a href="#products">Productos</a></li>
+            <li><a href="#products?category=labios">Labios</a></li>
+            <li><a href="#products?category=ojos">Ojos</a></li>
+            <li><a href="#products?category=rostro">Rostro</a></li>
+            
+            <li id="cart-link" style="display: none;">
+                <a href="#cart" class="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </a>
+            </li>
+            
+            <li id="user-info" style="display: none;">
+                <span class="user-welcome" id="user-welcome"></span>
+            </li>
 
-            switch (pagina) {
-                case 'home':
-                    contenido.innerHTML = `
+            <!-- Menú desplegable - MEJORADO PARA ACCESIBILIDAD -->
+            <li class="dropdown">
+                <button class="dropdown-btn" aria-expanded="false" aria-haspopup="true" aria-label="Menú de opciones">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="dropdown-content" role="menu" aria-labelledby="dropdown-btn">
+                    <a href="guide.html" role="menuitem">Guía de usuario</a>
+                    
+                    <div class="accessibility-controls">
+                        <details>
+                            <summary>Tamaño de lectura</summary>
+                            <div class="control-group">
+                                <label for="fontSizeRange">
+                                    <span>Fuente</span>
+                                    <span id="fontSizeValue">16px</span>
+                                </label>
+                                <input id="fontSizeRange" type="range" min="12" max="28" step="1" value="16">
+                                <button id="fontSizeReset">Restablecer</button>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>Espaciado</summary>
+                            <div class="control-group">
+                                <label for="spacingRange">
+                                    <span>Interlineado</span>
+                                    <span id="spacingValue">1.6</span>
+                                </label>
+                                <input id="spacingRange" type="range" min="1.0" max="3.0" step="0.1" value="1.6">
+                                <button id="spacingReset">Restablecer</button>
+                            </div>
+                        </details>
+
+                        <button id="toggleContrastBtn">Alto contraste</button>
+
+                        <details>
+                            <summary>Escala de grises</summary>
+                            <div class="control-group">
+                                <label for="grayscaleRange">
+                                    <span>Intensidad</span>
+                                    <span id="grayscaleValue">0%</span>
+                                </label>
+                                <input id="grayscaleRange" type="range" min="0" max="100" step="1" value="0">
+                                <button id="grayscaleReset">Restablecer</button>
+                            </div>
+                        </details>
+                    </div>
+
+                    <button id="srToggleBtnMenu" role="menuitem">Navegación por voz</button>
+                    <button id="themeToggleBtnMenu" role="menuitem">Cambiar a modo oscuro</button>
+                    
+                    <div id="auth-links">
+                        <a href="#login" role="menuitem">Iniciar Sesión</a>
+                        <a href="#register" role="menuitem">Registrarse</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main id="main-content">
+    <div id="page-content">
+        <!-- Contenido se cargará dinámicamente aquí -->
+    </div>
+</main>
+
+<div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="sr-visual-announcer" class="sr-announcement" aria-hidden="true"></div>
+
+<script>
+// ====================================================================
+// SISTEMA DE RUTAS
+// ====================================================================
+function cargarPagina(pagina, parametros = {}) {
+    const contenido = document.getElementById('page-content');
+    
+    switch(pagina) {
+        case 'home':
+            contenido.innerHTML = `
                 <section class="hero">
-<<<<<<< HEAD
-                    <div class="hero-frame">
-                        <video autoplay muted loop playsinline class="hero-video">
-                            <source src="videos/video3.mp4" type="video/mp4">
-                            Tu navegador no soporta videos.
-                        </video>
-                        <div class="hero-content">
-                           <a href="#products" class="cta-button">VER COLECCIÓN</a>
+                    <div class="hero-content">
+                        <h1>Bienvenido a MAC Style</h1>
+                        <p>Descubre la mejor colección de maquillaje profesional</p>
+                        <a href="#products" class="cta-button">Ver Productos</a>
+                    </div>
+                </section>
+                <section class="products">
+                    <div class="container">
+                        <h2>Ofertas Especiales</h2>
+                        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 30px;">Hasta 50% de descuento en productos seleccionados</p>
+                        <div class="product-grid">
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <i class="fas fa-gift" style="font-size: 4rem; color: #e91e63;"></i>
+                                </div>
+                                <h3>Kit Maquillaje Completo</h3>
+                                <p>Todo lo que necesitas en un solo kit</p>
+                                <div class="product-price">$599 MXN</div>
+                                <button class="add-to-cart">Ver Oferta</button>
+                            </div>
                         </div>
                     </div>
                 </section>
             `;
-                    break;
-
-                case 'products':
-                    const categoria = parametros.category || 'all';
-                    const terminoBusqueda = parametros.search || '';
-                    contenido.innerHTML = `
+            break;
+            
+        case 'products':
+            const categoria = parametros.category || 'all';
+            const terminoBusqueda = parametros.search || '';
+            contenido.innerHTML = `
                 <section class="products">
                     <div class="container">
                         <h2>Nuestros Productos</h2>
@@ -948,11 +895,11 @@
                     </div>
                 </section>
             `;
-                    cargarProductos(categoria, terminoBusqueda);
-                    break;
-
-                case 'cart':
-                    contenido.innerHTML = `
+            cargarProductos(categoria, terminoBusqueda);
+            break;
+            
+        case 'cart':
+            contenido.innerHTML = `
                 <section class="products">
                     <div class="container">
                         <h2>Tu Carrito de Compras</h2>
@@ -964,113 +911,113 @@
                     </div>
                 </section>
             `;
-                    mostrarCarrito();
-                    break;
-
-                case 'checkout':
-                    contenido.innerHTML = `
+            mostrarCarrito();
+            break;
+            
+        case 'checkout':
+            contenido.innerHTML = `
                 <section class="page-section">
                     <h1>Proceso de Pago</h1>
                     <iframe src="checkout.html" class="page-iframe" title="Proceso de pago Mercado Pago" 
                             style="width: 100%; height: 600px; border: none; border-radius: 8px;"></iframe>
                 </section>
             `;
-                    break;
+            break;
+            
+        case 'guide':
+        case 'login':
+        case 'register':
+            const titleMap = {
+                'guide': 'Guía de Usuario',
+                'login': 'Iniciar Sesión',
+                'register': 'Registrarse'
+            };
+            const pageTitle = titleMap[pagina] || pagina;
 
-                case 'guide':
-                case 'login':
-                case 'register':
-                    const titleMap = {
-                        'guide': 'Guía de Usuario',
-                        'login': 'Iniciar Sesión',
-                        'register': 'Registrarse'
-                    };
-                    const pageTitle = titleMap[pagina] || pagina;
-
-                    contenido.innerHTML = `
+            contenido.innerHTML = `
                 <section class="page-section">
                     <h1>${pageTitle}</h1>
                     <iframe src="${pagina}.html" class="page-iframe" title="${pageTitle}"
                             style="width: 100%; height: 600px; border: none; border-radius: 8px;"></iframe>
                 </section>
             `;
-                    break;
+            break;
+            
+        default:
+            cargarPagina('home');
+    }
+}
 
-                default:
-                    cargarPagina('home');
-            }
+// ====================================================================
+// FUNCIONES DE PRODUCTOS
+// ====================================================================
+async function cargarProductos(categoria = 'all', terminoBusqueda = '') {
+    try {
+        console.log('🔄 Cargando productos...', categoria, terminoBusqueda);
+        
+        if (typeof db === 'undefined') {
+            console.error('❌ Firestore no está inicializado');
+            mostrarProductos([]);
+            return;
         }
-
-        // ====================================================================
-        // FUNCIONES DE PRODUCTOS
-        // ====================================================================
-        async function cargarProductos(categoria = 'all', terminoBusqueda = '') {
-            try {
-                console.log('🔄 Cargando productos...', categoria, terminoBusqueda);
-
-                if (typeof db === 'undefined') {
-                    console.error('❌ Firestore no está inicializado');
-                    mostrarProductos([]);
-                    return;
-                }
-
-                let query = db.collection('products');
-
-                if (categoria !== 'all') {
-                    query = query.where('category', '==', categoria);
-                }
-
-                const snapshot = await query.get();
-                let productos = [];
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    productos.push({
-                        id: doc.id,
-                        name: data.name,
-                        description: data.description,
-                        price: data.price,
-                        category: data.category,
-                        imageUrl: data.image || data.imageUrl
-                    });
-                });
-
-                // Filtrar por término de búsqueda
-                if (terminoBusqueda) {
-                    const termino = terminoBusqueda.toLowerCase();
-                    productos = productos.filter(producto =>
-                        producto.name.toLowerCase().includes(termino) ||
-                        producto.description.toLowerCase().includes(termino) ||
-                        producto.category.toLowerCase().includes(termino)
-                    );
-                }
-
-                console.log(`✅ ${productos.length} productos cargados`);
-                mostrarProductos(productos);
-
-            } catch (error) {
-                console.error('❌ Error cargando productos:', error);
-                mostrarProductos([]);
-            }
+        
+        let query = db.collection('products');
+        
+        if (categoria !== 'all') {
+            query = query.where('category', '==', categoria);
         }
+        
+        const snapshot = await query.get();
+        let productos = [];
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            productos.push({ 
+                id: doc.id, 
+                name: data.name,
+                description: data.description,
+                price: data.price,
+                category: data.category,
+                imageUrl: data.image || data.imageUrl
+            });
+        });
+        
+        // Filtrar por término de búsqueda
+        if (terminoBusqueda) {
+            const termino = terminoBusqueda.toLowerCase();
+            productos = productos.filter(producto => 
+                producto.name.toLowerCase().includes(termino) ||
+                producto.description.toLowerCase().includes(termino) ||
+                producto.category.toLowerCase().includes(termino)
+            );
+        }
+        
+        console.log(`✅ ${productos.length} productos cargados`);
+        mostrarProductos(productos);
+        
+    } catch (error) {
+        console.error('❌ Error cargando productos:', error);
+        mostrarProductos([]);
+    }
+}
 
-        function mostrarProductos(productos) {
-            const grid = document.getElementById('products-grid');
-
-            if (!grid) return;
-
-            if (productos.length === 0) {
-                grid.innerHTML = `
+function mostrarProductos(productos) {
+    const grid = document.getElementById('products-grid');
+    
+    if (!grid) return;
+    
+    if (productos.length === 0) {
+        grid.innerHTML = `
             <div class="no-results">
                 <i class="fas fa-search"></i>
                 <h3>No se encontraron productos</h3>
                 <p>Intenta con otros términos de búsqueda o categorías</p>
             </div>
         `;
-                return;
-            }
-
-            grid.innerHTML = productos.map(producto => `
+        return;
+    }
+    
+    grid.innerHTML = productos.map(producto => `
         <div class="product-card">
             <div class="product-image">
                 <img src="${producto.imageUrl}" 
@@ -1085,30 +1032,13 @@
             </button>
         </div>
     `).join('');
-        }
+}
 
-        function filtrarProductos(categoria) {
-            console.log('🔍 Filtrando por categoría:', categoria);
-            window.location.hash = `products${categoria !== 'all' ? `?category=${categoria}` : ''}`;
-        }
+function filtrarProductos(categoria) {
+    console.log('🔍 Filtrando por categoría:', categoria);
+    window.location.hash = `products${categoria !== 'all' ? `?category=${categoria}` : ''}`;
+}
 
-<<<<<<< HEAD
-        // ====================================================================
-        // BÚSQUEDA POR VOZ - VERSIÓN CORREGIDA
-        // ====================================================================
-        let recognition = null;
-        let isListening = false;
-
-        function inicializarReconocimientoVoz() {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                console.warn('El reconocimiento de voz no es compatible con este navegador');
-                document.getElementById('voice-search-btn').style.display = 'none';
-                return;
-            }
-
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-=======
 // ====================================================================
 // BÚSQUEDA POR VOZ - VERSIÓN CORREGIDA
 // ====================================================================
@@ -1272,140 +1202,85 @@ function toggleReconocimientoVoz() {
         srAnnounce('Error al iniciar el reconocimiento de voz', 'assertive');
     }
 }
->>>>>>> d04e4beb74f5e4018ce51b0958423420e7bb668d
 
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'es-ES';
+// ====================================================================
+// BUSCADOR MEJORADO CON LIMPIEZA
+// ====================================================================
+function buscarProductos(event) {
+    if (event) event.preventDefault();
+    
+    let termino = document.getElementById('search-input').value.trim();
+    
+    // Limpieza adicional por si el usuario escribe con punto
+    termino = termino.replace(/\.$/, '').trim();
+    
+    if (termino) {
+        console.log('🔍 Buscando:', termino);
+        srAnnounce(`Buscando: "${termino}"`);
+        window.location.hash = `products?search=${encodeURIComponent(termino)}`;
+    } else {
+        window.location.hash = 'products';
+    }
+}
 
-            recognition.onstart = function () {
-                isListening = true;
-                document.getElementById('voice-search-btn').classList.add('voice-listening');
-                srAnnounce('Escuchando... Habla ahora');
-            };
+// ====================================================================
+// FUNCIONES DEL CARRITO
+// ====================================================================
+function agregarAlCarrito(id, nombre, precio, categoria = 'General') {
+    let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+    const existe = carrito.find(item => item.id === id);
+    
+    if (existe) {
+        existe.cantidad++;
+    } else {
+        carrito.push({ 
+            id, 
+            nombre, 
+            precio: parseFloat(precio), 
+            cantidad: 1,
+            categoria: categoria
+        });
+    }
+    
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarContadorCarrito();
+    
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+        cartCount.classList.add('bump');
+        setTimeout(() => cartCount.classList.remove('bump'), 200);
+    }
+    
+    srAnnounce(`${nombre} agregado al carrito`);
+}
 
-            recognition.onresult = function (event) {
-                let transcript = event.results[0][0].transcript;
+function actualizarContadorCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+    const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    const cartCountEl = document.querySelector('.cart-count');
+    if (cartCountEl) {
+        cartCountEl.textContent = total;
+    }
+}
 
-                // LIMPIEZA DEL TEXTO - CORRECCIÓN DEL PUNTO
-                transcript = transcript
-                    .trim() // Eliminar espacios al inicio y final
-                    .replace(/\.$/, '') // Eliminar punto final
-                    .replace(/\s+\.$/, '') // Eliminar punto después de espacios
-                    .replace(/\s+/g, ' ') // Normalizar espacios múltiples
+function mostrarCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+    const itemsDiv = document.getElementById('cart-items');
+    const totalDiv = document.getElementById('total-price');
+    
+    if (!itemsDiv || !totalDiv) return;
 
-                console.log('Texto reconocido (limpio):', transcript);
-
-                document.getElementById('search-input').value = transcript;
-                srAnnounce(`Búsqueda por voz: "${transcript}"`);
-
-                // Pequeño delay para que el usuario vea el texto
-                setTimeout(() => {
-                    buscarProductos(new Event('submit'));
-                }, 500);
-            };
-
-            recognition.onerror = function (event) {
-                console.error('Error en reconocimiento de voz:', event.error);
-                srAnnounce('Error en el reconocimiento de voz');
-            };
-
-            recognition.onend = function () {
-                isListening = false;
-                document.getElementById('voice-search-btn').classList.remove('voice-listening');
-            };
-        }
-
-        function toggleReconocimientoVoz() {
-            if (!recognition) {
-                inicializarReconocimientoVoz();
-            }
-
-            if (isListening) {
-                recognition.stop();
-            } else {
-                recognition.start();
-            }
-        }
-
-        // ====================================================================
-        // BUSCADOR MEJORADO CON LIMPIEZA
-        // ====================================================================
-        function buscarProductos(event) {
-            if (event) event.preventDefault();
-
-            let termino = document.getElementById('search-input').value.trim();
-
-            // Limpieza adicional por si el usuario escribe con punto
-            termino = termino.replace(/\.$/, '').trim();
-
-            if (termino) {
-                console.log('🔍 Buscando:', termino);
-                srAnnounce(`Buscando: "${termino}"`);
-                window.location.hash = `products?search=${encodeURIComponent(termino)}`;
-            } else {
-                window.location.hash = 'products';
-            }
-        }
-
-        // ====================================================================
-        // FUNCIONES DEL CARRITO
-        // ====================================================================
-        function agregarAlCarrito(id, nombre, precio, categoria = 'General') {
-            let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-            const existe = carrito.find(item => item.id === id);
-
-            if (existe) {
-                existe.cantidad++;
-            } else {
-                carrito.push({
-                    id,
-                    nombre,
-                    precio: parseFloat(precio),
-                    cantidad: 1,
-                    categoria: categoria
-                });
-            }
-
-            localStorage.setItem('carrito', JSON.stringify(carrito));
-            actualizarContadorCarrito();
-
-            const cartCount = document.querySelector('.cart-count');
-            if (cartCount) {
-                cartCount.classList.add('bump');
-                setTimeout(() => cartCount.classList.remove('bump'), 200);
-            }
-
-            srAnnounce(`${nombre} agregado al carrito`);
-        }
-
-        function actualizarContadorCarrito() {
-            const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-            const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-            const cartCountEl = document.querySelector('.cart-count');
-            if (cartCountEl) {
-                cartCountEl.textContent = total;
-            }
-        }
-
-        function mostrarCarrito() {
-            const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-            const itemsDiv = document.getElementById('cart-items');
-            const totalDiv = document.getElementById('total-price');
-
-            if (!itemsDiv || !totalDiv) return;
-
-            if (carrito.length === 0) {
-                itemsDiv.innerHTML = '<p>Tu carrito está vacío</p>';
-                totalDiv.textContent = '0.00';
-                return;
-            }
-
-            let total = 0;
-            itemsDiv.innerHTML = carrito.map(item => {
-                const subtotal = item.precio * item.cantidad;
-                total += subtotal;
-                return `
+    if (carrito.length === 0) {
+        itemsDiv.innerHTML = '<p>Tu carrito está vacío</p>';
+        totalDiv.textContent = '0.00';
+        return;
+    }
+    
+    let total = 0;
+    itemsDiv.innerHTML = carrito.map(item => {
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+        return `
             <div class="cart-item">
                 <div class="cart-item-info">
                     <h3>${item.nombre}</h3>
@@ -1419,11 +1294,11 @@ function toggleReconocimientoVoz() {
                 </div>
             </div>
         `;
-            }).join('');
+    }).join('');
+    
+    totalDiv.textContent = total.toFixed(2);
+}
 
-<<<<<<< HEAD
-            totalDiv.textContent = total.toFixed(2);
-=======
 function cambiarCantidad(id, nuevaCantidad) {
     if (nuevaCantidad < 1) {
         removerDelCarrito(id);
@@ -1833,70 +1708,10 @@ function srAnnounce(msg, politeness = 'polite', visualFeedback = true) {
             setTimeout(() => {
                 visualEl.classList.remove('show');
             }, 3000);
->>>>>>> d04e4beb74f5e4018ce51b0958423420e7bb668d
         }
+    }
+}
 
-<<<<<<< HEAD
-        function cambiarCantidad(id, nuevaCantidad) {
-            if (nuevaCantidad < 1) {
-                removerDelCarrito(id);
-                return;
-            }
-
-            let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-            const item = carrito.find(item => item.id === id);
-
-            if (item) {
-                item.cantidad = nuevaCantidad;
-                localStorage.setItem('carrito', JSON.stringify(carrito));
-                mostrarCarrito();
-                actualizarContadorCarrito();
-            }
-        }
-
-        function removerDelCarrito(id) {
-            let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-            const itemNombre = carrito.find(item => item.id === id)?.nombre || 'Producto';
-            carrito = carrito.filter(item => item.id !== id);
-            localStorage.setItem('carrito', JSON.stringify(carrito));
-            mostrarCarrito();
-            actualizarContadorCarrito();
-            srAnnounce(`${itemNombre} eliminado del carrito`);
-        }
-
-        function redirigirACheckout() {
-            const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-
-            if (carrito.length === 0) {
-                srAnnounce('Tu carrito está vacío, no puedes pagar');
-                alert('Tu carrito está vacío');
-                return;
-            }
-
-            window.location.hash = 'checkout';
-            srAnnounce('Redirigiendo al proceso de pago');
-        }
-
-        // ====================================================================
-        // FUNCIONES DE ACCESIBILIDAD
-        // ====================================================================
-        function srAnnounce(msg, politeness = 'polite', visualFeedback = true) {
-            const el = document.getElementById('sr-announcer');
-            if (el) {
-                el.setAttribute('aria-live', politeness);
-                el.textContent = '';
-                setTimeout(() => el.textContent = msg, 100);
-            }
-
-            if (visualFeedback) {
-                const visualEl = document.getElementById('sr-visual-announcer');
-                if (visualEl) {
-                    visualEl.textContent = msg;
-                    visualEl.classList.add('show');
-                    setTimeout(() => {
-                        visualEl.classList.remove('show');
-                    }, 3000);
-=======
 // ====================================================================
 // CONTROLES DE ACCESIBILIDAD MEJORADOS
 // ====================================================================
@@ -2104,217 +1919,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             adminLink.style.display = 'block';
                         }
                     });
->>>>>>> d04e4beb74f5e4018ce51b0958423420e7bb668d
                 }
-            }
-        }
-
-        // ====================================================================
-        // CONTROLES DE ACCESIBILIDAD
-        // ====================================================================
-        function inicializarControlesAccesibilidad() {
-            // Tamaño de fuente
-            const fontSizeRange = document.getElementById('fontSizeRange');
-            const fontSizeValue = document.getElementById('fontSizeValue');
-            const fontSizeReset = document.getElementById('fontSizeReset');
-
-            if (fontSizeRange) {
-                fontSizeRange.addEventListener('input', function () {
-                    document.documentElement.style.fontSize = this.value + 'px';
-                    fontSizeValue.textContent = this.value + 'px';
-                });
-
-                fontSizeReset.addEventListener('click', function () {
-                    fontSizeRange.value = 16;
-                    document.documentElement.style.fontSize = '16px';
-                    fontSizeValue.textContent = '16px';
-                    srAnnounce('Tamaño de fuente restablecido');
-                });
-            }
-
-            // Alto contraste
-            const toggleContrastBtn = document.getElementById('toggleContrastBtn');
-
-            if (toggleContrastBtn) {
-                toggleContrastBtn.addEventListener('click', function () {
-                    document.body.classList.toggle('high-contrast');
-                    const isActive = document.body.classList.contains('high-contrast');
-                    this.textContent = isActive ? 'Desactivar alto contraste' : 'Alto contraste';
-                    srAnnounce(isActive ? 'Alto contraste activado' : 'Alto contraste desactivado');
-                });
-            }
-
-            // Escala de grises
-            const grayscaleRange = document.getElementById('grayscaleRange');
-            const grayscaleValue = document.getElementById('grayscaleValue');
-            const grayscaleReset = document.getElementById('grayscaleReset');
-
-            if (grayscaleRange) {
-                grayscaleRange.addEventListener('input', function () {
-                    document.documentElement.style.setProperty('--grayscale-percent', this.value + '%');
-                    grayscaleValue.textContent = this.value + '%';
-                    document.body.classList.toggle('grayscale', this.value > 0);
-                });
-
-                grayscaleReset.addEventListener('click', function () {
-                    grayscaleRange.value = 0;
-                    document.documentElement.style.setProperty('--grayscale-percent', '0%');
-                    grayscaleValue.textContent = '0%';
-                    document.body.classList.remove('grayscale');
-                    srAnnounce('Escala de grises restablecida');
-                });
-            }
-
-            // Lector de pantalla
-            const srToggleBtnMenu = document.getElementById('srToggleBtnMenu');
-            let srEnabled = false;
-
-            if (srToggleBtnMenu) {
-                srToggleBtnMenu.addEventListener('click', function () {
-                    srEnabled = !srEnabled;
-                    this.textContent = srEnabled ? 'Desactivar lector' : 'Lector';
-                    this.classList.toggle('active', srEnabled);
-
-                    if (srEnabled) {
-                        srAnnounce('Lector de pantalla activado', 'assertive');
-                    } else {
-                        srAnnounce('Lector de pantalla desactivado', 'assertive');
-                    }
-                });
-            }
-
-            // Modo oscuro
-            const themeToggleBtnMenu = document.getElementById('themeToggleBtnMenu');
-
-            if (themeToggleBtnMenu) {
-                if (localStorage.getItem('darkMode') === 'true') {
-                    document.body.classList.add('dark-mode');
-                    themeToggleBtnMenu.textContent = 'Cambiar a modo claro';
-                }
-
-                themeToggleBtnMenu.addEventListener('click', function () {
-                    document.body.classList.toggle('dark-mode');
-                    const isDark = document.body.classList.contains('dark-mode');
-                    this.textContent = isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
-                    localStorage.setItem('darkMode', isDark);
-                    srAnnounce(isDark ? 'Modo oscuro activado' : 'Modo claro activado');
-                });
-            }
-        }
-
-        /**
-         * Inicializa los controles de espaciado solo cuando son visibles.
-         * Usa un atributo de datos para evitar adjuntar listeners múltiples veces.
-         */
-        function inicializarControlesDeEspaciado() {
-            const spacingRange = document.getElementById('spacingRange');
-            
-            // Si no existe o ya fue inicializado, no hacer nada.
-            if (!spacingRange || spacingRange.dataset.initialized === 'true') {
-                return;
-            }
-
-            const spacingValue = document.getElementById('spacingValue');
-            const spacingReset = document.getElementById('spacingReset');
-
-            spacingRange.addEventListener('input', function () {
-                document.documentElement.style.setProperty('--base-spacing', this.value + 'rem');
-                spacingValue.textContent = this.value + 'rem';
-            });
-
-            spacingReset.addEventListener('click', function () {
-                spacingRange.value = 1.0;
-                document.documentElement.style.setProperty('--base-spacing', '1rem');
-                spacingValue.textContent = '1rem';
-                srAnnounce('Espaciado restablecido');
-            });
-
-            // Marcar como inicializado para no volver a ejecutar.
-            spacingRange.dataset.initialized = 'true';
-        }
-
-        // ====================================================================
-        // INICIALIZACIÓN
-        // ====================================================================
-        document.addEventListener('DOMContentLoaded', function () {
-            // Sistema de rutas
-            window.addEventListener('hashchange', function () {
-                const hash = window.location.hash.substring(1);
-                let pagina = 'home';
-                let parametros = {};
-
-                if (hash.includes('?')) {
-                    const parts = hash.split('?');
-                    pagina = parts[0];
-                    const searchParams = new URLSearchParams(parts[1]);
-                    parametros = Object.fromEntries(searchParams.entries());
-                } else if (hash) {
-                    pagina = hash;
-                }
-
-                cargarPagina(pagina, parametros);
-            });
-
-            // Cargar página inicial
-            const hash = window.location.hash.substring(1);
-            if (!hash) {
-                cargarPagina('home');
             } else {
-                window.dispatchEvent(new Event('hashchange'));
-            }
-
-            // Inicializar componentes
-            actualizarContadorCarrito();
-            inicializarReconocimientoVoz();
-            inicializarControlesAccesibilidad();
-
-            // Event listeners
-            document.getElementById('voice-search-btn').addEventListener('click', toggleReconocimientoVoz);
-
-            // Auth state
-            if (typeof auth !== 'undefined') {
-                auth.onAuthStateChanged(async (usuario) => {
-                    const authLinks = document.getElementById('auth-links');
-
-                    if (usuario) {
-                        // El usuario ha iniciado sesión.
-                        // 1. Actualizar la UI para mostrar el estado de "logueado".
-                        authLinks.innerHTML = '<a href="#" onclick="logout()">Cerrar Sesión</a>';
-
-                        // 2. Centralizar la redirección aquí.
-                        // Llamamos a verificarRolYRedirigir con 'true' para forzar la redirección
-                        // a la página correcta según el rol del usuario.
-                        if (typeof verificarRolYRedirigir === 'function') {
-                            await verificarRolYRedirigir(usuario.uid, true);
-                        }
-                    } else {
-                        // El usuario ha cerrado sesión o no está logueado.
-                        authLinks.innerHTML = `
+                userInfo.style.display = 'none';
+                cartLink.style.display = 'none';
+                adminLink.style.display = 'none';
+                authLinks.innerHTML = `
                     <a href="#login">Iniciar Sesión</a>
                     <a href="#register">Registrarse</a>
                 `;
-                    }
-                });
             }
         });
+    }
+});
 
-<<<<<<< HEAD
-        function logout() {
-            if (typeof auth !== 'undefined') {
-                auth.signOut();
-            }
-            srAnnounce('Sesión cerrada');
-            window.location.hash = 'home';
-        }
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-
-    <script src="js/firebase-config.js"></script>
-    <script src="js/mobile-interactions.js"></script>
-=======
 function logout() {
     if (typeof auth !== 'undefined') {
         auth.signOut();
@@ -2325,7 +1943,5 @@ function logout() {
 </script>
 <!-- Chatbot Tidio -->
     <script src="//code.tidio.co/cmem7ppxta4iuu1xh0aylze6ttntght0.js" async></script>
->>>>>>> d04e4beb74f5e4018ce51b0958423420e7bb668d
 </body>
-
 </html>
