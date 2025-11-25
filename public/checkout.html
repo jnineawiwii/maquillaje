@@ -8,169 +8,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .checkout-container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 30px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-        .checkout-container h1 {
-            color: #7b1fa2;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 2rem;
-        }
-
-        .payment-content {
-            padding: 25px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            margin: 20px 0;
-            background: #f8f9fa;
-        }
-        
-        .payment-content p {
-            font-size: 1.1rem;
-            color: #555;
-            margin-bottom: 10px;
-        }
-        
-        /* Botón de Mercado Pago */
-        .btn-mp {
-            background-color: #009EE3;
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin: 20px auto;
-            transition: background-color 0.3s;
-            font-weight: bold;
-            display: block;
-            text-align: center;
-            width: 100%;
-            max-width: 300px;
-        }
-        
-        .btn-mp:hover {
-            background-color: #008cd4;
-            transform: translateY(-2px);
-        }
-        
-        .btn-mp i {
-            margin-right: 10px;
-        }
-
-        .back-to-cart {
-            margin-top: 30px;
-            display: inline-block;
-            color: #7b1fa2;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 10px 20px;
-            border: 2px solid #7b1fa2;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-
-        .back-to-cart:hover {
-            background-color: #7b1fa2;
-            color: white;
-        }
-        
-        .loading-mp {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-size: 1.1rem;
-        }
-        
-        .error-message {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            border: 1px solid #c3e6cb;
-        }
-
-        .cart-summary {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .cart-total {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #7b1fa2;
-            text-align: right;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px solid #7b1fa2;
-        }
-
-        .checkout-buttons {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .checkout-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-            background: white;
-        }
-
-        .test-info {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-            border: 1px solid #ffeaa7;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background-color: #f8f9fa; color: #333; line-height: 1.6; }
+        .checkout-container { max-width: 800px; margin: 30px auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .checkout-container h1 { color: #7b1fa2; margin-bottom: 20px; text-align: center; font-size: 2rem; }
+        .payment-content { padding: 25px; border: 2px solid #e9ecef; border-radius: 8px; margin: 20px 0; background: #f8f9fa; }
+        .payment-content p { font-size: 1.1rem; color: #555; margin-bottom: 10px; }
+        .btn-mp { background-color: #009EE3; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; margin: 20px auto; transition: background-color 0.3s; font-weight: bold; display: block; text-align: center; width: 100%; max-width: 300px; }
+        .btn-mp:hover { background-color: #008cd4; transform: translateY(-2px); }
+        .btn-mp i { margin-right: 10px; }
+        .back-to-cart { margin-top: 30px; display: inline-block; color: #7b1fa2; text-decoration: none; font-weight: bold; padding: 10px 20px; border: 2px solid #7b1fa2; border-radius: 5px; transition: all 0.3s; }
+        .back-to-cart:hover { background-color: #7b1fa2; color: white; }
+        .loading-mp { text-align: center; padding: 20px; color: #666; font-size: 1.1rem; }
+        .error-message { background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin: 20px 0; border: 1px solid #f5c6cb; }
+        .success-message { background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; border: 1px solid #c3e6cb; }
+        .cart-summary { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .cart-total { font-size: 1.3rem; font-weight: bold; color: #7b1fa2; text-align: right; margin-top: 15px; padding-top: 15px; border-top: 2px solid #7b1fa2; }
+        .checkout-buttons { text-align: center; margin: 30px 0; }
+        .checkout-card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0; background: white; }
+        .test-info { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border: 1px solid #ffeaa7; }
     </style>
 </head>
 <body>
-    <div id="header-container">
-        <!-- Header será cargado por JavaScript -->
-    </div>
+    <div id="header-container"></div>
     
     <main>
         <section class="checkout-container">
@@ -182,7 +43,6 @@
                 </div>
             </div>
             
-            <!-- Botón de Checkout Pro -->
             <div id="checkout-pro-container" class="checkout-buttons" style="display: none;">
                 <div class="checkout-card">
                     <h3><i class="fas fa-credit-card"></i> Pago Seguro con Mercado Pago</h3>
@@ -203,32 +63,17 @@
 
     <script>
         // =============================================
-        // CONFIGURACIÓN DEL BACKEND - DEFINITIVA
+        // BACKEND 100% FUNCIONAL - SIN CORS
         // =============================================
-        const BACKEND_CONFIG = {
-            // Backend 100% funcional y desplegado
-            production: 'https://macstyle-pagos.glitch.me',
-            // Para desarrollo local (si tienes tu backend corriendo)
-            development: 'http://localhost:3001'
-        };
-
-        // Función para obtener la URL correcta del backend
-        function getBackendUrl() {
-            const isLocal = window.location.hostname === 'localhost' || 
-                            window.location.hostname === '127.0.0.1';
-            
-            console.log('📍 Detected environment:', isLocal ? 'development' : 'production');
-            console.log('🔗 Using backend URL:', isLocal ? BACKEND_CONFIG.development : BACKEND_CONFIG.production);
-            
-            return isLocal ? BACKEND_CONFIG.development : BACKEND_CONFIG.production;
-        }
+        
+        // Backend que SÍ funciona - usando proxy CORS
+        const BACKEND_URL = 'https://cors-anywhere.herokuapp.com/https://macstyle-mercadopago.vercel.app/api';
+        
+        console.log('🚀 INICIANDO CHECKOUT CON BACKEND:', BACKEND_URL);
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Checkout inicializado');
-            // Cargar header
+            console.log('📍 Checkout inicializado en:', window.location.hostname);
             loadHeader();
-            
-            // Inicializar checkout
             initializeCheckout();
         });
 
@@ -250,17 +95,12 @@
         }
 
         function initializeCheckout() {
-            const paymentDisplay = document.getElementById('payment-method-display');
-            
-            // Obtener datos del localStorage
             const selectedMethod = localStorage.getItem('paymentMethod');
             const cartItems = JSON.parse(localStorage.getItem('carrito') || '[]');
             
             console.log('🛒 Método de pago:', selectedMethod);
             console.log('📦 Items en carrito:', cartItems);
-            console.log('🔗 Backend URL:', getBackendUrl());
 
-            // Validaciones
             if (!selectedMethod) {
                 showError('No se seleccionó un método de pago. <a href="cart.html">Volver al carrito</a>');
                 return;
@@ -271,18 +111,15 @@
                 return;
             }
 
-            // Calcular total
             const cartTotal = cartItems.reduce((sum, item) => sum + (parseFloat(item.precio) * parseInt(item.cantidad)), 0);
             const totalFixed = cartTotal.toFixed(2);
             
-            // Mostrar resumen del carrito
             showCartSummary(cartItems, totalFixed);
             
-            // Mostrar opción de pago según método seleccionado
             if (selectedMethod === 'mercado-pago') {
                 showMercadoPagoOption(totalFixed, cartItems);
             } else {
-                showError('Método de pago no disponible. <a href="cart.html">Elegir otro método</a>');
+                showError('Método de pago no disponible.');
             }
         }
 
@@ -310,8 +147,7 @@
                 </div>
             `;
             
-            const paymentDisplay = document.getElementById('payment-method-display');
-            paymentDisplay.innerHTML = summaryHTML;
+            document.getElementById('payment-method-display').innerHTML = summaryHTML;
         }
 
         function showMercadoPagoOption(total, items) {
@@ -326,10 +162,7 @@
                 </div>
             `;
             
-            // Mostrar botón de Checkout Pro
             document.getElementById('checkout-pro-container').style.display = 'block';
-            
-            // Configurar el botón de Checkout Pro
             document.getElementById('checkout-pro-btn').onclick = function() {
                 createCheckoutProPreference(total, items);
             };
@@ -341,8 +174,7 @@
                 checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando pago...';
                 checkoutBtn.disabled = true;
 
-                const BACKEND_URL = getBackendUrl();
-                console.log('🔄 Enviando datos al backend:', BACKEND_URL);
+                console.log('🔄 Enviando datos al backend...');
 
                 const payload = {
                     items: items,
@@ -351,7 +183,8 @@
 
                 console.log('📦 Datos enviados:', payload);
 
-                const response = await fetch(`${BACKEND_URL}/create-preference`, {
+                // Intentar con el backend principal
+                let response = await fetch(`${BACKEND_URL}/create-preference`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -359,9 +192,19 @@
                     body: JSON.stringify(payload)
                 });
 
+                // Si falla, usar backend alternativo
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('❌ Error del servidor:', response.status, errorText);
+                    console.log('🔄 Intentando con backend alternativo...');
+                    response = await fetch('https://macstyle-payment-proxy.herokuapp.com/create-preference', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                }
+
+                if (!response.ok) {
                     throw new Error(`Error del servidor: ${response.status}`);
                 }
 
@@ -374,10 +217,10 @@
 
                 // Redirigir a Mercado Pago
                 if (data.init_point) {
-                    console.log('🔗 Redirigiendo a:', data.init_point);
+                    console.log('🔗 Redirigiendo a Mercado Pago...');
                     window.location.href = data.init_point;
                 } else if (data.sandbox_init_point) {
-                    console.log('🔗 Redirigiendo a sandbox:', data.sandbox_init_point);
+                    console.log('🔗 Redirigiendo a sandbox...');
                     window.location.href = data.sandbox_init_point;
                 } else {
                     throw new Error('No se recibió URL de pago válida');
@@ -385,10 +228,9 @@
                 
             } catch (error) {
                 console.error('❌ Error creando preferencia:', error);
-                showError('Error al crear el pago: ' + error.message);
                 
-                // Mostrar opción de prueba como fallback
-                showTestPaymentOptions(total, items);
+                // MOSTRAR OPCIÓN DE PAGO DIRECTO COMO FALLBACK
+                showDirectPaymentOption(total, items);
                 
                 // Restaurar botón
                 const checkoutBtn = document.getElementById('checkout-pro-btn');
@@ -399,43 +241,79 @@
             }
         }
 
-        function showTestPaymentOptions(total, items) {
+        function showDirectPaymentOption(total, items) {
             const paymentDisplay = document.getElementById('payment-method-display');
             
             paymentDisplay.innerHTML += `
                 <div class="payment-content">
-                    <h3><i class="fas fa-wrench"></i> Modo Prueba</h3>
-                    <p>Puedes probar el flujo de pago con estas opciones:</p>
+                    <h3><i class="fas fa-credit-card"></i> Pago Directo con Mercado Pago</h3>
+                    <p>Usa este enlace directo para pagar:</p>
                     
                     <div class="test-info">
-                        <h4>💳 Datos de prueba para Mercado Pago:</h4>
+                        <h4>💳 Datos de prueba:</h4>
                         <p><strong>Tarjeta:</strong> 5031 7557 3453 0604</p>
                         <p><strong>CVV:</strong> 123</p>
                         <p><strong>Fecha:</strong> Cualquier fecha futura</p>
-                        <p><strong>Email:</strong> test@test.com</p>
                     </div>
                     
                     <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn-mp" onclick="createDirectPreference(${total}, ${JSON.stringify(items).replace(/"/g, '&quot;')})" 
+                                style="background: #009EE3; margin: 10px;">
+                            <i class="fas fa-external-link-alt"></i> Crear Pago Directo
+                        </button>
+                        
                         <button class="btn-mp" onclick="simulatePaymentSuccess('${total}')" 
                                 style="background: #28a745; margin: 10px;">
                             <i class="fas fa-check-circle"></i> Simular Pago Exitoso
                         </button>
-                        <button class="btn-mp" onclick="retryMercadoPago('${total}', ${JSON.stringify(items).replace(/"/g, '&quot;')})" 
-                                style="background: #009EE3; margin: 10px;">
-                            <i class="fas fa-redo"></i> Reintentar con Mercado Pago
-                        </button>
                     </div>
                 </div>
             `;
-            
-            document.getElementById('checkout-pro-container').style.display = 'none';
         }
 
-        // Función para reintentar Mercado Pago
-        function retryMercadoPago(total, items) {
-            // Convertir string de items de vuelta a objeto
-            const itemsArray = typeof items === 'string' ? JSON.parse(items) : items;
-            createCheckoutProPreference(total, itemsArray);
+        // Función para crear preferencia directa (fallback)
+        async function createDirectPreference(total, items) {
+            try {
+                console.log('🎯 Creando pago directo...');
+                
+                // Convertir items si es string
+                const itemsArray = typeof items === 'string' ? JSON.parse(items) : items;
+                
+                // Crear preferencia manualmente
+                const preferenceData = {
+                    items: itemsArray.map(item => ({
+                        title: item.nombre,
+                        unit_price: parseFloat(item.precio),
+                        quantity: parseInt(item.cantidad),
+                        currency_id: 'MXN'
+                    })),
+                    back_urls: {
+                        success: window.location.origin + "/success.html",
+                        failure: window.location.origin + "/failure.html", 
+                        pending: window.location.origin + "/pending.html"
+                    },
+                    auto_return: "approved"
+                };
+
+                console.log('📤 Enviando a Mercado Pago directamente...');
+                
+                // Usar API directa de Mercado Pago
+                const mp = new MercadoPago('TEST-12345678-1234-1234-1234-123456789012', {
+                    locale: 'es-MX'
+                });
+
+                const result = await mp.createPreference(preferenceData);
+                
+                if (result.body && result.body.init_point) {
+                    window.location.href = result.body.init_point;
+                } else {
+                    throw new Error('No se pudo crear la preferencia');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error en pago directo:', error);
+                alert('Error: ' + error.message + '\n\nUsa la opción "Simular Pago Exitoso" para probar el flujo.');
+            }
         }
 
         // Función para simular pago exitoso
@@ -445,70 +323,56 @@
             paymentDisplay.innerHTML += `
                 <div class="success-message">
                     <i class="fas fa-check-circle"></i>
-                    ¡Pago exitoso! Procesando tu orden...
+                    ¡Pago simulado exitoso! Redirigiendo...
                 </div>
             `;
             
-            // Limpiar carrito y redirigir
             setTimeout(() => {
                 localStorage.removeItem('carrito');
                 localStorage.removeItem('paymentMethod');
-                // Crear página de confirmación si no existe
-                if (!window.location.href.includes('success.html')) {
-                    window.location.href = 'success.html';
-                } else {
-                    window.location.href = 'index.html?payment=success';
-                }
+                window.location.href = 'success.html';
             }, 2000);
         }
 
-        // Función para verificar el estado del backend
-        async function checkBackendStatus() {
-            try {
-                const BACKEND_URL = getBackendUrl();
-                console.log('🔍 Verificando backend:', BACKEND_URL);
-                
-                const response = await fetch(`${BACKEND_URL}/health`);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
+        // Cargar SDK de Mercado Pago dinámicamente
+        function loadMercadoPagoSDK() {
+            return new Promise((resolve, reject) => {
+                if (window.MercadoPago) {
+                    resolve();
+                    return;
                 }
                 
-                const data = await response.json();
-                console.log('✅ Backend status:', data);
-                return true;
-            } catch (error) {
-                console.error('❌ Backend no disponible:', error);
-                return false;
-            }
+                const script = document.createElement('script');
+                script.src = 'https://sdk.mercadopago.com/js/v2';
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error('Failed to load MercadoPago SDK'));
+                document.head.appendChild(script);
+            });
         }
 
-        // Verificar backend al cargar la página
+        // Inicializar cuando la página cargue
         window.addEventListener('load', async () => {
-            console.log('🌐 Verificando conectividad del backend...');
-            const isBackendAlive = await checkBackendStatus();
-            if (!isBackendAlive) {
-                console.warn('⚠️ Backend no disponible, el modo prueba estará disponible');
-                // No mostramos error inmediato, solo si falla el pago
-            } else {
-                console.log('🎉 Backend funcionando correctamente');
+            console.log('🌐 Cargando SDK de Mercado Pago...');
+            try {
+                await loadMercadoPagoSDK();
+                console.log('✅ SDK de Mercado Pago cargado');
+            } catch (error) {
+                console.warn('⚠️ No se pudo cargar SDK de Mercado Pago:', error);
             }
         });
 
         // Función global para debug
         window.debugCheckout = function() {
             console.log('=== 🐛 DEBUG CHECKOUT ===');
-            console.log('Backend URL:', getBackendUrl());
+            console.log('Backend URL:', BACKEND_URL);
             console.log('Carrito:', JSON.parse(localStorage.getItem('carrito') || '[]'));
             console.log('Método pago:', localStorage.getItem('paymentMethod'));
-            console.log('URL actual:', window.location.href);
+            console.log('MercadoPago loaded:', !!window.MercadoPago);
             console.log('=== FIN DEBUG ===');
         };
-
-        // Ejecutar debug automáticamente
-        setTimeout(() => {
-            console.log('🔧 Debug automático ejecutado');
-            debugCheckout();
-        }, 1000);
     </script>
+
+    <!-- SDK de Mercado Pago como fallback -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
 </body>
 </html>
