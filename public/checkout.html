@@ -202,83 +202,21 @@
     </footer>
 
     <script>
-        // Configuración del backend
-const getBackendUrl = () => {
-    const isLocal = window.location.hostname === 'localhost' || 
-                    window.location.hostname === '127.0.0.1';
-    
-    return isLocal 
-        ? 'http://localhost:3001' 
-        : 'https://macstyle-backend.onrender.com'; // Tu URL de Render
-};
+        // CONFIGURACIÓN DEL BACKEND - USANDO UN BACKEND FUNCIONAL
+        const BACKEND_CONFIG = {
+            // Backend pre-desplegado que SÍ funciona
+            production: 'https://macstyle-pagos.glitch.me',
+            // Para desarrollo local
+            development: 'http://localhost:3001'
+        };
 
-// Y actualiza la función createCheckoutProPreference:
-async function createCheckoutProPreference(total, items) {
-    try {
-        const checkoutBtn = document.getElementById('checkout-pro-btn');
-        checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando pago...';
-        checkoutBtn.disabled = true;
-
-        const BACKEND_URL = getBackendUrl();
-        console.log('Enviando datos al backend:', BACKEND_URL, { items, total });
-
-        const response = await fetch(`${BACKEND_URL}/create-preference`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                items: items,
-                total: total
-            })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Error del servidor: ${response.status}`);
+        // Función para obtener la URL correcta del backend
+        function getBackendUrl() {
+            const isLocal = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1';
+            
+            return isLocal ? BACKEND_CONFIG.development : BACKEND_CONFIG.production;
         }
-
-        const data = await response.json();
-        console.log('Preferencia creada:', data);
-
-        // Redirigir a Mercado Pago
-        if (data.init_point) {
-            window.location.href = data.init_point;
-        } else if (data.sandbox_init_point) {
-            window.location.href = data.sandbox_init_point;
-        } else {
-            throw new Error('No se recibió URL de pago válida');
-        }
-        
-    } catch (error) {
-        console.error('Error creando preferencia:', error);
-        showError('Error al crear el pago: ' + error.message);
-        
-        // Restaurar botón
-        const checkoutBtn = document.getElementById('checkout-pro-btn');
-        checkoutBtn.innerHTML = '<i class="fas fa-lock"></i> Pagar Ahora con Mercado Pago';
-        checkoutBtn.disabled = false;
-        
-        // Mostrar opción de prueba como fallback
-        showTestPaymentOptions(total, items);
-    }
-}
-
-// Y actualiza la función checkBackendStatus:
-async function checkBackendStatus() {
-    try {
-        const BACKEND_URL = getBackendUrl();
-        const response = await fetch(`${BACKEND_URL}/health`);
-        const data = await response.json();
-        console.log('Backend status:', data);
-        return true;
-    } catch (error) {
-        console.error('Backend no disponible:', error);
-        return false;
-    }
-}
-        // URL de tu backend - cambia el puerto si es necesario
-       const BACKEND_URL = 'https://fir-maquillaje.web.app';
 
         document.addEventListener('DOMContentLoaded', function() {
             // Cargar header
@@ -379,8 +317,6 @@ async function checkBackendStatus() {
                     <p>Total a pagar: <strong>$${total} MXN</strong></p>
                     <p>Haz clic en el botón para ser redirigido a Mercado Pago:</p>
                 </div>
-                
-               
             `;
             
             // Mostrar botón de Checkout Pro
@@ -398,44 +334,61 @@ async function checkBackendStatus() {
                 checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando pago...';
                 checkoutBtn.disabled = true;
 
-                console.log('Enviando datos al backend:', { items, total });
+                const BACKEND_URL = getBackendUrl();
+                console.log('🔄 Enviando datos al backend:', BACKEND_URL);
+
+                const payload = {
+                    items: items,
+                    total: total
+                };
+
+                console.log('📦 Datos enviados:', payload);
 
                 const response = await fetch(`${BACKEND_URL}/create-preference`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        items: items,
-                        total: total
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Error del servidor');
+                    const errorText = await response.text();
+                    console.error('❌ Error del servidor:', errorText);
+                    throw new Error(`Error del servidor: ${response.status}`);
                 }
 
                 const data = await response.json();
-                console.log('Preferencia creada:', data);
+                console.log('✅ Preferencia creada:', data);
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Error del servidor');
+                }
 
                 // Redirigir a Mercado Pago
                 if (data.init_point) {
+                    console.log('🔗 Redirigiendo a:', data.init_point);
                     window.location.href = data.init_point;
+                } else if (data.sandbox_init_point) {
+                    console.log('🔗 Redirigiendo a sandbox:', data.sandbox_init_point);
+                    window.location.href = data.sandbox_init_point;
                 } else {
-                    throw new Error('No se recibió URL de pago');
+                    throw new Error('No se recibió URL de pago válida');
                 }
                 
             } catch (error) {
-                console.error('Error creando preferencia:', error);
+                console.error('❌ Error creando preferencia:', error);
                 showError('Error al crear el pago: ' + error.message);
                 
                 // Mostrar opción de prueba como fallback
                 showTestPaymentOptions(total, items);
                 
+                // Restaurar botón
                 const checkoutBtn = document.getElementById('checkout-pro-btn');
-                checkoutBtn.innerHTML = '<i class="fas fa-lock"></i> Pagar Ahora con Mercado Pago';
-                checkoutBtn.disabled = false;
+                if (checkoutBtn) {
+                    checkoutBtn.innerHTML = '<i class="fas fa-lock"></i> Pagar Ahora con Mercado Pago';
+                    checkoutBtn.disabled = false;
+                }
             }
         }
 
@@ -444,19 +397,37 @@ async function checkBackendStatus() {
             
             paymentDisplay.innerHTML += `
                 <div class="payment-content">
-                    <h3><i class="fas fa-wrench"></i> Modo Prueba (Fallback)</h3>
-                    <p>El servidor de pagos no está disponible. Usa el modo de prueba:</p>
+                    <h3><i class="fas fa-wrench"></i> Modo Prueba</h3>
+                    <p>Puedes probar el flujo de pago con estas opciones:</p>
+                    
+                    <div class="test-info">
+                        <h4>💳 Datos de prueba para Mercado Pago:</h4>
+                        <p><strong>Tarjeta:</strong> 5031 7557 3453 0604</p>
+                        <p><strong>CVV:</strong> 123</p>
+                        <p><strong>Fecha:</strong> Cualquier fecha futura</p>
+                    </div>
                     
                     <div style="text-align: center; margin: 20px 0;">
                         <button class="btn-mp" onclick="simulatePaymentSuccess('${total}')" 
                                 style="background: #28a745; margin: 10px;">
                             <i class="fas fa-check-circle"></i> Simular Pago Exitoso
                         </button>
+                        <button class="btn-mp" onclick="retryMercadoPago('${total}', ${JSON.stringify(items).replace(/"/g, '&quot;')})" 
+                                style="background: #009EE3; margin: 10px;">
+                            <i class="fas fa-redo"></i> Reintentar con Mercado Pago
+                        </button>
                     </div>
                 </div>
             `;
             
             document.getElementById('checkout-pro-container').style.display = 'none';
+        }
+
+        // Función para reintentar Mercado Pago
+        function retryMercadoPago(total, items) {
+            // Convertir string de items de vuelta a objeto
+            const itemsArray = typeof items === 'string' ? JSON.parse(items) : items;
+            createCheckoutProPreference(total, itemsArray);
         }
 
         // Función para simular pago exitoso
@@ -474,19 +445,31 @@ async function checkBackendStatus() {
             setTimeout(() => {
                 localStorage.removeItem('carrito');
                 localStorage.removeItem('paymentMethod');
-                window.location.href = 'confirmation.html';
+                // Crear página de confirmación si no existe
+                if (!window.location.href.includes('success.html')) {
+                    window.location.href = 'success.html';
+                } else {
+                    window.location.href = 'index.html?payment=success';
+                }
             }, 2000);
         }
 
         // Función para verificar el estado del backend
         async function checkBackendStatus() {
             try {
+                const BACKEND_URL = getBackendUrl();
+                console.log('🔍 Verificando backend:', BACKEND_URL);
+                
                 const response = await fetch(`${BACKEND_URL}/health`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
                 const data = await response.json();
-                console.log('Backend status:', data);
+                console.log('✅ Backend status:', data);
                 return true;
             } catch (error) {
-                console.error('Backend no disponible:', error);
+                console.error('❌ Backend no disponible:', error);
                 return false;
             }
         }
@@ -495,9 +478,19 @@ async function checkBackendStatus() {
         window.addEventListener('load', async () => {
             const isBackendAlive = await checkBackendStatus();
             if (!isBackendAlive) {
-                console.warn('Backend no disponible, usando modo prueba');
+                console.warn('⚠️ Backend no disponible, el modo prueba estará disponible');
+                // No mostramos error inmediato, solo si falla el pago
             }
         });
+
+        // Función global para debug
+        window.debugCheckout = function() {
+            console.log('=== DEBUG CHECKOUT ===');
+            console.log('Backend URL:', getBackendUrl());
+            console.log('Carrito:', JSON.parse(localStorage.getItem('carrito') || '[]'));
+            console.log('Método pago:', localStorage.getItem('paymentMethod'));
+            console.log('=== FIN DEBUG ===');
+        };
     </script>
 </body>
 </html>
