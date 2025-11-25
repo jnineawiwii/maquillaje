@@ -1,77 +1,475 @@
 <!DOCTYPE html>
-<html lang="es" class="login-html">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrarse - MAC Style Makeup Store</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/custom.css?v=2.0">
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root{
+            --base-font-size: 16px;
+            --base-line-height: 1.5;
+            --base-spacing: 1rem;
+            --site-header-height: 70px;
+        }
+        
+        html {
+            font-size: var(--base-font-size);
+            line-height: var(--base-spacing);
+        }
+
+        body {
+            padding-top: var(--site-header-height);
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--site-header-height);
+            z-index: 1050;
+            background: linear-gradient(90deg,#040210 0%, #0b0212 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 8px 20px;
+        }
+
+        .nav-brand { 
+            margin-right: 12px; 
+            font-weight:700; 
+            color:#fff; 
+            text-decoration:none; 
+            font-size:1.25rem; 
+        }
+        
+        .search-container { 
+            flex: 1 1 480px; 
+            margin: 0 20px; 
+        }
+        
+        .search-form {
+            display: flex;
+            width: 100%;
+        }
+        
+        .search-form input {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .search-form button {
+            background: #7b1fa2;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        
+        .nav-menu { 
+            display:flex; 
+            gap:18px; 
+            align-items:center; 
+            margin-left:auto; 
+            list-style:none; 
+            padding:0; 
+            margin:0; 
+        }
+        
+        .nav-menu li { 
+            display:inline-flex; 
+            align-items:center; 
+        }
+        
+        .nav-menu a, .nav-menu span { 
+            color:#fff; 
+            text-decoration:none; 
+            padding:6px 8px; 
+        }
+
+        .dropdown { position: relative; }
+        
+        .dropdown-btn { 
+            background: none; 
+            border: none; 
+            color: white; 
+            cursor: pointer; 
+            font-size: 1.2rem; 
+            padding: 5px;
+        }
+        
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            right: 0; 
+            top: 100%; 
+            background: #1a1a1a; 
+            min-width: 220px; 
+            border-radius: 8px; 
+            padding: 10px 0; 
+            z-index: 1100;
+        }
+        
+        .dropdown.show .dropdown-content { display: block; }
+        
+        .dropdown-content a, .dropdown-content button { 
+            display: block; 
+            width: 100%; 
+            text-align: left; 
+            background: none; 
+            border: none; 
+            color: white; 
+            padding: 8px 16px; 
+            text-decoration: none; 
+            cursor: pointer; 
+        }
+        
+        .dropdown-content a:hover, .dropdown-content button:hover { background: #333; }
+
+        .site-footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        /* Estilos específicos para el formulario de registro */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - var(--site-header-height) - 80px);
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .auth-form {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #7b1fa2;
+            box-shadow: 0 0 0 3px rgba(123, 31, 162, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: #7b1fa2;
+        }
+
+        .captcha-container { 
+            position: relative; 
+            margin-bottom: 20px; 
+        }
+        
+        #captcha-canvas { 
+            border-radius: 8px; 
+            display: block; 
+            margin-bottom: 10px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+        }
+        
+        #reload-captcha { 
+            position: absolute; 
+            top: 5px; 
+            right: 5px; 
+            background: rgba(123,31,162,0.2); 
+            border: none; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            transition: background 0.3s; 
+        }
+        
+        #reload-captcha:hover { 
+            background: rgba(123,31,162,0.4); 
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            position: relative;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(123, 31, 162, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .auth-links a {
+            color: #7b1fa2;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .auth-links a:hover {
+            color: #6a1b9a;
+            text-decoration: underline;
+        }
+
+        .auth-separator {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .auth-separator span {
+            background: white;
+            padding: 0 15px;
+            color: #666;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-separator:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: #e1e5e9;
+            z-index: 0;
+        }
+
+        .btn-google {
+            background: white;
+            color: #333;
+            border: 2px solid #e1e5e9;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-google:hover {
+            border-color: #db4437;
+            box-shadow: 0 4px 12px rgba(219, 68, 55, 0.15);
+        }
+
+        .btn-google:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-error {
+            background: #fee;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-success {
+            background: #eff;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .auth-form {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .auth-form h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
-<body class="login-page">
+<body>
+    <!-- Header fijo -->
+  
 
-    <div class="login-container">
-        <h2>Crear Cuenta</h2>
-        
-        <!-- Mensajes de alerta -->
-        <div id="alert-container"></div>
-        
-        <form id="register-form">
-            <div class="form-group">
-                <label for="displayName">Nombre completo:</label>
-                <input type="text" id="displayName" name="displayName" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Correo electrónico:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required minlength="6">
-                <div class="password-toggle">
-                    <i class="fas fa-eye" id="toggle-password"></i>
+    <main id="main-content">
+        <div class="auth-container">
+            <div class="auth-form">
+                <h2>Crear Cuenta</h2>
+                
+                <!-- Mensajes de alerta -->
+                <div id="alert-container"></div>
+                
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="displayName">Nombre completo:</label>
+                        <input type="text" id="displayName" name="displayName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Correo electrónico:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Contraseña:</label>
+                        <input type="password" id="password" name="password" required minlength="6">
+                        <div class="password-toggle">
+                            <i class="fas fa-eye" id="toggle-password"></i>
+                        </div>
+                        <small>Mínimo 6 caracteres</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar contraseña:</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <div class="password-toggle">
+                            <i class="fas fa-eye" id="toggle-confirm-password"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group captcha-container">
+                        <canvas id="captcha-canvas" width="200" height="60"></canvas>
+                        <button type="button" id="reload-captcha"><i class="fas fa-sync-alt"></i></button>
+                        <input type="text" id="captcha-input" placeholder="Resuelve el captcha" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary" id="register-btn">
+                        <span id="register-text">Crear Cuenta</span>
+                        <div id="register-spinner" class="spinner" style="display: none;"></div>
+                    </button>
+                </form>
+                
+                <div class="auth-links">
+                    <p>¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a></p>
                 </div>
-                <small>Mínimo 6 caracteres</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="confirmPassword">Confirmar contraseña:</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
-                <div class="password-toggle">
-                    <i class="fas fa-eye" id="toggle-confirm-password"></i>
+
+                <!-- Separador -->
+                <div class="auth-separator">
+                    <span>o</span>
                 </div>
+
+                <!-- Registro con Google -->
+                <button type="button" class="btn-google" id="google-register-btn">
+                    <i class="fab fa-google"></i>
+                    Registrarse con Google
+                </button>
             </div>
-            
-            <button type="submit" class="btn-primary" id="register-btn">
-                <span id="register-text">Crear Cuenta</span>
-                <div id="register-spinner" class="spinner" style="display: none;"></div>
-            </button>
-        </form>
-        
-        <div class="auth-links">
-            <p>¿Ya tienes cuenta? <a href="#login">Inicia sesión aquí</a></p>
         </div>
+    </main>
 
-        <!-- Separador -->
-        <div class="auth-separator">
-            <span>o</span>
-        </div>
-
-        <!-- Registro con Google -->
-        <button type="button" class="btn-google" id="google-register-btn">
-            <i class="fab fa-google"></i>
-            Registrarse con Google
-        </button>
-    </div>
-
-    <footer class="site-footer" style="position: absolute; bottom: 10px; width: 100%; text-align: center; color: white; z-index: 10;">
+    <footer class="site-footer">
         <p>© 2023 MAC Style Makeup Store. Proyecto estudiantil sin derechos de autor.</p>
     </footer>
 
@@ -82,6 +480,55 @@
             // Inicializar Firebase
             const auth = firebase.auth();
             const db = firebase.firestore();
+
+            // CAPTCHA
+            const captchaCanvas = document.getElementById('captcha-canvas');
+            const captchaInput = document.getElementById('captcha-input');
+            const reloadBtn = document.getElementById('reload-captcha');
+            const ctx = captchaCanvas.getContext('2d');
+            let captchaAnswer = 0;
+
+            function generarCaptcha() {
+                ctx.clearRect(0, 0, captchaCanvas.width, captchaCanvas.height);
+
+                const num1 = Math.floor(Math.random() * 20) + 1;
+                const num2 = Math.floor(Math.random() * 20) + 1;
+                captchaAnswer = num1 + num2;
+                const captchaText = `${num1} + ${num2} = ?`;
+
+                const grad = ctx.createLinearGradient(0, 0, captchaCanvas.width, captchaCanvas.height);
+                grad.addColorStop(0, '#6a11cb');
+                grad.addColorStop(1, '#2575fc');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, captchaCanvas.width, captchaCanvas.height);
+
+                ctx.font = '28px Arial';
+                ctx.fillStyle = '#fff';
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+                ctx.fillText(captchaText, captchaCanvas.width / 2, captchaCanvas.height / 2);
+
+                for (let i = 0; i < 5; i++) {
+                    ctx.strokeStyle = `rgba(255,255,255,${Math.random() * 0.3})`;
+                    ctx.beginPath();
+                    ctx.moveTo(Math.random() * captchaCanvas.width, Math.random() * captchaCanvas.height);
+                    ctx.lineTo(Math.random() * captchaCanvas.width, Math.random() * captchaCanvas.height);
+                    ctx.stroke();
+                }
+
+                for (let i = 0; i < 30; i++) {
+                    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.5})`;
+                    ctx.beginPath();
+                    ctx.arc(Math.random() * captchaCanvas.width, Math.random() * captchaCanvas.height, 2, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+
+            generarCaptcha();
+            reloadBtn.addEventListener('click', function() {
+                generarCaptcha();
+                captchaInput.value = '';
+            });
 
             // Mostrar/ocultar contraseña
             const togglePassword = document.getElementById('toggle-password');
@@ -116,9 +563,10 @@
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
+                const captchaValue = parseInt(captchaInput.value);
                 
                 // Validaciones
-                if (!displayName || !email || !password || !confirmPassword) {
+                if (!displayName || !email || !password || !confirmPassword || !captchaValue) {
                     showAlert('Por favor completa todos los campos', 'error');
                     return;
                 }
@@ -135,6 +583,14 @@
 
                 if (password !== confirmPassword) {
                     showAlert('Las contraseñas no coinciden', 'error');
+                    return;
+                }
+
+                // Validar CAPTCHA
+                if (captchaValue !== captchaAnswer) {
+                    showAlert('Captcha incorrecto. Intenta de nuevo.', 'error');
+                    generarCaptcha();
+                    captchaInput.value = '';
                     return;
                 }
 
@@ -170,7 +626,7 @@
                     
                     // Redirigir después de un breve delay
                     setTimeout(() => {
-                        window.top.location.href = 'index.html#login';
+                        window.location.href = 'login.html';
                     }, 3000);
 
                 } catch (error) {
@@ -205,26 +661,39 @@
                 }
             });
 
-            // Registro con Google
+            // Registro con Google - Función mejorada
             const googleRegisterBtn = document.getElementById('google-register-btn');
+            
             googleRegisterBtn.addEventListener('click', async function() {
                 try {
+                    // Crear proveedor de Google
                     const provider = new firebase.auth.GoogleAuthProvider();
+                    
+                    // Configurar scopes adicionales si es necesario
                     provider.addScope('email');
                     provider.addScope('profile');
+                    
+                    // Configurar parámetros personalizados
+                    provider.setCustomParameters({
+                        prompt: 'select_account'
+                    });
 
                     // Mostrar loading
                     googleRegisterBtn.disabled = true;
-                    googleRegisterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+                    googleRegisterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando con Google...';
 
+                    // Iniciar autenticación con popup
                     const result = await auth.signInWithPopup(provider);
                     const user = result.user;
 
-                    // Verificar si es un usuario nuevo
+                    // Verificar si es un usuario nuevo o existente
                     const userDoc = await db.collection('users').doc(user.uid).get();
                     
-                    if (!userDoc.exists) {
-                        // Crear documento de usuario en Firestore
+                    if (userDoc.exists) {
+                        // Usuario existente - iniciar sesión
+                        showAlert(`¡Bienvenido/a de nuevo, ${user.displayName || user.email}!`, 'success');
+                    } else {
+                        // Usuario nuevo - crear registro en Firestore
                         await db.collection('users').doc(user.uid).set({
                             email: user.email,
                             displayName: user.displayName,
@@ -232,24 +701,37 @@
                             role: 'customer',
                             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                             provider: 'google',
-                            emailVerified: true
+                            emailVerified: user.emailVerified
                         });
+                        
+                        showAlert(`¡Cuenta creada exitosamente! Bienvenido/a, ${user.displayName || user.email}`, 'success');
                     }
-
-                    showAlert(`¡Bienvenido/a, ${user.displayName || user.email}!`, 'success');
                     
+                    // Redirigir después de un breve delay
                     setTimeout(() => {
-                        window.top.location.href = 'index.html#home';
+                        window.location.href = 'index.html';
                     }, 1500);
 
                 } catch (error) {
                     console.error('Error en registro con Google:', error);
                     
                     let errorMessage = 'Error al registrarse con Google';
-                    if (error.code === 'auth/popup-closed-by-user') {
-                        errorMessage = 'El registro fue cancelado';
-                    } else if (error.code === 'auth/popup-blocked') {
-                        errorMessage = 'El popup fue bloqueado. Por favor permite popups para este sitio';
+                    
+                    switch (error.code) {
+                        case 'auth/popup-closed-by-user':
+                            errorMessage = 'El registro fue cancelado';
+                            break;
+                        case 'auth/popup-blocked':
+                            errorMessage = 'El popup fue bloqueado. Por favor permite popups para este sitio';
+                            break;
+                        case 'auth/unauthorized-domain':
+                            errorMessage = 'Este dominio no está autorizado para autenticación con Google';
+                            break;
+                        case 'auth/account-exists-with-different-credential':
+                            errorMessage = 'Ya existe una cuenta con este email usando otro método de autenticación';
+                            break;
+                        default:
+                            errorMessage = `Error: ${error.message}`;
                     }
                     
                     showAlert(errorMessage, 'error');
@@ -264,12 +746,12 @@
             function showAlert(message, type) {
                 const alertContainer = document.getElementById('alert-container');
                 const alertClass = type === 'error' ? 'alert-error' : 
-                                   type === 'success' ? 'alert-success' : 'alert-warning';
+                                 type === 'success' ? 'alert-success' : 'alert-warning';
                 
                 alertContainer.innerHTML = `
                     <div class="alert ${alertClass}">
                         <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
-                                         type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+                                      type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
                         ${message}
                     </div>
                 `;
@@ -292,17 +774,23 @@
                     // Si ya está logueado, redirigir
                     showAlert('Ya tienes una sesión activa', 'warning');
                     setTimeout(() => {
-                        window.top.location.href = 'index.html#home';
+                        window.location.href = 'index.html';
                     }, 2000);
                 }
             });
 
-            // Fix link to use hash routing
-            const loginLink = document.querySelector('.auth-links a');
-            if(loginLink) {
-                loginLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    window.top.location.href = 'index.html#login';
+            // Dropdown functionality
+            const dropdownBtn = document.querySelector('.dropdown-btn');
+            const dropdown = document.querySelector('.dropdown');
+            
+            if (dropdownBtn && dropdown) {
+                dropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                });
+
+                document.addEventListener('click', function() {
+                    dropdown.classList.remove('show');
                 });
             }
         });

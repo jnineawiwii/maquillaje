@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MAC Style Makeup Store</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/custom.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -446,14 +445,11 @@
 
         /* Hero Section */
         .hero {
-            background: transparent;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            height: calc(100vh - 70px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            padding: 150px 0 100px;
             text-align: center;
+            margin-top: 70px;
             transition: all 0.3s ease;
         }
 
@@ -743,8 +739,13 @@
         <!-- Menú de navegación -->
         <ul class="nav-menu">
             <li id="admin-link" style="display: none;">
-                <a href="#admin">Administración</a>
-            </li>
+    <a href="admin.html">Administración</a>
+</li>
+            
+            <li><a href="#products">Productos</a></li>
+            <li><a href="#products?category=labios">Labios</a></li>
+            <li><a href="#products?category=ojos">Ojos</a></li>
+            <li><a href="#products?category=rostro">Rostro</a></li>
             
             <li id="cart-link" style="display: none;">
                 <a href="#cart" class="cart-icon">
@@ -764,14 +765,6 @@
                 </button>
                 <div class="dropdown-content" role="menu" aria-labelledby="dropdown-btn">
                     <a href="guide.html" role="menuitem">Guía de usuario</a>
-
-                    <details class="side-menu-section" style="padding: 10px 12px; cursor: pointer;">
-                        <summary>Productos</summary>
-                        <a href="#products" role="menuitem" style="padding-left: 25px;">Ver Todo</a>
-                        <a href="#products?category=labios" role="menuitem" style="padding-left: 25px;">Labios</a>
-                        <a href="#products?category=ojos" role="menuitem" style="padding-left: 25px;">Ojos</a>
-                        <a href="#products?category=rostro" role="menuitem" style="padding-left: 25px;">Rostro</a>
-                    </details>
                     
                     <div class="accessibility-controls">
                         <details>
@@ -1949,6 +1942,6 @@ function logout() {
 }
 </script>
 <!-- Chatbot Tidio -->
-<script src="//code.tidio.co/cmem7ppxta4iuu1xh0aylze6ttntght0.js" async></script>
+    <script src="//code.tidio.co/cmem7ppxta4iuu1xh0aylze6ttntght0.js" async></script>
 </body>
 </html>

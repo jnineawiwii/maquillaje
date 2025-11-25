@@ -4,8 +4,13 @@
   "description": "Sistema de pagos para MAC Style Makeup Store",
   "main": "js/backend-node.js",
   "scripts": {
+<<<<<<< HEAD
+    "start": "node public/js/backend-node.js",
+    "dev": "node public/js/backend-node.js"
+=======
     "start": "node js/backend-node.js",
     "dev": "node js/backend-node.js"
+>>>>>>> 7f12ad24c9c2f18ccb836f2c90e66e2ae443ed22
   },
   "dependencies": {
     "express": "^4.18.2",
