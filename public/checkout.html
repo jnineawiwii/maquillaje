@@ -202,6 +202,81 @@
     </footer>
 
     <script>
+        // Configuración del backend
+const getBackendUrl = () => {
+    const isLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1';
+    
+    return isLocal 
+        ? 'http://localhost:3001' 
+        : 'https://macstyle-backend.onrender.com'; // Tu URL de Render
+};
+
+// Y actualiza la función createCheckoutProPreference:
+async function createCheckoutProPreference(total, items) {
+    try {
+        const checkoutBtn = document.getElementById('checkout-pro-btn');
+        checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando pago...';
+        checkoutBtn.disabled = true;
+
+        const BACKEND_URL = getBackendUrl();
+        console.log('Enviando datos al backend:', BACKEND_URL, { items, total });
+
+        const response = await fetch(`${BACKEND_URL}/create-preference`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                items: items,
+                total: total
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Error del servidor: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Preferencia creada:', data);
+
+        // Redirigir a Mercado Pago
+        if (data.init_point) {
+            window.location.href = data.init_point;
+        } else if (data.sandbox_init_point) {
+            window.location.href = data.sandbox_init_point;
+        } else {
+            throw new Error('No se recibió URL de pago válida');
+        }
+        
+    } catch (error) {
+        console.error('Error creando preferencia:', error);
+        showError('Error al crear el pago: ' + error.message);
+        
+        // Restaurar botón
+        const checkoutBtn = document.getElementById('checkout-pro-btn');
+        checkoutBtn.innerHTML = '<i class="fas fa-lock"></i> Pagar Ahora con Mercado Pago';
+        checkoutBtn.disabled = false;
+        
+        // Mostrar opción de prueba como fallback
+        showTestPaymentOptions(total, items);
+    }
+}
+
+// Y actualiza la función checkBackendStatus:
+async function checkBackendStatus() {
+    try {
+        const BACKEND_URL = getBackendUrl();
+        const response = await fetch(`${BACKEND_URL}/health`);
+        const data = await response.json();
+        console.log('Backend status:', data);
+        return true;
+    } catch (error) {
+        console.error('Backend no disponible:', error);
+        return false;
+    }
+}
         // URL de tu backend - cambia el puerto si es necesario
         const BACKEND_URL = 'http://localhost:3001';
 

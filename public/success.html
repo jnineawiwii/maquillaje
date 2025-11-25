@@ -1,16 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pago Exitoso - MAC Style</title>
     <style>
-        body { font-family: Arial; text-align: center; padding: 50px; }
-        .success { color: #28a745; font-size: 3rem; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 40px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 2.2em;
+        }
+        
+        p {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(123, 31, 162, 0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="success">✅</div>
-    <h1>¡Pago Exitoso!</h1>
-    <p>Tu pedido ha sido procesado correctamente.</p>
-    <a href="base.html">Volver a la tienda</a>
+    <div class="container">
+        <div class="success-icon">✓</div>
+        <h1>¡Pago Exitoso!</h1>
+        <p>Tu pedido ha sido procesado correctamente.</p>
+        <p>Hemos enviado un correo con los detalles de tu compra.</p>
+        <p>Tu pedido estará listo en 2-3 días hábiles.</p>
+        <a href="index.html" class="btn">Volver a la Tienda</a>
+    </div>
 </body>
 </html>

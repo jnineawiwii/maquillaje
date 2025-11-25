@@ -363,6 +363,90 @@
     </section>
 
     <script>
+        // Función para procesar pago directo desde el carrito
+async function procesarPagoDirecto() {
+    try {
+        const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+        
+        if (carrito.length === 0) {
+            mostrarNotificacion('Tu carrito está vacío', 'error');
+            return;
+        }
+
+        // Calcular total
+        const subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+        const shipping = subtotal >= 50 ? 0 : 5.99;
+        const total = subtotal + shipping;
+
+        console.log('🔄 Iniciando pago directo...');
+        
+        // Configuración para producción/desarrollo
+        const isLocal = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1';
+        
+        const BACKEND_URL = isLocal 
+            ? 'http://localhost:3001' 
+            : 'https://macstyle-backend.onrender.com'; // Tu URL de Render
+
+        const payload = {
+            items: carrito,
+            total: total
+        };
+
+        console.log('Enviando a:', `${BACKEND_URL}/create-preference`);
+        console.log('Datos:', payload);
+
+        // Mostrar loading
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const originalText = checkoutBtn.innerHTML;
+        checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+        checkoutBtn.disabled = true;
+
+        const response = await fetch(`${BACKEND_URL}/create-preference`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || `Error del servidor: ${response.status}`);
+        }
+
+        if (!data.success) {
+            throw new Error(data.error || 'Error desconocido del servidor');
+        }
+
+        console.log('✅ Preferencia creada, redirigiendo...');
+        
+        // Redirigir a Mercado Pago
+        window.location.href = data.init_point;
+
+    } catch (error) {
+        console.error('❌ Error en el pago:', error);
+        
+        // Restaurar botón
+        const checkoutBtn = document.getElementById('checkout-btn');
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Proceder al Pago';
+        checkoutBtn.disabled = false;
+        
+        mostrarNotificacion(`Error al procesar pago: ${error.message}`, 'error');
+        
+        // Opción de fallback - redirigir al checkout normal
+        setTimeout(() => {
+            localStorage.setItem('paymentMethod', 'mercado-pago');
+            window.location.href = 'checkout.html';
+        }, 3000);
+    }
+}
+
+// Actualizar la función procederAlPago para usar pago directo
+function procederAlPago() {
+    procesarPagoDirecto();
+}
         // Función para cargar y mostrar el carrito
         function cargarCarrito() {
             const cartItems = document.getElementById('cart-items');
