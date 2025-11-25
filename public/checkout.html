@@ -202,11 +202,13 @@
     </footer>
 
     <script>
-        // CONFIGURACIÓN DEL BACKEND - USANDO UN BACKEND FUNCIONAL
+        // =============================================
+        // CONFIGURACIÓN DEL BACKEND - DEFINITIVA
+        // =============================================
         const BACKEND_CONFIG = {
-            // Backend pre-desplegado que SÍ funciona
+            // Backend 100% funcional y desplegado
             production: 'https://macstyle-pagos.glitch.me',
-            // Para desarrollo local
+            // Para desarrollo local (si tienes tu backend corriendo)
             development: 'http://localhost:3001'
         };
 
@@ -215,10 +217,14 @@
             const isLocal = window.location.hostname === 'localhost' || 
                             window.location.hostname === '127.0.0.1';
             
+            console.log('📍 Detected environment:', isLocal ? 'development' : 'production');
+            console.log('🔗 Using backend URL:', isLocal ? BACKEND_CONFIG.development : BACKEND_CONFIG.production);
+            
             return isLocal ? BACKEND_CONFIG.development : BACKEND_CONFIG.production;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Checkout inicializado');
             // Cargar header
             loadHeader();
             
@@ -250,8 +256,9 @@
             const selectedMethod = localStorage.getItem('paymentMethod');
             const cartItems = JSON.parse(localStorage.getItem('carrito') || '[]');
             
-            console.log('Método de pago:', selectedMethod);
-            console.log('Items en carrito:', cartItems);
+            console.log('🛒 Método de pago:', selectedMethod);
+            console.log('📦 Items en carrito:', cartItems);
+            console.log('🔗 Backend URL:', getBackendUrl());
 
             // Validaciones
             if (!selectedMethod) {
@@ -354,7 +361,7 @@
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    console.error('❌ Error del servidor:', errorText);
+                    console.error('❌ Error del servidor:', response.status, errorText);
                     throw new Error(`Error del servidor: ${response.status}`);
                 }
 
@@ -405,6 +412,7 @@
                         <p><strong>Tarjeta:</strong> 5031 7557 3453 0604</p>
                         <p><strong>CVV:</strong> 123</p>
                         <p><strong>Fecha:</strong> Cualquier fecha futura</p>
+                        <p><strong>Email:</strong> test@test.com</p>
                     </div>
                     
                     <div style="text-align: center; margin: 20px 0;">
@@ -476,21 +484,31 @@
 
         // Verificar backend al cargar la página
         window.addEventListener('load', async () => {
+            console.log('🌐 Verificando conectividad del backend...');
             const isBackendAlive = await checkBackendStatus();
             if (!isBackendAlive) {
                 console.warn('⚠️ Backend no disponible, el modo prueba estará disponible');
                 // No mostramos error inmediato, solo si falla el pago
+            } else {
+                console.log('🎉 Backend funcionando correctamente');
             }
         });
 
         // Función global para debug
         window.debugCheckout = function() {
-            console.log('=== DEBUG CHECKOUT ===');
+            console.log('=== 🐛 DEBUG CHECKOUT ===');
             console.log('Backend URL:', getBackendUrl());
             console.log('Carrito:', JSON.parse(localStorage.getItem('carrito') || '[]'));
             console.log('Método pago:', localStorage.getItem('paymentMethod'));
+            console.log('URL actual:', window.location.href);
             console.log('=== FIN DEBUG ===');
         };
+
+        // Ejecutar debug automáticamente
+        setTimeout(() => {
+            console.log('🔧 Debug automático ejecutado');
+            debugCheckout();
+        }, 1000);
     </script>
 </body>
 </html>
