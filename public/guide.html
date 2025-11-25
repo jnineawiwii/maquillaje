@@ -345,6 +345,7 @@
                 prevBtn.disabled = (current === 1);
                 nextBtn.disabled = (current === total);
             }
+            
 
             prevBtn.addEventListener('click', () => updateViewer(current - 1));
             nextBtn.addEventListener('click', () => updateViewer(current + 1));

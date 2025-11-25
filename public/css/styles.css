@@ -1041,6 +1041,7 @@ footer {
             opacity: 1;
         }
 
+        
         /* Focus visible para todos los elementos interactivos */
         button:focus,
         input:focus,

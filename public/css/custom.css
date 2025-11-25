@@ -435,6 +435,7 @@ html.login-html, body.login-page {
         font-size: 16px; /* Prevents iOS auto-zoom */
     }
 
+    
     /* Dropdown Menu */
     .dropdown-content {
         width: 90vw;

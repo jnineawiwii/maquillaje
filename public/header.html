@@ -125,6 +125,7 @@ function buscarProductos(event) {
     if (termino) {
         alert(`Buscando: ${termino}`);
         // Redirigir a la página de productos con búsqueda
+        
         window.location.href = `index.html?search=${encodeURIComponent(termino)}`;
     }
 }
