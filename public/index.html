@@ -3,165 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAC Style Makeup Store</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/custom.css">
+    <title>Inicio | Mi Sitio Web</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            left: 80%;
+            animation: float 18s infinite ease-in-out reverse;
+        }
+        
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 80%;
+            left: 20%;
+            animation: float 12s infinite ease-in-out;
+        }
+        
+        .shape:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 70%;
+            animation: float 20s infinite ease-in-out reverse;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 800px;
+            z-index: 1;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .btn-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .menu-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            z-index: 1;
+        }
+        
+        .menu-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .menu-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .menu-btn i {
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-btn:hover i {
+            transform: translateX(5px);
+        }
+        
+        .btn-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+            z-index: -1;
+        }
+        
+        .menu-btn:hover .btn-glow {
+            transform: translateX(100%);
+        }
+        
+        .pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            animation: pulse 2s infinite;
+            z-index: -2;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+        
+        footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        /* Efectos responsivos */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            p {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .menu-btn {
+                padding: 1rem 2rem;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="nav-container">
-            <!-- Logo -->
-            <div class="logo">
-                <h2><a href="#home">MAC Style</a></h2>
-            </div>
-
-    
-            <!-- Buscador Mejorado -->
-            <div class="search-container">
-                <form class="search-form" onsubmit="buscarProductos(event)">
-                    <input type="text" id="search-input" placeholder="Buscar productos..." value="">
-                    <button type="button" class="voice-btn" id="voice-search-btn" title="Búsqueda por voz">
-                        <i class="fas fa-microphone"></i>
-                    </button>
-                    <button type="submit" class="search-btn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
-            </div>
-
-    
-            <!-- Menú de navegación -->
-            <ul class="nav-menu">
-                <li id="admin-link" style="display: none;">
-                    <a href="admin.html">Administración</a>
-                </li>
-
-                <li>
-                    <a href="#login" class="nav-icon" aria-label="Iniciar Sesión">
-                        <i class="fas fa-user"></i>
-                    </a>
-                </li>
-
-                <li id="cart-link" style="display: none;">
-                <!-- Icono de Carrito -->
-                <li>
-                    <a href="#cart" class="cart-icon">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count" class="cart-count">0</span>
-                    </a>
-                </li>
-
-                
-                <li id="user-info" style="display: none;">
-                    <span class="user-welcome" id="user-welcome"></span>
-                </li>
-
-                <!-- Menú desplegable - MEJORADO PARA ACCESIBILIDAD -->
-    
-                <!-- Menú desplegable (Hamburguesa) -->
-                <li class="dropdown">
-                    <button id="dropdown-btn" class="dropdown-btn" aria-expanded="false" aria-haspopup="true" aria-label="Menú de opciones">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <div class="dropdown-content" role="menu" aria-labelledby="dropdown-btn">
-                    <a href="#guide" role="menuitem">Guía de usuario</a>
-
-                    <!-- Sección de Productos -->
-                    <details class="side-menu-section">
-                        <summary>Productos</summary>
-                        <a href="#products" class="side-menu-item">Ver Todo</a>
-                        <a href="#products?category=labios" class="side-menu-item">Labios</a>
-                        <a href="#products?category=ojos" class="side-menu-item">Ojos</a>
-                        <a href="#products?category=rostro" class="side-menu-item">Rostro</a>
-                    </details>
-
-                    <!-- Sección de Accesibilidad -->
-                    <details class="side-menu-section">
-                        <summary>Accesibilidad</summary>
-                        <div class="accessibility-controls">
-                            <details>
-                                <summary>Tamaño de lectura</summary>
-                                <div class="control-group">
-                                    <label for="fontSizeRange"><span>Fuente</span><span id="fontSizeValue">16px</span></label>
-                                    <label for="fontSizeRange">
-                                    <label for="fontSizeRange">
-                                    </label>
-                                    <input id="fontSizeRange" type="range" min="12" max="28" step="1" value="16">
-                                    <button id="fontSizeReset">Restablecer</button>
-                                </div>
-                            </details>
-    
-                            <details>
-                                <summary>Espaciado</summary>
-                                <div class="control-group">
-                                    <label for="spacingRange"><span>Interlineado</span><span id="spacingValue">1.6</span></label>
-                                    <input id="spacingRange" type="range" min="1.0" max="3.0" step="0.1" value="1.6">
-                                    <button id="spacingReset">Restablecer</button>
-                                </div>
-                            </details>
-                            <button id="toggleContrastBtn">Alto contraste</button>
-                            <details>
-                                <summary>Escala de grises</summary>
-                                <div class="control-group">
-                                    <label for="grayscaleRange"><span>Intensidad</span><span id="grayscaleValue">0%</span></label>
-                                    <input id="grayscaleRange" type="range" min="0" max="100" step="1" value="0">
-                                    <button id="grayscaleReset">Restablecer</button>
-                                </div>
-                            </details>
-                        </div>
-                        <button id="srToggleBtnMenu" role="menuitem">Navegación por voz</button>
-                        <button id="themeToggleBtnMenu" role="menuitem">Cambiar a modo oscuro</button>
-                    </details>
-
-                    <div id="auth-links">
-                        <a href="#login" role="menuitem">Iniciar Sesión</a>
-                        <a href="#register" role="menuitem">Registrarse</a>
-                    </div>
-                </div>
-            </li>
-        </ul>
+    <div class="background-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
     </div>
-</nav>
-
-<main id="main-content">
-    <div id="page-content">
-        <!-- Contenido se cargará dinámicamente aquí -->
-    </div>
-</main>
-
-<!-- Cart Drawer -->
-<div id="cart-overlay" class="cart-overlay"></div>
-<div id="cart-drawer" class="cart-drawer">
-    <div class="drawer-header">
-        <h3>Tu Carrito</h3>
-        <button id="close-drawer-btn" class="close-drawer-btn" aria-label="Cerrar carrito">&times;</button>
-    </div>
-    <div id="drawer-cart-items" class="drawer-body">
-        <!-- Cart items will be injected here by JavaScript -->
-    </div>
-    <div class="drawer-footer">
-        <div class="drawer-total">
-            <span>Total:</span>
-            <span id="drawer-total-price">$0.00 MXN</span>
+    
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-compass"></i>
         </div>
-        <button id="drawer-checkout-btn" class="btn-primary" style="border-radius: 8px;">Proceder al Pago</button>
+        <h1>Bienvenido a Nuestro Sitio</h1>
+        <p>Descubre todo lo que tenemos para ofrecerte. Haz clic en el botón de abajo para explorar nuestro menú principal y comenzar tu experiencia.</p>
+        
+        <div class="btn-container">
+            <div class="pulse"></div>
+            <a href="base.html" class="menu-btn">
+                Ir al Menú Principal
+                <i class="fas fa-arrow-right"></i>
+                <span class="btn-glow"></span>
+            </a>
+        </div>
     </div>
-</div>
-<!-- End Cart Drawer -->
+    
+    <footer>
+        <p>&copy; 2023 Mi Sitio Web. Todos los derechos reservados.</p>
+    </footer>
 
-<div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-<div id="sr-visual-announcer" class="sr-announcement" aria-hidden="true"></div>
-
-<script src="js/firebase-config.js"></script>
-
-<script src="js/app.js"></script>
+    <script>
+        // Efecto de partículas simples para el fondo
+        document.addEventListener('DOMContentLoaded', function() {
+            const shapesContainer = document.querySelector('.background-shapes');
+            
+            // Crear más formas para el fondo
+            for (let i = 0; i < 6; i++) {
+                const shape = document.createElement('div');
+                shape.classList.add('shape');
+                
+                // Tamaño aleatorio
+                const size = Math.random() * 80 + 40;
+                shape.style.width = `${size}px`;
+                shape.style.height = `${size}px`;
+                
+                // Posición aleatoria
+                shape.style.top = `${Math.random() * 100}%`;
+                shape.style.left = `${Math.random() * 100}%`;
+                
+                // Animación con delay aleatorio
+                shape.style.animationDelay = `${Math.random() * 10}s`;
+                shape.style.animationDuration = `${15 + Math.random() * 15}s`;
+                
+                shapesContainer.appendChild(shape);
+            }
+        });
+    </script>
 </body>
 </html>
