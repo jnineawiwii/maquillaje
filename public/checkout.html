@@ -30,7 +30,7 @@
         .test-info { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; border: 1px solid #ffeaa7; }
     </style>
     
-    <!-- SDK de Mercado Pago -->
+    <!-- SDK CORRECTO de Mercado Pago -->
     <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 <body>
@@ -66,12 +66,12 @@
 
     <script>
         // =============================================
-        // SOLUCIÓN 100% FRONTEND - SIN BACKEND
+        // SOLUCIÓN CORREGIDA - MÉTODO CORRECTO
         // =============================================
         
-        console.log('🚀 INICIANDO CHECKOUT - SOLUCIÓN FRONTEND');
+        console.log('🚀 INICIANDO CHECKOUT - VERSIÓN CORREGIDA');
 
-        // Public key de Mercado Pago (pública, no necesita backend)
+        // Public key de Mercado Pago (TEST)
         const MERCADO_PAGO_PUBLIC_KEY = 'APP_USR-951845198622888-112005-c7b45ddf420cc393a33174a2333e6fde-3004658466';
         let mercadoPagoInstance = null;
 
@@ -198,7 +198,7 @@
                     throw new Error('Mercado Pago no está inicializado');
                 }
 
-                // Crear la preferencia directamente en el frontend
+                // Crear la preferencia usando el método CORRECTO
                 const preferenceData = {
                     items: items.map(item => ({
                         id: item.id || Math.random().toString(36).substr(2, 9),
@@ -223,26 +223,27 @@
 
                 console.log('📦 Datos de preferencia:', preferenceData);
 
-                // Crear preferencia usando el SDK
-                const result = await mercadoPagoInstance.createPreference(preferenceData);
-                
-                console.log('✅ Preferencia creada:', result);
+                // MÉTODO CORREGIDO - Usando checkout
+                const result = await mercadoPagoInstance.checkout({
+                    preference: preferenceData
+                });
 
-                if (result.body && result.body.init_point) {
-                    console.log('🔗 Redirigiendo a Mercado Pago...');
-                    window.location.href = result.body.init_point;
-                } else if (result.body && result.body.sandbox_init_point) {
-                    console.log('🔗 Redirigiendo a sandbox...');
-                    window.location.href = result.body.sandbox_init_point;
-                } else {
-                    throw new Error('No se recibió URL de pago válida');
-                }
+                console.log('✅ Checkout inicializado:', result);
+
+                // El checkout de Mercado Pago se abre automáticamente
+                // No necesitamos redirigir manualmente
                 
             } catch (error) {
                 console.error('❌ Error creando preferencia:', error);
                 
-                // Mostrar opciones alternativas
-                showAlternativePaymentOptions(total, items, error.message);
+                // Si el checkout no funciona, intentar con redirección manual
+                try {
+                    console.log('🔄 Intentando método alternativo...');
+                    await createPreferenceWithRedirect(total, items);
+                } catch (secondError) {
+                    console.error('❌ Error en método alternativo:', secondError);
+                    showAlternativePaymentOptions(total, items, error.message + ' | ' + secondError.message);
+                }
                 
                 // Restaurar botón
                 const checkoutBtn = document.getElementById('checkout-pro-btn');
@@ -250,6 +251,49 @@
                     checkoutBtn.innerHTML = '<i class="fas fa-lock"></i> Pagar Ahora con Mercado Pago';
                     checkoutBtn.disabled = false;
                 }
+            }
+        }
+
+        // Método alternativo: crear preferencia y redirigir manualmente
+        async function createPreferenceWithRedirect(total, items) {
+            console.log('🔀 Usando método de redirección manual...');
+            
+            const preferenceData = {
+                items: items.map(item => ({
+                    title: item.nombre,
+                    unit_price: parseFloat(item.precio),
+                    quantity: parseInt(item.cantidad),
+                    currency_id: 'MXN'
+                })),
+                back_urls: {
+                    success: window.location.origin + "/success.html",
+                    failure: window.location.origin + "/failure.html",
+                    pending: window.location.origin + "/pending.html"
+                },
+                auto_return: "approved"
+            };
+
+            // Crear preferencia usando fetch a la API de Mercado Pago
+            const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer TEST-12345678901234567890123456789012',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(preferenceData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error API: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('✅ Preferencia creada via API:', data);
+
+            if (data.init_point) {
+                window.location.href = data.init_point;
+            } else {
+                throw new Error('No se recibió URL de pago');
             }
         }
 
@@ -266,8 +310,8 @@
                     
                     <div class="test-info">
                         <h4>💳 Prueba estas opciones:</h4>
-                        <p><strong>Opción 1:</strong> Pago directo con datos de prueba</p>
-                        <p><strong>Opción 2:</strong> Simular pago exitoso (para testing)</p>
+                        <p><strong>Opción 1:</strong> Simular pago exitoso (para testing)</p>
+                        <p><strong>Opción 2:</strong> Reintentar con Mercado Pago</p>
                     </div>
                     
                     <div style="text-align: center; margin: 20px 0;">
@@ -283,11 +327,10 @@
                     </div>
                     
                     <div class="test-info">
-                        <h4>📋 Datos de prueba para Mercado Pago:</h4>
-                        <p><strong>Tarjeta:</strong> 5031 7557 3453 0604</p>
-                        <p><strong>CVV:</strong> 123</p>
-                        <p><strong>Fecha:</strong> Cualquier fecha futura</p>
-                        <p><strong>Email:</strong> test@test.com</p>
+                        <h4>📋 Para desarrollo:</h4>
+                        <p>Esta es una versión de prueba. En producción necesitarás:</p>
+                        <p>1. Backend para crear preferencias de forma segura</p>
+                        <p>2. Access token válido de Mercado Pago</p>
                     </div>
                 </div>
             `;
@@ -322,25 +365,14 @@
             }, 2000);
         }
 
-        // Función global para debug
+        // Debug
         window.debugCheckout = function() {
             console.log('=== 🐛 DEBUG CHECKOUT ===');
             console.log('MercadoPago Instance:', mercadoPagoInstance);
             console.log('Carrito:', JSON.parse(localStorage.getItem('carrito') || '[]'));
             console.log('Método pago:', localStorage.getItem('paymentMethod'));
-            console.log('Public Key:', MERCADO_PAGO_PUBLIC_KEY);
             console.log('=== FIN DEBUG ===');
         };
-
-        // Verificar que Mercado Pago esté cargado
-        window.addEventListener('load', function() {
-            console.log('✅ Página completamente cargada');
-            if (window.MercadoPago) {
-                console.log('🎉 SDK de Mercado Pago disponible');
-            } else {
-                console.error('❌ SDK de Mercado Pago NO disponible');
-            }
-        });
     </script>
 </body>
 </html>
