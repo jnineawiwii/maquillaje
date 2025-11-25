@@ -1,0 +1,445 @@
+/* * custom.css - Estilos Glassmorphism y Modernización
+ */
+
+/* =========================================
+   1. Sticky Glass Navbar (Menú fijo y borroso)
+   ========================================= */
+.navbar {
+  position: fixed !important;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.05) !important; /* 95% transparent, just a hint of glass */
+  -webkit-backdrop-filter: blur(15px); /* Desenfoque para Safari */
+  backdrop-filter: blur(15px); /* Desenfoque estándar */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* =========================================
+   2. Menú de Hamburguesa (Dropdown Glass)
+   ========================================= */
+.dropdown-content {
+  background: rgba(255, 255, 255, 0.85) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 20px !important;
+  padding: 25px !important;
+  width: 300px !important; /* Un poco más ancho */
+  top: 100% !important;
+  right: 0 !important;
+  margin-top: 15px !important;
+  
+  /* Barra de desplazamiento */
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Estilos de los items del menú */
+.dropdown-content a,
+.dropdown-content button,
+.dropdown-content summary {
+  padding: 12px 15px !important;
+  margin-bottom: 8px !important;
+  font-size: 1.05rem !important;
+  color: #333 !important;
+  border-radius: 10px !important;
+  transition: background 0.2s ease;
+}
+
+/* Efecto Hover en items */
+.dropdown-content a:hover,
+.dropdown-content button:hover,
+.dropdown-content summary:hover {
+  background: rgba(233, 30, 99, 0.1) !important; /* Rosa muy suave */
+  color: #e91e63 !important;
+}
+
+/* Barra de scroll bonita y delgada */
+.dropdown-content::-webkit-scrollbar {
+    width: 6px;
+}
+.dropdown-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+.dropdown-content::-webkit-scrollbar-thumb {
+    background: rgba(233, 30, 99, 0.5);
+    border-radius: 10px;
+}
+
+/* =========================================
+   3. Botones "Tinted Glass" (Cristal tintado)
+   ========================================= */
+
+/* Botón "Ver Productos" (Rosa) */
+.cta-button {
+  background: rgba(233, 30, 99, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px 0 rgba(233, 30, 99, 0.25);
+  border-radius: 50px;
+  color: white !important;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.cta-button:hover {
+  transform: scale(1.05);
+  background: rgba(233, 30, 99, 0.85) !important;
+}
+
+/* Botón de Voz (Morado) */
+.voice-btn {
+  background: rgba(156, 39, 176, 0.6) !important;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  border-left: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Botón de Búsqueda (Rosa) */
+.search-btn {
+  background: rgba(233, 30, 99, 0.65) !important;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+/* Input de Búsqueda */
+.search-form input {
+  background: rgba(255, 255, 255, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  color: #333 !important;
+}
+
+/* =========================================
+   4. Login Page (Pantalla Completa)
+   ========================================= */
+/* Force full height on root elements to prevent white gaps */
+html.login-html, body.login-page {
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important; /* Prevent scrolling completely */
+}
+
+/* The Body specific background logic */
+.login-page {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    
+    background: url('../images/fondo2.jpg') no-repeat center center fixed !important;
+    -webkit-background-size: cover !important;
+    -moz-background-size: cover !important;
+    -o-background-size: cover !important;
+    background-size: cover !important;
+
+    /* Ensure flex container fills the space */
+    min-height: 100% !important;
+    width: 100% !important;
+}
+
+/* Tarjeta de Login flotante */
+.login-container {
+    background: rgba(0, 0, 0, 0.5) !important; /* Darker for contrast */
+    -webkit-backdrop-filter: blur(25px) !important; /* Increased blur */
+    backdrop-filter: blur(25px) !important; /* Increased blur */
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important; /* Subtle border */
+    padding: 40px !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3) !important;
+    color: white !important;
+    z-index: 1;
+    max-height: 90vh;
+    overflow-y: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for chrome/safari/opera - Corrected Syntax */
+.login-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Textos del login en blanco */
+.login-container h2, 
+.login-container label,
+.login-container p,
+.login-container a {
+    color: white !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Inputs del login */
+.login-container input {
+    background: rgba(255, 255, 255, 0.1) !important; /* Slightly darker input */
+    border: 1px solid rgba(255, 255, 255, 0.4) !important; /* Borde sutil */
+    color: white !important; /* Texto blanco */
+    padding: 12px 15px !important; /* Inputs más altos y espaciosos */
+    height: 48px; /* Altura fija para consistencia */
+    width: 100%; /* Ocupar todo el ancho disponible */
+    border-radius: 8px !important; /* Bordes redondeados */
+}
+
+.login-container input::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Espaciado y posicionamiento de los grupos de formulario */
+.login-container .form-group {
+    position: relative; /* Contenedor para el ícono de contraseña */
+    margin-bottom: 25px; /* Espacio vertical entre campos */
+}
+
+.login-container .form-group label {
+    display: block;
+    margin-bottom: 8px; /* Espacio entre la etiqueta y el input */
+}
+
+/* Posicionamiento del ícono para mostrar/ocultar contraseña */
+.login-container .password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 42px; /* Ajuste vertical para alinear con el input (considerando la etiqueta) */
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 10;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* =========================================
+   5. Login/Register Buttons
+   ========================================= */
+
+/* Botón Primario (Crear Cuenta / Iniciar Sesión) */
+.login-container .btn-primary {
+    background: linear-gradient(45deg, #9c27b0, #e91e63) !important;
+    color: white !important;
+    width: 100%;
+    padding: 12px;
+    border-radius: 50px;
+    border: none;
+    margin-top: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-container .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+/* Botón de Google */
+.login-container .btn-google {
+    background: white !important;
+    color: #333 !important;
+    width: 100%;
+    padding: 12px;
+    border-radius: 50px;
+    border: none;
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Footer for login/register pages */
+.login-page .site-footer {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* =========================================
+   6. Cart Drawer (Slide-out)
+   ========================================= */
+
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.cart-overlay.cart-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.cart-drawer {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 400px;
+    max-width: 90vw;
+    height: 100vh;
+    z-index: 2000;
+    
+    background: rgba(0, 0, 0, 0.8);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+    
+    display: flex;
+    flex-direction: column;
+    color: white;
+    transition: right 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cart-drawer.cart-open {
+    right: 0;
+}
+
+.drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.drawer-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.close-drawer-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.close-drawer-btn:hover {
+    opacity: 1;
+}
+
+.drawer-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px 25px;
+}
+
+.drawer-cart-item {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.drawer-cart-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.drawer-footer {
+    padding: 20px 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.drawer-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Botón de Checkout en el Drawer */
+#drawer-checkout-btn {
+    background: linear-gradient(45deg, #9c27b0, #e91e63); /* Same gradient as Register/Login */
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    width: 100%; /* Full width of the drawer footer */
+    border-radius: 50px; /* Pill shape */
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3); /* Subtle glow */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#drawer-checkout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.5); /* Stronger glow on hover */
+}
+
+/* =========================================
+   7. Mobile Responsiveness (max-width: 768px)
+   ========================================= */
+@media (max-width: 768px) {
+    /* Hero Section */
+    .hero {
+        height: 100vh; /* Full screen height on mobile */
+    }
+
+    .hero-content h1 {
+        font-size: 2rem; /* Smaller title on mobile */
+    }
+
+    /* Product Grid - 2 columns for better scanning */
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .product-card {
+        padding: 10px; /* More compact cards */
+    }
+
+    /* Cart Drawer - More screen real estate */
+    .cart-drawer {
+        width: 85vw;
+    }
+
+    /* Login/Register Forms */
+    .login-container {
+        width: 90%;
+        padding: 25px;
+        max-height: 95vh;
+    }
+
+    .login-container input {
+        font-size: 16px; /* Prevents iOS auto-zoom */
+    }
+
+    /* Dropdown Menu */
+    .dropdown-content {
+        width: 90vw;
+        right: 5vw; /* Center it with 5vw on each side */
+        top: 65px; /* Position below navbar */
+        margin-top: 0 !important;
+    }
+}
