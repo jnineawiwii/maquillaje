@@ -661,26 +661,39 @@
                 }
             });
 
-            // Registro con Google
+            // Registro con Google - Función mejorada
             const googleRegisterBtn = document.getElementById('google-register-btn');
+            
             googleRegisterBtn.addEventListener('click', async function() {
                 try {
+                    // Crear proveedor de Google
                     const provider = new firebase.auth.GoogleAuthProvider();
+                    
+                    // Configurar scopes adicionales si es necesario
                     provider.addScope('email');
                     provider.addScope('profile');
+                    
+                    // Configurar parámetros personalizados
+                    provider.setCustomParameters({
+                        prompt: 'select_account'
+                    });
 
                     // Mostrar loading
                     googleRegisterBtn.disabled = true;
-                    googleRegisterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+                    googleRegisterBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando con Google...';
 
+                    // Iniciar autenticación con popup
                     const result = await auth.signInWithPopup(provider);
                     const user = result.user;
 
-                    // Verificar si es un usuario nuevo
+                    // Verificar si es un usuario nuevo o existente
                     const userDoc = await db.collection('users').doc(user.uid).get();
                     
-                    if (!userDoc.exists) {
-                        // Crear documento de usuario en Firestore
+                    if (userDoc.exists) {
+                        // Usuario existente - iniciar sesión
+                        showAlert(`¡Bienvenido/a de nuevo, ${user.displayName || user.email}!`, 'success');
+                    } else {
+                        // Usuario nuevo - crear registro en Firestore
                         await db.collection('users').doc(user.uid).set({
                             email: user.email,
                             displayName: user.displayName,
@@ -688,12 +701,13 @@
                             role: 'customer',
                             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                             provider: 'google',
-                            emailVerified: true
+                            emailVerified: user.emailVerified
                         });
+                        
+                        showAlert(`¡Cuenta creada exitosamente! Bienvenido/a, ${user.displayName || user.email}`, 'success');
                     }
-
-                    showAlert(`¡Bienvenido/a, ${user.displayName || user.email}!`, 'success');
                     
+                    // Redirigir después de un breve delay
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 1500);
@@ -702,10 +716,22 @@
                     console.error('Error en registro con Google:', error);
                     
                     let errorMessage = 'Error al registrarse con Google';
-                    if (error.code === 'auth/popup-closed-by-user') {
-                        errorMessage = 'El registro fue cancelado';
-                    } else if (error.code === 'auth/popup-blocked') {
-                        errorMessage = 'El popup fue bloqueado. Por favor permite popups para este sitio';
+                    
+                    switch (error.code) {
+                        case 'auth/popup-closed-by-user':
+                            errorMessage = 'El registro fue cancelado';
+                            break;
+                        case 'auth/popup-blocked':
+                            errorMessage = 'El popup fue bloqueado. Por favor permite popups para este sitio';
+                            break;
+                        case 'auth/unauthorized-domain':
+                            errorMessage = 'Este dominio no está autorizado para autenticación con Google';
+                            break;
+                        case 'auth/account-exists-with-different-credential':
+                            errorMessage = 'Ya existe una cuenta con este email usando otro método de autenticación';
+                            break;
+                        default:
+                            errorMessage = `Error: ${error.message}`;
                     }
                     
                     showAlert(errorMessage, 'error');
@@ -757,14 +783,16 @@
             const dropdownBtn = document.querySelector('.dropdown-btn');
             const dropdown = document.querySelector('.dropdown');
             
-            dropdownBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                dropdown.classList.toggle('show');
-            });
+            if (dropdownBtn && dropdown) {
+                dropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                });
 
-            document.addEventListener('click', function() {
-                dropdown.classList.remove('show');
-            });
+                document.addEventListener('click', function() {
+                    dropdown.classList.remove('show');
+                });
+            }
         });
     </script>
 </body>
