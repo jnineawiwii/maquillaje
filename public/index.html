@@ -3,53 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAQUILLAIETIRE</title>
+    <title>MAC Style Makeup Store</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 </head>
 <body>
-    <!-- Tu header/navigation aquí -->
-    
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Belleza profesional a tu alcance</h1>
-            <p>Descubre los productos que realzan tu belleza natural</p>
-            <a href="products.html" class="btn-primary">Ver productos</a>
-        </div>
-    </section>
 
-    <section class="featured-products">
-        <h2>Productos destacados</h2>
-        <div id="featured-products-grid" class="products-grid">
-            <!-- Los productos se cargarán con JavaScript -->
-        </div>
-    </section>
-
-    <!-- Video destacado -->
-    <div id="featured-video-section" style="margin-top: 40px; display: none;">
-        <div style="max-width: 1000px; margin-left: auto; margin-right: auto;">
-            <h2 id="featured-video-title" style="text-align:center; font-size:2rem; font-weight:700; margin-bottom:20px; color:#111;"></h2>
-            <p id="featured-video-description" style="text-align:center; margin-bottom:25px; color:#555; font-size:1.1rem;"></p>
-            <div class="video-container">
-                <video id="promoVideo" controls autoplay muted style="display: none;">
-                    Tu navegador no soporta el elemento de video.
-                </video>
-                <iframe id="embeddedVideo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: none;"></iframe>
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <div class="logo">
+                <h2><a href="#home">MAC Style</a></h2>
             </div>
-            <div id="video-category" style="text-align:center; margin-top:15px;"></div>
-        </div>
+
+    
+            <!-- Buscador Mejorado -->
+            <div class="search-container">
+                <form class="search-form" onsubmit="buscarProductos(event)">
+                    <input type="text" id="search-input" placeholder="Buscar productos..." value="">
+                    <button type="button" class="voice-btn" id="voice-search-btn" title="Búsqueda por voz">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+
+    
+            <!-- Menú de navegación -->
+            <ul class="nav-menu">
+                <li id="admin-link" style="display: none;">
+                    <a href="admin.html">Administración</a>
+                </li>
+
+                <li>
+                    <a href="#login" class="nav-icon" aria-label="Iniciar Sesión">
+                        <i class="fas fa-user"></i>
+                    </a>
+                </li>
+
+                <li id="cart-link" style="display: none;">
+                <!-- Icono de Carrito -->
+                <li>
+                    <a href="#cart" class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="cart-count">0</span>
+                    </a>
+                </li>
+
+                
+                <li id="user-info" style="display: none;">
+                    <span class="user-welcome" id="user-welcome"></span>
+                </li>
+
+                <!-- Menú desplegable - MEJORADO PARA ACCESIBILIDAD -->
+    
+                <!-- Menú desplegable (Hamburguesa) -->
+                <li class="dropdown">
+                    <button id="dropdown-btn" class="dropdown-btn" aria-expanded="false" aria-haspopup="true" aria-label="Menú de opciones">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="dropdown-content" role="menu" aria-labelledby="dropdown-btn">
+                    <a href="#guide" role="menuitem">Guía de usuario</a>
+
+                    <!-- Sección de Productos -->
+                    <details class="side-menu-section">
+                        <summary>Productos</summary>
+                        <a href="#products" class="side-menu-item">Ver Todo</a>
+                        <a href="#products?category=labios" class="side-menu-item">Labios</a>
+                        <a href="#products?category=ojos" class="side-menu-item">Ojos</a>
+                        <a href="#products?category=rostro" class="side-menu-item">Rostro</a>
+                    </details>
+
+                    <!-- Sección de Accesibilidad -->
+                    <details class="side-menu-section">
+                        <summary>Accesibilidad</summary>
+                        <div class="accessibility-controls">
+                            <details>
+                                <summary>Tamaño de lectura</summary>
+                                <div class="control-group">
+                                    <label for="fontSizeRange"><span>Fuente</span><span id="fontSizeValue">16px</span></label>
+                                    <label for="fontSizeRange">
+                                    <label for="fontSizeRange">
+                                    </label>
+                                    <input id="fontSizeRange" type="range" min="12" max="28" step="1" value="16">
+                                    <button id="fontSizeReset">Restablecer</button>
+                                </div>
+                            </details>
+    
+                            <details>
+                                <summary>Espaciado</summary>
+                                <div class="control-group">
+                                    <label for="spacingRange"><span>Interlineado</span><span id="spacingValue">1.6</span></label>
+                                    <input id="spacingRange" type="range" min="1.0" max="3.0" step="0.1" value="1.6">
+                                    <button id="spacingReset">Restablecer</button>
+                                </div>
+                            </details>
+                            <button id="toggleContrastBtn">Alto contraste</button>
+                            <details>
+                                <summary>Escala de grises</summary>
+                                <div class="control-group">
+                                    <label for="grayscaleRange"><span>Intensidad</span><span id="grayscaleValue">0%</span></label>
+                                    <input id="grayscaleRange" type="range" min="0" max="100" step="1" value="0">
+                                    <button id="grayscaleReset">Restablecer</button>
+                                </div>
+                            </details>
+                        </div>
+                        <button id="srToggleBtnMenu" role="menuitem">Navegación por voz</button>
+                        <button id="themeToggleBtnMenu" role="menuitem">Cambiar a modo oscuro</button>
+                    </details>
+
+                    <div id="auth-links">
+                        <a href="#login" role="menuitem">Iniciar Sesión</a>
+                        <a href="#register" role="menuitem">Registrarse</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
     </div>
+</nav>
 
-    <!-- Más videos -->
-    <section id="other-videos-section" class="videos-section" style="margin-top: 60px; padding: 20px; display: none;">
-        <h2 style="text-align:center; font-size:2rem; font-weight:700; margin-bottom:30px; color:#111;">CONOCENOS!!</h2>
-        <div id="other-videos-grid" class="videos-grid"></div>
-    </section>
+<main id="main-content">
+    <div id="page-content">
+        <!-- Contenido se cargará dinámicamente aquí -->
+    </div>
+</main>
 
-    <script src="js/firebase-config.js"></script>
-    <script src="js/app.js"></script>
+<!-- Cart Drawer -->
+<div id="cart-overlay" class="cart-overlay"></div>
+<div id="cart-drawer" class="cart-drawer">
+    <div class="drawer-header">
+        <h3>Tu Carrito</h3>
+        <button id="close-drawer-btn" class="close-drawer-btn" aria-label="Cerrar carrito">&times;</button>
+    </div>
+    <div id="drawer-cart-items" class="drawer-body">
+        <!-- Cart items will be injected here by JavaScript -->
+    </div>
+    <div class="drawer-footer">
+        <div class="drawer-total">
+            <span>Total:</span>
+            <span id="drawer-total-price">$0.00 MXN</span>
+        </div>
+        <button id="drawer-checkout-btn" class="btn-primary" style="border-radius: 8px;">Proceder al Pago</button>
+    </div>
+</div>
+<!-- End Cart Drawer -->
+
+<div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="sr-visual-announcer" class="sr-announcement" aria-hidden="true"></div>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

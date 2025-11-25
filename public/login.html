@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="login-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - MAC Style Makeup Store</title>
+    <title>Iniciar Sesión - MAC Style Makeup Store</title>    
+    <link rel="stylesheet" href="css/custom.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -11,172 +12,39 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <style>
-        :root{
-            --color-primary: #7b1fa2; /* Morado Oscuro de MAC Style */
-            --color-secondary: #6a1b9a;
-            --color-text: #ffffff;
-            --color-bg-dark: #1a0033; /* Fondo Oscuro */
-            --base-font-size: 16px;
-            --base-line-height: 1.5;
-            --base-spacing: 1rem;
-            --site-header-height: 70px;
-        }
-        
-        html {
-            font-size: var(--base-font-size);
-            line-height: var(--base-spacing);
-        }
-
         body {
-            padding-top: var(--site-header-height);
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-
-        /* --- Estilos del Encabezado (Simulando lo que estaría en css/style.css y base.html) --- */
-        
-        .site-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--site-header-height);
-            background: var(--color-bg-dark);
-            color: var(--color-text);
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .header-content {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo a {
-            color: var(--color-text);
-            text-decoration: none;
-            font-size: 1.8rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            padding-bottom: 3px; /* Espacio para la línea */
-            border-bottom: 3px solid var(--color-primary); /* Línea morada bajo el logo */
-        }
-        
-        .search-container {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            margin: 0 40px;
-        }
-
-        .search-input-group {
-            display: flex;
-            max-width: 400px;
-            width: 100%;
-        }
-
-        .search-input-group input[type="text"] {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px 0 0 5px;
-            font-size: 1rem;
-            flex-grow: 1;
-        }
-
-        .search-input-group button {
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .search-input-group button:hover {
-            background: var(--color-secondary);
-        }
-        
-        .nav-links {
-            display: flex;
-            align-items: center;
-            list-style: none;
             padding: 0;
-            margin: 0;
-        }
-
-        .nav-links li {
-            margin-left: 20px;
-        }
-
-        .nav-links a {
-            color: var(--color-text);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 5px 0;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--color-primary);
-        }
-
-        .dropdown-btn { /* Botón de menú/hamburguesa */
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            margin-left: 20px;
-            display: none; /* Oculto por defecto en desktop */
-        }
-
-        /* Fin de Estilos de Encabezado */
-        /* ------------------------------------ */
-
-
-        /* Estilos del Footer */
-        .site-footer {
-            background: #f5f5f5;
-            padding: 20px;
-            text-align: center;
-            margin-top: 40px;
-            border-top: 1px solid #ddd;
-        }
-
-        /* Estilos específicos para el formulario de registro/login (se mantienen igual) */
-        .auth-container {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: calc(100vh - var(--site-header-height) - 80px);
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: Arial, sans-serif;
+            background: url('images/fondo1.jpg') no-repeat center center fixed;
+            background-size: cover; /* Este fondo no se verá porque está en un iframe */
         }
 
-        .auth-form {
-            background: white;
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
-        .auth-form h2 {
+        h2 {
             text-align: center;
             margin-bottom: 30px;
-            color: #333;
+            color: #fff;
             font-size: 2rem;
             font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .form-group {
@@ -184,27 +52,34 @@
             position: relative;
         }
 
-        .form-group label {
+        label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
         }
 
-        .form-group input {
+        input[type="email"], input[type="password"] {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e1e5e9;
+            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s, box-shadow 0.3s;
             box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
         }
 
-        .form-group input:focus {
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input:focus {
             outline: none;
-            border-color: #7b1fa2;
-            box-shadow: 0 0 0 3px rgba(123, 31, 162, 0.1);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.3);
         }
 
         .password-toggle {
@@ -212,31 +87,12 @@
             right: 12px;
             top: 38px;
             cursor: pointer;
-            color: #666;
+            color: #eee;
             transition: color 0.3s;
         }
 
         .password-toggle:hover {
-            color: #7b1fa2;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #7b1fa2 0%, #6a1b9a 100%);
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            width: 100%;
-            position: relative;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(123, 31, 162, 0.3);
+            color: #fff;
         }
 
         .spinner {
@@ -260,19 +116,19 @@
             margin-top: 20px;
         }
 
-        .auth-links a {
-            color: #7b1fa2;
+        a {
+            color: #ffc1e3;
             text-decoration: none;
             transition: color 0.3s;
         }
 
-        .auth-links a:hover {
-            color: #6a1b9a;
+        a:hover {
+            color: #fff;
             text-decoration: underline;
         }
 
         .auth-separator {
-            text-align: center;
+             text-align: center;
             margin: 25px 0;
             position: relative;
         }
@@ -280,7 +136,7 @@
         .auth-separator span {
             background: white;
             padding: 0 15px;
-            color: #666;
+            color: #fff;
             position: relative;
             z-index: 1;
         }
@@ -294,28 +150,6 @@
             height: 1px;
             background: #e1e5e9;
             z-index: 0;
-        }
-
-        .btn-google {
-            background: white;
-            color: #333;
-            border: 2px solid #e1e5e9;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-google:hover {
-            border-color: #db4437;
-            box-shadow: 0 4px 12px rgba(219, 68, 55, 0.15);
         }
 
         .alert {
@@ -345,82 +179,43 @@
             color: #856404;
         }
 
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none; /* Ocultar enlaces de navegación en móvil */
-            }
-            .dropdown-btn {
-                display: block; /* Mostrar botón de menú en móvil */
-            }
-            .search-container {
-                margin: 0 10px;
-                max-width: 250px;
-            }
-            .header-content {
-                justify-content: space-between;
-            }
-            .auth-form {
-                padding: 30px 20px;
-                margin: 20px;
-            }
-            
-            .auth-form h2 {
-                font-size: 1.5rem;
-            }
-        }
     </style>
 </head>
 <body>
     
 
-    <main id="main-content">
-        <div class="auth-container">
-            <div class="auth-form">
-                <h2>Iniciar Sesión</h2>
+    <div class="login-container">
+        <h2>Iniciar Sesión</h2>
                 
-                <div id="alert-container"></div>
+        <div id="alert-container"></div>
                 
-                <form id="login-form">
+        <form id="login-form">
                     
-                    <div class="form-group">
-                        <label for="email">Correo electrónico:</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Contraseña:</label>
-                        <input type="password" id="password" name="password" required>
-                        <div class="password-toggle">
-                            <i class="fas fa-eye" id="toggle-password"></i>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary" id="login-btn">
-                        <span id="login-text">Iniciar Sesión</span>
-                        <div id="login-spinner" class="spinner" style="display: none;"></div>
-                    </button>
-                </form>
-                
-                <div class="auth-links">
-                    <p>¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></p>
-                    <p><a href="forgot-password.html">¿Olvidaste tu contraseña?</a></p>
-                </div>
-
-                <div class="auth-separator">
-                    <span>o</span>
-                </div>
-
-                <button type="button" class="btn-google" id="google-login-btn">
-                    <i class="fab fa-google"></i>
-                    Iniciar Sesión con Google
-                </button>
+            <div class="form-group">
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email" required placeholder="tu@correo.com">
             </div>
+                    
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required placeholder="••••••••">
+                <div class="password-toggle">
+                    <i class="fas fa-eye" id="toggle-password"></i>
+                </div>
+            </div>
+                    
+            <button type="submit" class="btn-primary" id="login-btn">
+                <span id="login-text">Iniciar Sesión</span>
+                <div id="login-spinner" class="spinner" style="display: none;"></div>
+            </button>
+        </form>
+                
+        <div class="auth-links">
+            <p>¿No tienes cuenta? <a href="index.html#register" target="_top">Regístrate aquí</a></p>
+            <p><a href="forgot-password.html">¿Olvidaste tu contraseña?</a></p>
         </div>
-    </main>
 
-    <footer class="site-footer">
-        <p>© 2023 MAC Style Makeup Store. Proyecto estudiantil sin derechos de autor.</p>
-    </footer>
+    </div>
 
     <script src="js/firebase-config.js"></script>
     <script>
@@ -488,54 +283,47 @@
 
                     try {
                         // Iniciar sesión en Firebase Auth
-                        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-const user = userCredential.user;
+                        const userCredential = await auth.signInWithEmailAndPassword(email, password);                        
+                        const user = userCredential.user;
 
-// VERIFICAR ROL EN FIRESTORE
-const userDoc = await db.collection('users').doc(user.uid).get();
+                        // VERIFICAR ROL EN FIRESTORE
+                        const userDoc = await db.collection('users').doc(user.uid).get();
 
-if (!userDoc.exists) {
-    showAlert('Usuario no encontrado en la base de datos', 'error');
-    await auth.signOut();
-    return;
-}
+                        if (!userDoc.exists) {
+                            showAlert('Usuario no encontrado en la base de datos', 'error');
+                            await auth.signOut();
+                            return;
+                        }
 
-const userData = userDoc.data();
-const userRole = userData.role;
+                        const userData = userDoc.data();
+                        const userRole = userData.role;
 
-// Mostrar mensaje de éxito
-showAlert(`¡Bienvenido/a de nuevo! Rol: ${userRole}`, 'success');
+                        // Mostrar mensaje de éxito
+                        showAlert(`¡Bienvenido/a de nuevo! Redirigiendo...`, 'success');
 
-// Redirigir según el rol
-setTimeout(() => {
-    switch(userRole) {
-        case 'masteradmin':
-            window.location.href = 'masteradmin/dashboard.html';
-            break;
-        case 'admin':
-            window.location.href = 'admin/dashboard.html';
-            break;
-        case 'customer':
-        default:
-            window.location.href = 'index.html';
-    }
-}, 1500);
+                        // Redirigir a la página principal en el frame padre
+                        setTimeout(() => {
+                            if (window.top) {
+                                window.top.location.href = 'index.html';
+                            } else {
+                                window.location.href = 'index.html';
+                            }
+                        }, 1500);
 
                     } catch (error) {
-                        console.error('Error en inicio de sesión con Google:', error);
+                        console.error('Error en inicio de sesión:', error);
                         
-                        let errorMessage = 'Error al iniciar sesión con Google';
-                        if (error.code === 'auth/popup-closed-by-user') {
-                            errorMessage = 'La ventana de inicio de sesión fue cancelada';
-                        } else if (error.code === 'auth/popup-blocked') {
-                            errorMessage = 'El popup fue bloqueado. Por favor permite popups para este sitio';
+                        let errorMessage = 'Correo o contraseña incorrectos.';
+                        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                            errorMessage = 'El correo electrónico o la contraseña no son válidos.';
+                        } else if (error.code === 'auth/too-many-requests') {
+                            errorMessage = 'Demasiados intentos fallidos. Intenta de nuevo más tarde.';
                         }
                         
                         showAlert(errorMessage, 'error');
-                        
-                        // Restaurar botón
-                        googleLoginBtn.disabled = false;
-                        googleLoginBtn.innerHTML = '<i class="fab fa-google"></i> Iniciar Sesión con Google';
+                        loginText.style.display = 'inline';
+                        loginSpinner.style.display = 'none';
+                        loginBtn.disabled = false;
                     }
                 });
             }
@@ -568,9 +356,11 @@ setTimeout(() => {
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     // Si ya está logueado, redirigir
-                    showAlert('Ya tienes una sesión activa', 'warning');
+                    showAlert('Ya tienes una sesión activa. Redirigiendo...', 'warning');
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                         if (window.top) {
+                            window.top.location.href = 'index.html';
+                        }
                     }, 2000);
                 }
             });
