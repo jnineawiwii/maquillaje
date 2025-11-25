@@ -1,27 +1,5 @@
 // Datos de productos (backup por si Firebase falla)
-const productosBackup = [
-    {
-        id: 1,
-        nombre: "Labial Matte Premium",
-        precio: 25.99,
-        categoria: "labios",
-        icono: "💄"
-    },
-    {
-        id: 2,
-        nombre: "Paleta de Sombras", 
-        precio: 45.50,
-        categoria: "ojos",
-        icono: "🎨"
-    },
-    {
-        id: 3,
-        nombre: "Base Líquida",
-        precio: 32.75,
-        categoria: "rostro",
-        icono: "💧"
-    }
-];
+
 
 // Carrito
 let carrito = [];
@@ -78,58 +56,7 @@ async function cargarProductosDesdeFirebase() {
     }
 }
 
-// Agregar productos de ejemplo a Firebase
-async function agregarProductosEjemplo() {
-    const productosEjemplo = [
-        {
-            name: "Labial Matte Premium",
-            price: 25.99,
-            category: "labios",
-            description: "Labial de acabado mate y larga duración"
-        },
-        {
-            name: "Paleta de Sombras",
-            price: 45.50, 
-            category: "ojos",
-            description: "Paleta con 12 colores profesionales"
-        },
-        {
-            name: "Base Líquida",
-            price: 32.75,
-            category: "rostro",
-            description: "Base de cobertura media y acabado natural"
-        },
-        {
-            name: "Rímel Volumizador",
-            price: 18.99,
-            category: "ojos", 
-            description: "Rímel para pestañas voluminosas"
-        },
-        {
-            name: "Rubor en Polvo",
-            price: 22.50,
-            category: "rostro",
-            description: "Rubor en polvo de larga duración"
-        },
-        {
-            name: "Delineador Líquido",
-            price: 15.25,
-            category: "ojos",
-            description: "Delineador de precisión y rápido secado"
-        }
-    ];
 
-    try {
-        for (const producto of productosEjemplo) {
-            await db.collection('products').add(producto);
-        }
-        console.log("Productos de ejemplo agregados a Firebase");
-        // Recargar productos
-        cargarProductosDesdeFirebase();
-    } catch (error) {
-        console.error("Error agregando productos de ejemplo:", error);
-    }
-}
 
 // Obtener icono según categoría
 function obtenerIconoCategoria(categoria) {
@@ -149,11 +76,18 @@ function cargarProductosEnGrid(filtroCategoria = null, terminoBusqueda = null) {
         return;
     }
 
+    productGrid.innerHTML = ''; // Limpiar grid antes de cargar
+
     let productosAMostrar = productos;
     if (filtroCategoria && filtroCategoria !== 'all') productosAMostrar = productos.filter(p => p.categoria === filtroCategoria);
     if (terminoBusqueda) productosAMostrar = productos.filter(p => p.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()));
     
-    productos.forEach(producto => {
+    if (productosAMostrar.length === 0) {
+        productGrid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; padding: 40px; opacity: 0.7;">No se encontraron productos</p>';
+        return;
+    }
+    
+    productosAMostrar.forEach(producto => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         
@@ -336,8 +270,15 @@ function handleAuthStateChange(usuario) {
     if (usuario) {
         if (userInfo) userInfo.style.display = 'block';
         if (cartLink) cartLink.style.display = 'block';
-        if (document.getElementById('user-welcome')) document.getElementById('user-welcome').textContent = `Hola, ${usuario.email}`;
+        if (document.getElementById('user-welcome')) {
+            document.getElementById('user-welcome').textContent = `Hola, ${usuario.email}`;
+        }
         if (authLinks) authLinks.innerHTML = '<a href="#" onclick="logout()">Cerrar Sesión</a>';
+
+        // Ocultar el iframe de login si está visible
+        if (window.location.hash === '#login') {
+            window.location.hash = 'home';
+        }
 
         if (typeof db !== 'undefined') {
             db.collection('users').doc(usuario.uid).get().then(doc => {
@@ -368,7 +309,7 @@ function logout() {
 }
 
 // ====================================================================
-// SISTEMA DE RUTAS
+// SISTEMA DE RUTAS - CORREGIDO
 // ====================================================================
 function handleRoute() {
     const contenido = document.getElementById('page-content');
@@ -389,8 +330,6 @@ function handleRoute() {
 
     switch (pagina) {
         case 'home':
-            // El video hero ahora es estático en index.html.
-            // Esta ruta solo se encarga de limpiar el contenido de la página y cargar productos si es necesario.
             contenido.innerHTML = `
                 <section class="hero">
                     <video autoplay loop muted playsinline class="hero-video" src="videos/intro.mp4"></video>
@@ -431,8 +370,73 @@ function handleRoute() {
 
         case 'login':
             contenido.innerHTML = `
-                <div style="position: fixed; top: 70px; left: 0; width: 100vw; height: calc(100vh - 70px); margin: 0; padding: 0; overflow: hidden; z-index: 500; background: black;">
-                    <iframe src="login.html" style="width: 100%; height: 100%; border: none; display: block;"></iframe>
+                <div class="auth-container">
+                    <div class="auth-form">
+                        <h2>Iniciar Sesión</h2>
+                        
+                        <div id="alert-container"></div>
+                        
+                        <form id="login-form">
+                            <div class="form-group">
+                                <label for="email">Correo electrónico:</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="password">Contraseña:</label>
+                                <input type="password" id="password" name="password" required>
+                                <div class="password-toggle">
+                                    <i class="fas fa-eye" id="toggle-password"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group captcha-container">
+                                <canvas id="captcha-canvas" width="200" height="60"></canvas>
+                                <button type="button" id="reload-captcha"><i class="fas fa-sync-alt"></i></button>
+                                <input type="text" id="captcha-input" placeholder="Resuelve el captcha" required>
+                            </div>
+                            
+                            <button type="submit" class="btn-primary" id="login-btn">
+                                <span id="login-text">Iniciar Sesión</span>
+                                <div id="login-spinner" class="spinner" style="display: none;"></div>
+                            </button>
+                        </form>
+                        
+                        <div class="auth-links">
+                            <p>¿No tienes cuenta? <a href="#register">Regístrate aquí</a></p>
+                            <p><a href="#forgot-password">¿Olvidaste tu contraseña?</a></p>
+                        </div>
+
+                        <div class="auth-separator">
+                            <span>o</span>
+                        </div>
+
+                        <button type="button" class="btn-google" id="google-login-btn">
+                            <i class="fab fa-google"></i>
+                            Iniciar Sesión con Google
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Inicializar el formulario de login después de cargar el HTML
+            setTimeout(() => {
+                inicializarFormularioLogin();
+            }, 100);
+            break;
+
+        case 'register':
+            contenido.innerHTML = `
+                <div class="auth-container">
+                    <div class="auth-form">
+                        <h2>Registrarse</h2>
+                        <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                            Página de registro - Funcionalidad en desarrollo
+                        </p>
+                        <div class="auth-links">
+                            <p>¿Ya tienes cuenta? <a href="#login">Inicia sesión aquí</a></p>
+                        </div>
+                    </div>
                 </div>
             `;
             break;
@@ -446,11 +450,19 @@ function handleRoute() {
                 </section>
             `;
             break;
-        
-        case 'register':
+
+        case 'forgot-password':
             contenido.innerHTML = `
-                <div style="position: fixed; top: 70px; left: 0; width: 100vw; height: calc(100vh - 70px); margin: 0; padding: 0; overflow: hidden; z-index: 500; background: black;">
-                    <iframe src="register.html" style="width: 100%; height: 100%; border: none; display: block;"></iframe>
+                <div class="auth-container">
+                    <div class="auth-form">
+                        <h2>Recuperar Contraseña</h2>
+                        <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                            Funcionalidad de recuperación de contraseña en desarrollo
+                        </p>
+                        <div class="auth-links">
+                            <p><a href="#login">Volver al inicio de sesión</a></p>
+                        </div>
+                    </div>
                 </div>
             `;
             break;
@@ -458,6 +470,269 @@ function handleRoute() {
         default:
             handleRoute('home');
     }
+}
+
+// ====================================================================
+// FORMULARIO DE LOGIN INTEGRADO
+// ====================================================================
+function inicializarFormularioLogin() {
+    // CAPTCHA
+    const captchaCanvas = document.getElementById('captcha-canvas');
+    const captchaInput = document.getElementById('captcha-input');
+    const reloadBtn = document.getElementById('reload-captcha');
+    
+    if (!captchaCanvas || !captchaInput) return;
+    
+    const ctx = captchaCanvas.getContext('2d');
+    let captchaAnswer = 0;
+
+    function generarCaptcha() {
+        ctx.clearRect(0, 0, captchaCanvas.width, captchaCanvas.height);
+
+        const num1 = Math.floor(Math.random() * 20) + 1;
+        const num2 = Math.floor(Math.random() * 20) + 1;
+        captchaAnswer = num1 + num2;
+        const captchaText = `${num1} + ${num2} = ?`;
+
+        const grad = ctx.createLinearGradient(0, 0, captchaCanvas.width, captchaCanvas.height);
+        grad.addColorStop(0, '#6a11cb');
+        grad.addColorStop(1, '#2575fc');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, captchaCanvas.width, captchaCanvas.height);
+
+        ctx.font = '28px Arial';
+        ctx.fillStyle = '#fff';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        ctx.fillText(captchaText, captchaCanvas.width / 2, captchaCanvas.height / 2);
+
+        for (let i = 0; i < 5; i++) {
+            ctx.strokeStyle = `rgba(255,255,255,${Math.random() * 0.3})`;
+            ctx.beginPath();
+            ctx.moveTo(Math.random() * captchaCanvas.width, Math.random() * captchaCanvas.height);
+            ctx.lineTo(Math.random() * captchaCanvas.width, Math.random() * captchaCanvas.height);
+            ctx.stroke();
+        }
+
+        for (let i = 0; i < 30; i++) {
+            ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.5})`;
+            ctx.beginPath();
+            ctx.arc(Math.random() * captchaCanvas.width, Math.random() * captchaCanvas.height, 2, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+    }
+
+    generarCaptcha();
+    
+    if (reloadBtn) {
+        reloadBtn.addEventListener('click', function() {
+            generarCaptcha();
+            captchaInput.value = '';
+        });
+    }
+
+    // Mostrar/ocultar contraseña
+    const togglePassword = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
+    
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    }
+
+    // Manejar envío del formulario de LOGIN
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const loginText = document.getElementById('login-text');
+    const loginSpinner = document.getElementById('login-spinner');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email')?.value;
+            const password = document.getElementById('password')?.value;
+            const captchaValue = parseInt(captchaInput.value);
+            
+            // Validaciones básicas
+            if (!email || !password || !captchaValue) {
+                showAlert('Por favor completa todos los campos', 'error');
+                return;
+            }
+
+            // Validar CAPTCHA
+            if (captchaValue !== captchaAnswer) {
+                showAlert('Captcha incorrecto. Intenta de nuevo.', 'error');
+                generarCaptcha();
+                captchaInput.value = '';
+                return;
+            }
+
+            // Mostrar loading
+            if (loginText && loginSpinner && loginBtn) {
+                loginText.style.display = 'none';
+                loginSpinner.style.display = 'inline-block';
+                loginBtn.disabled = true;
+            }
+
+            try {
+                // Iniciar sesión en Firebase Auth
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // VERIFICAR ROL EN FIRESTORE
+                const userDoc = await db.collection('users').doc(user.uid).get();
+
+                if (!userDoc.exists) {
+                    showAlert('Usuario no encontrado en la base de datos', 'error');
+                    await auth.signOut();
+                    return;
+                }
+
+                const userData = userDoc.data();
+                const userRole = userData.role;
+
+                // Mostrar mensaje de éxito
+                showAlert(`¡Bienvenido/a de nuevo! Rol: ${userRole}`, 'success');
+
+                // Redirigir según el rol - IMPORTANTE: Usar replace para evitar historial
+setTimeout(() => {
+    switch(userRole) {
+        case 'masteradmin':
+            window.location.replace('masteradmin/dashboard.html');
+            break;
+        case 'admin':
+            window.location.replace('admin/dashboard.html');
+            break;
+        case 'customer':
+        default:
+            // REDIRIGIR A BASE.HTML en lugar de quedarse en index.html
+            window.location.replace('base.html');
+    }
+}, 1500);
+
+            } catch (error) {
+                console.error('Error en inicio de sesión:', error);
+                
+                let errorMessage = 'Error al iniciar sesión';
+                
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        errorMessage = 'Correo electrónico inválido';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'Esta cuenta ha sido deshabilitada';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMessage = 'No existe una cuenta con este correo';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'Contraseña incorrecta';
+                        break;
+                    default:
+                        errorMessage = error.message;
+                }
+                
+                showAlert(errorMessage, 'error');
+            } finally {
+                // Ocultar loading
+                if (loginText && loginSpinner && loginBtn) {
+                    loginText.style.display = 'inline-block';
+                    loginSpinner.style.display = 'none';
+                    loginBtn.disabled = false;
+                }
+            }
+        });
+    }
+
+    // Inicio de sesión con Google
+    const googleLoginBtn = document.getElementById('google-login-btn');
+    if (googleLoginBtn) {
+        googleLoginBtn.addEventListener('click', async function() {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                provider.addScope('email');
+                provider.addScope('profile');
+
+                // Mostrar loading
+                googleLoginBtn.disabled = true;
+                googleLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
+
+                const result = await auth.signInWithPopup(provider);
+                const user = result.user;
+
+                // Verificar si es un usuario nuevo
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    // Crear documento de usuario en Firestore
+                    await db.collection('users').doc(user.uid).set({
+                        email: user.email,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                        role: 'customer',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        provider: 'google',
+                        emailVerified: true
+                    });
+                }
+
+                showAlert(`¡Bienvenido/a, ${user.displayName || user.email}!`, 'success');
+                
+                setTimeout(() => {
+                    window.location.hash = 'home';
+                    // Forzar recarga completa
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error en inicio de sesión con Google:', error);
+                
+                let errorMessage = 'Error al iniciar sesión con Google';
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'La ventana de inicio de sesión fue cancelada';
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorMessage = 'El popup fue bloqueado. Por favor permite popups para este sitio';
+                }
+                
+                showAlert(errorMessage, 'error');
+                
+                // Restaurar botón
+                googleLoginBtn.disabled = false;
+                googleLoginBtn.innerHTML = '<i class="fab fa-google"></i> Iniciar Sesión con Google';
+            }
+        });
+    }
+}
+
+// Función para mostrar alertas en el login
+function showAlert(message, type) {
+    const alertContainer = document.getElementById('alert-container');
+    if (!alertContainer) return;
+    
+    const alertClass = type === 'error' ? 'alert-error' : 
+                       type === 'success' ? 'alert-success' : 'alert-warning';
+    
+    alertContainer.innerHTML = `
+        <div class="alert ${alertClass}">
+            <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 
+                             type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+            ${message}
+        </div>
+    `;
+    
+    // Auto-eliminar alerta después de 8 segundos
+    setTimeout(() => {
+        if (alertContainer) {
+            alertContainer.innerHTML = '';
+        }
+    }, 8000);
 }
 
 function filtrarProductos(categoria) {
@@ -740,6 +1015,6 @@ function buscarProductos(event) {
     event.preventDefault();
     const termino = document.getElementById('search-input').value.trim();
     if (termino) {
-        window.location.hash = `#products?search=${encodeURIComponent(termino)}`;
+        window.location.hash = `products?search=${encodeURIComponent(termino)}`;
     }
 }
